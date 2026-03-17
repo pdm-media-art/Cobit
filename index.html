@@ -240,13 +240,92 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @media(max-width:1024px){.mcards{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.hdr{padding:6px 10px;flex-wrap:wrap}.wrap{padding:10px 8px 60px}.mg{grid-template-columns:1fr}.panel{padding:14px 12px}.mcards,.tpl-cards{grid-template-columns:1fr}.chart-grid{grid-template-columns:1fr}.top-nav{order:10;width:100%}}
 @media print{.hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right{display:none!important}body{background:#fff;color:#111}body::before{display:none}.panel,.rpt-hdr,.finding,.stat,.chart-box,.doc,.ma-card,.cn,.ci{background:#fff!important;border-color:#ddd!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* ═══ LOGIN ═══ */
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-overlay.hidden{display:none!important}
+.login-card{background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r2);padding:36px 40px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.75),0 0 0 1px rgba(20,184,166,.05);position:relative;overflow:hidden;animation:fadeUp .35s ease}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--orange),var(--purple))}
+.login-brand{text-align:center;margin-bottom:28px}
+.login-logo-mark{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(20,184,166,.2),rgba(249,115,22,.15));border:1px solid rgba(20,184,166,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:1.2rem;color:var(--text2);margin:0 auto 12px}
+.login-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--text2);margin-bottom:3px}
+.login-sub{font-size:.78rem;color:var(--muted)}
+.login-form{display:flex;flex-direction:column;gap:14px}
+.login-field{display:flex;flex-direction:column;gap:5px}
+.login-field label{font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.login-input-wrap{position:relative;display:flex;align-items:center}
+.login-input-wrap input{width:100%;background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:10px;padding:10px 40px 10px 38px;color:var(--text);font-size:.88rem;font-family:var(--ff);outline:none;transition:.2s}
+.login-input-wrap input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+.login-icon{position:absolute;left:11px;font-size:.9rem;pointer-events:none;opacity:.5}
+.login-eye{position:absolute;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;line-height:1;transition:.15s}
+.login-eye:hover{color:var(--text)}
+.login-btn{background:linear-gradient(135deg,var(--accent),#0d9488);color:#0f172a;border:none;border-radius:var(--rpill);padding:11px 20px;font-size:.88rem;font-weight:700;font-family:var(--ff);cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(20,184,166,.3);margin-top:4px}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(20,184,166,.4)}
+.login-btn:active{transform:none}
+.login-btn:disabled{opacity:.5;pointer-events:none;transform:none}
+.login-error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:9px 12px;font-size:.78rem;color:#fca5a5;display:none}
+.login-error.show{display:block;animation:fadeUp .2s ease}
+.login-lockout{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:9px 12px;font-size:.78rem;color:#fde047;display:none;text-align:center}
+.login-lockout.show{display:block;animation:fadeUp .2s ease}
+.login-footer{text-align:center;margin-top:22px;font-size:.64rem;color:var(--soft);line-height:1.8;border-top:1px solid var(--border);padding-top:14px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.shake{animation:shake .35s ease}
+/* ═══ USER BADGE ═══ */
+.user-badge{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 6px;background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.15);border-radius:var(--rpill);cursor:pointer;transition:.2s;flex-shrink:0}
+.user-badge:hover{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--orange));display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:#0f172a;flex-shrink:0;font-family:var(--fh)}
+.user-info{display:flex;flex-direction:column;line-height:1.3}
+.user-name{font-family:var(--fm);font-size:.54rem;letter-spacing:.05em;color:var(--text2);font-weight:600}
+.user-logout-lbl{font-size:.5rem;color:var(--danger);font-weight:600;font-family:var(--fm);letter-spacing:.04em;opacity:.8}
 </style>
 </head>
 <body>
+<!-- ═══ LOGIN OVERLAY ═══ -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card" id="loginCard">
+    <div class="login-brand">
+      <div class="login-logo-mark">S<span style="color:var(--accent)">:</span>A</div>
+      <div class="login-title">SecureStay: Analytics</div>
+      <div class="login-sub">Audit & Compliance Platform — Bitte anmelden</div>
+    </div>
+    <div class="login-form">
+      <div class="login-field">
+        <label>Nutzername</label>
+        <div class="login-input-wrap">
+          <span class="login-icon">👤</span>
+          <input type="text" id="li_user" placeholder="Nutzername" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('li_pass').focus()">
+        </div>
+      </div>
+      <div class="login-field">
+        <label>Passwort</label>
+        <div class="login-input-wrap">
+          <span class="login-icon">🔒</span>
+          <input type="password" id="li_pass" placeholder="Passwort" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+          <button class="login-eye" id="eyeBtn" onclick="togglePw()" title="Passwort anzeigen/verstecken">👁</button>
+        </div>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-lockout" id="loginLockout"></div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">Anmelden →</button>
+    </div>
+    <div class="login-footer">
+      SecureStay Solutions UG (haftungsbeschränkt)<br>
+      Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de<br>
+      <span style="color:var(--border2)">v2.0 · Enterprise Edition</span>
+    </div>
+  </div>
+</div>
 <header class="hdr">
 <div class="logo"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
 <div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')">🛡️ Audit</button><button class="tn t-db" onclick="go('database')">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')">🕐 Historie</button></div>
 <div class="hdr-badge" id="hdrBadge">–</div>
+<div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
+  <div class="user-avatar" id="userAvatar">A</div>
+  <div class="user-info">
+    <span class="user-name" id="userName">Admin</span>
+    <span class="user-logout-lbl">Abmelden</span>
+  </div>
+</div>
 </header>
 <div class="wrap">
 <div id="auditNav"><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div><div class="stepper" id="stepper"></div></div>
@@ -660,7 +739,102 @@ function showEsk(){const krit=[];activeChecks().forEach(ch=>ch.items.forEach(it=
 document.getElementById('eskText').value=`DRINGEND – Eskalation kritischer Mängel\n\nSehr geehrte Geschäftsleitung,\n\nbei der Begehung am ${S.meta.datum||'[Datum]'} des Objekts "${S.meta.objekt||'[Objekt]'}" wurden ${krit.length} kritische Mängel festgestellt:\n\n${krit.map((k,i)=>`${i+1}. ${k.sec} → ${k.l}${k.note?' ('+k.note+')':''}`).join('\n')}\n\nSofortige Korrekturmaßnahmen gemäß NIS2 §38 / ISO 31000 erforderlich.\n\nMit freundlichen Grüßen,\n${S.meta.pruefer||'[Auditor]'}\nSecureStay Solutions UG (haftungsbeschränkt)`;
 document.getElementById('eskModal').classList.add('open');}
 
-render();
+// ═══ AUTH ═══
+const _AH = btoa(unescape(encodeURIComponent('Admin\x00TEstpasswort123')));
+let _loginAttempts = 0;
+let _lockoutTimer = null;
+
+function checkAuth() {
+  const sess = sessionStorage.getItem('ssa_sess');
+  if (sess && sess === _AH) {
+    const uname = sessionStorage.getItem('ssa_u') || 'Admin';
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('userBadge').style.display = 'flex';
+    document.getElementById('userName').textContent = uname;
+    document.getElementById('userAvatar').textContent = uname.charAt(0).toUpperCase();
+    return true;
+  }
+  return false;
+}
+
+function doLogin() {
+  if (_lockoutTimer) return;
+  const u = (document.getElementById('li_user').value || '').trim();
+  const p = document.getElementById('li_pass').value || '';
+  const err = document.getElementById('loginError');
+  err.classList.remove('show');
+  if (!u || !p) {
+    err.textContent = 'Bitte alle Felder ausfüllen.';
+    err.classList.add('show');
+    return;
+  }
+  const h = btoa(unescape(encodeURIComponent(u + '\x00' + p)));
+  if (h === _AH) {
+    _loginAttempts = 0;
+    sessionStorage.setItem('ssa_sess', _AH);
+    sessionStorage.setItem('ssa_u', u);
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('userBadge').style.display = 'flex';
+    document.getElementById('userName').textContent = u;
+    document.getElementById('userAvatar').textContent = u.charAt(0).toUpperCase();
+    render();
+  } else {
+    _loginAttempts++;
+    const card = document.getElementById('loginCard');
+    card.classList.add('shake');
+    setTimeout(() => card.classList.remove('shake'), 400);
+    if (_loginAttempts >= 5) {
+      err.classList.remove('show');
+      const lockEl = document.getElementById('loginLockout');
+      const btn = document.getElementById('loginBtn');
+      lockEl.classList.add('show');
+      btn.disabled = true;
+      let secs = 30;
+      lockEl.textContent = `⛔ Zu viele Fehlversuche. Bitte ${secs}s warten.`;
+      _lockoutTimer = setInterval(() => {
+        secs--;
+        lockEl.textContent = `⛔ Zu viele Fehlversuche. Bitte ${secs}s warten.`;
+        if (secs <= 0) {
+          clearInterval(_lockoutTimer);
+          _lockoutTimer = null;
+          _loginAttempts = 0;
+          lockEl.classList.remove('show');
+          btn.disabled = false;
+        }
+      }, 1000);
+    } else {
+      const rem = 5 - _loginAttempts;
+      err.textContent = `❌ Ungültige Anmeldedaten. (${rem} Versuch${rem !== 1 ? 'e' : ''} verbleibend)`;
+      err.classList.add('show');
+    }
+  }
+}
+
+function doLogout() {
+  if (!confirm('Wirklich abmelden?')) return;
+  sessionStorage.removeItem('ssa_sess');
+  sessionStorage.removeItem('ssa_u');
+  _loginAttempts = 0;
+  if (_lockoutTimer) { clearInterval(_lockoutTimer); _lockoutTimer = null; }
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('userBadge').style.display = 'none';
+  document.getElementById('li_user').value = '';
+  document.getElementById('li_pass').value = '';
+  document.getElementById('li_pass').type = 'password';
+  document.getElementById('eyeBtn').textContent = '👁';
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginLockout').classList.remove('show');
+  document.getElementById('loginBtn').disabled = false;
+}
+
+function togglePw() {
+  const inp = document.getElementById('li_pass');
+  const btn = document.getElementById('eyeBtn');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+if (checkAuth()) render();
 </script>
 </body>
 </html>
