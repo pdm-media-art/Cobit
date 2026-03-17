@@ -963,7 +963,10 @@ document.getElementById('eskText').value=`DRINGEND – Eskalation kritischer Mä
 document.getElementById('eskModal').classList.add('open');}
 
 // ═══ ADMIN AUTH ═══
-const _ADM_AH = btoa(unescape(encodeURIComponent('SecureStay\x00SS@Intern!25')));
+const _ADM_USERS = [
+  btoa(unescape(encodeURIComponent('SecureStay\x00SS@Intern!25'))),
+  btoa(unescape(encodeURIComponent('Grygoriy.Ogorinskyy\x00TEstpasswort123'))),
+];
 let _admAttempts = 0;
 
 function adminDoLogin() {
@@ -973,7 +976,7 @@ function adminDoLogin() {
   err.classList.remove('show');
   if (!u||!p){err.textContent='Bitte alle Felder ausfüllen.';err.classList.add('show');return;}
   const h = btoa(unescape(encodeURIComponent(u+'\x00'+p)));
-  if (h===_ADM_AH) {
+  if (_ADM_USERS.includes(h)) {
     _admAttempts=0;
     sessionStorage.setItem('ssa_adm',_ADM_AH);
     document.getElementById('admLoginOverlay').classList.remove('open');
@@ -1446,13 +1449,16 @@ document.addEventListener('keydown', e => {
 });
 
 // ═══ AUTH ═══
-const _AH = btoa(unescape(encodeURIComponent('Admin\x00TEstpasswort123')));
+const _USERS = [
+  btoa(unescape(encodeURIComponent('Admin\x00TEstpasswort123'))),
+  btoa(unescape(encodeURIComponent('Grygoriy.Ogorinskyy\x00TEstpasswort123'))),
+];
 let _loginAttempts = 0;
 let _lockoutTimer = null;
 
 function checkAuth() {
   const sess = sessionStorage.getItem('ssa_sess');
-  if (sess && sess === _AH) {
+  if (sess && _USERS.includes(sess)) {
     const uname = sessionStorage.getItem('ssa_u') || 'Admin';
     document.getElementById('loginOverlay').classList.add('hidden');
     document.getElementById('userBadge').style.display = 'flex';
@@ -1475,9 +1481,9 @@ function doLogin() {
     return;
   }
   const h = btoa(unescape(encodeURIComponent(u + '\x00' + p)));
-  if (h === _AH) {
+  if (_USERS.includes(h)) {
     _loginAttempts = 0;
-    sessionStorage.setItem('ssa_sess', _AH);
+    sessionStorage.setItem('ssa_sess', h);
     sessionStorage.setItem('ssa_u', u);
     document.getElementById('loginOverlay').classList.add('hidden');
     document.getElementById('userBadge').style.display = 'flex';
