@@ -239,7 +239,41 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 @media(max-width:1024px){.mcards{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.hdr{padding:6px 10px;flex-wrap:wrap}.wrap{padding:10px 8px 60px}.mg{grid-template-columns:1fr}.panel{padding:14px 12px}.mcards,.tpl-cards{grid-template-columns:1fr}.chart-grid{grid-template-columns:1fr}.top-nav{order:10;width:100%}}
-@media print{.hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right{display:none!important}body{background:#fff;color:#111}body::before{display:none}.panel,.rpt-hdr,.finding,.stat,.chart-box,.doc,.ma-card,.cn,.ci{background:#fff!important;border-color:#ddd!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right,
+  .toast-wrap,.login-overlay,.user-badge,.autosave-dot{display:none!important}
+  body{background:#fff!important;color:#111!important;font-size:12px}
+  body::before{display:none}
+  .wrap{padding:0!important;max-width:100%!important}
+  .panel{background:#fff!important;border:1px solid #ddd!important;box-shadow:none!important;border-radius:6px!important;padding:14px!important;page-break-inside:avoid}
+  .rpt-hdr{background:linear-gradient(135deg,#e0f7f4,#f0fdf4)!important;border:1px solid #b2dfdb!important;border-radius:8px!important;padding:20px!important}
+  .rpt-title{color:#0f172a!important;font-size:1.5rem!important}
+  .rpt-meta{color:#334155!important}
+  .stat{background:#f8fafc!important;border:1px solid #e2e8f0!important;border-radius:6px!important}
+  .stat-val{font-size:1.6rem!important}.stat-lbl{color:#64748b!important}
+  .stat.danger .stat-val{color:#dc2626!important}.stat.warn .stat-val{color:#ca8a04!important}
+  .stat.ok .stat-val{color:#16a34a!important}.stat.total .stat-val,.stat.purple .stat-val{color:#7c3aed!important}
+  .stat.emerald .stat-val{color:#059669!important}
+  .finding{border:1px solid #e2e8f0!important;border-radius:6px!important;background:#fff!important;padding:8px 10px!important;page-break-inside:avoid;margin-bottom:4px!important}
+  .finding.kritisch{border-left:4px solid #dc2626!important;background:#fef2f2!important}
+  .finding.mangel{border-left:4px solid #ca8a04!important;background:#fffbeb!important}
+  .finding-icon{display:none}
+  .f-label{color:#1e293b!important;font-size:.85rem!important}.f-section{color:#64748b!important}.f-note{color:#475569!important}
+  .f-cost-val{color:#0d9488!important}.f-cost-lbl{color:#64748b!important}
+  .cost-sum{background:#f0fdfa!important;border:1px solid #b2f5ea!important;border-radius:6px!important}
+  .cost-row span:first-child{color:#475569!important}.cost-row span:last-child{color:#0f766e!important}
+  .risk-level{border:1px solid currentColor!important;border-radius:20px!important}
+  .risk-level.gering{background:#f0fdf4!important;color:#15803d!important}
+  .risk-level.mittel{background:#fffbeb!important;color:#b45309!important}
+  .risk-level.hoch,.risk-level.kritisch{background:#fef2f2!important;color:#dc2626!important}
+  .nb{border:1px solid #e2e8f0!important}
+  .nb.sec{color:#0f766e!important;background:#e0f7f4!important}
+  .nb.qm{color:#c2410c!important;background:#fff7ed!important}
+  .nb.it{color:#065f46!important;background:#ecfdf5!important}
+  .print-page-break{page-break-before:always}
+  @page{margin:15mm 12mm;size:A4}
+}
 
 /* ═══ LOGIN ═══ */
 .login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
@@ -277,9 +311,33 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .user-info{display:flex;flex-direction:column;line-height:1.3}
 .user-name{font-family:var(--fm);font-size:.54rem;letter-spacing:.05em;color:var(--text2);font-weight:600}
 .user-logout-lbl{font-size:.5rem;color:var(--danger);font-weight:600;font-family:var(--fm);letter-spacing:.04em;opacity:.8}
+
+/* ═══ TOAST ═══ */
+.toast-wrap{position:fixed;top:68px;right:16px;z-index:8000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--surface3);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--text2);box-shadow:0 8px 28px rgba(0,0,0,.55);display:flex;align-items:center;gap:8px;min-width:220px;max-width:320px;pointer-events:all;animation:toastIn .25s ease;transition:opacity .3s,transform .3s}
+.toast.out{opacity:0;transform:translateX(14px)}
+.toast.success{border-left:3px solid var(--ok)}.toast.error{border-left:3px solid var(--danger)}.toast.warn{border-left:3px solid var(--warn)}.toast.info{border-left:3px solid var(--accent)}
+.toast-icon{font-size:.95rem;flex-shrink:0}.toast-msg{flex:1;line-height:1.4}
+.toast-action{background:none;border:none;color:var(--accent);font-size:.72rem;font-weight:700;font-family:var(--fm);cursor:pointer;padding:2px 8px;border-radius:5px;transition:.15s;flex-shrink:0;border:1px solid rgba(20,184,166,.3)}.toast-action:hover{background:var(--accentDim)}
+@keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+/* ═══ AUTOSAVE ═══ */
+.autosave-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);opacity:0;flex-shrink:0}
+.autosave-dot.pulse{animation:savePulse 1.4s ease forwards}
+@keyframes savePulse{0%{opacity:1;transform:scale(1)}40%{opacity:1;transform:scale(1.4)}100%{opacity:0;transform:scale(.8)}}
+/* ═══ SEARCH ═══ */
+.search-wrap{position:relative;flex:1;max-width:260px}
+.search-wrap input{width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:var(--rpill);padding:6px 28px 6px 32px;color:var(--text);font-size:.78rem;font-family:var(--ff);outline:none;transition:.2s}
+.search-wrap input:focus{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(20,184,166,.08)}
+.search-wrap input::placeholder{color:var(--soft)}
+.search-clear{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:0;line-height:1;display:none}.search-clear.show{display:block}
+.search-icon-lbl{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.78rem;pointer-events:none;opacity:.45}
+/* ═══ SHORTCUTS HINT ═══ */
+.kbd{display:inline-flex;align-items:center;padding:1px 5px;border-radius:4px;border:1px solid var(--border2);background:rgba(255,255,255,.04);font-family:var(--fm);font-size:.5rem;color:var(--muted);line-height:1.6;vertical-align:middle}
 </style>
 </head>
 <body>
+<!-- ═══ TOAST CONTAINER ═══ -->
+<div class="toast-wrap" id="toastWrap"></div>
 <!-- ═══ LOGIN OVERLAY ═══ -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card" id="loginCard">
@@ -318,6 +376,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <header class="hdr">
 <div class="logo"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
 <div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')">🛡️ Audit</button><button class="tn t-db" onclick="go('database')">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')">🕐 Historie</button></div>
+<div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
 <div class="hdr-badge" id="hdrBadge">–</div>
 <div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
   <div class="user-avatar" id="userAvatar">A</div>
@@ -333,7 +392,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 <div class="modal-overlay" id="docModal"><div class="modal"><button class="modal-close" onclick="closeModal('docModal')">&times;</button><div class="modal-title" id="docModalTitle">Dokument</div><div class="modal-sub">Metadaten für Audit-Datenbank.</div><div class="mg" id="docForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('docModal')">Abbrechen</button><button class="btn-p" onclick="saveDoc()">💾 Speichern</button></div></div></div>
 <div class="modal-overlay" id="maModal"><div class="modal"><button class="modal-close" onclick="closeModal('maModal')">&times;</button><div class="modal-title" id="maModalTitle">Maßnahme</div><div class="modal-sub">Korrekturmaßnahme erfassen.</div><div class="mg" id="maForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('maModal')">Abbrechen</button><button class="btn-p" onclick="saveMa()">💾 Speichern</button></div></div></div>
-<div class="modal-overlay" id="eskModal"><div class="modal"><button class="modal-close" onclick="closeModal('eskModal')">&times;</button><div class="modal-title">⚠️ Eskalations-E-Mail</div><div class="modal-sub">Vorlage für kritische Mängel.</div><div class="esk-box"><textarea id="eskText" readonly></textarea></div><div class="nav-row"><button class="btn-s" onclick="closeModal('eskModal')">Schließen</button><button class="btn-p" onclick="navigator.clipboard.writeText(document.getElementById('eskText').value).then(()=>alert('Kopiert!'))">📋 Kopieren</button></div></div></div>
+<div class="modal-overlay" id="eskModal"><div class="modal"><button class="modal-close" onclick="closeModal('eskModal')">&times;</button><div class="modal-title">⚠️ Eskalations-E-Mail</div><div class="modal-sub">Vorlage für kritische Mängel.</div><div class="esk-box"><textarea id="eskText" readonly></textarea></div><div class="nav-row"><button class="btn-s" onclick="closeModal('eskModal')">Schließen</button><button class="btn-p" onclick="navigator.clipboard.writeText(document.getElementById('eskText').value).then(()=>toast('In Zwischenablage kopiert','success'))">📋 Kopieren</button></div></div></div>
 <script>
 const NORMS={
 'ISO 31000':{m:'security',fn:'ISO 31000:2018 – Risikomanagement',reqs:[{n:'5.2',t:'Führung und Verpflichtung'},{n:'6.3',t:'Risikoidentifikation'},{n:'6.4',t:'Risikoanalyse'},{n:'6.5',t:'Risikobewertung'},{n:'6.6',t:'Risikobehandlung'},{n:'6.7',t:'Überwachung'}]},
@@ -518,10 +577,10 @@ const TEMPLATES=[
 {id:'kritis',name:'KRITIS',icon:'🏛️',desc:'Maximaler Umfang.'},{id:'it',name:'IT / RZ',icon:'🖥️',desc:'IT-Governance + Security.'},{id:'custom',name:'Eigene',icon:'✏️',desc:'Individuell.'},
 ];
 
-let S={mode:'audit',dbTab:'all',step:0,module:null,norms:[],
+let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:''},
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null};
-function save(){try{localStorage.setItem('ssa4',JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
 load();
 
@@ -638,13 +697,28 @@ function renderDB(){
   let gC=0,yC=0,rC=0;S.docs.forEach(d=>{const s=docStatus(d);if(s==='green')gC++;else if(s==='yellow')yC++;else if(s==='red')rC++;});
   let content=S.dbTab==='compliance'?renderCompliance():S.dbTab==='expiring'?renderExpiring():renderAllDocs();
   document.getElementById('mainContent').innerHTML=`<div class="panel">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px"><div><div class="panel-title">📁 Datenbank</div></div><button class="btn-p" onclick="openDocModal()">+ Dokument</button></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+    <div><div class="panel-title">📁 Datenbank</div></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <div class="search-wrap"><span class="search-icon-lbl">🔍</span><input id="dbSearchInput" placeholder="Suchen…" value="${esc(S.dbSearch)}" oninput="S.dbSearch=this.value;document.getElementById('dbClear').classList.toggle('show',!!this.value);renderDBContent()"><button class="search-clear ${S.dbSearch?'show':''}" id="dbClear" onclick="S.dbSearch='';document.getElementById('dbSearchInput').value='';this.classList.remove('show');renderDBContent()">✕</button></div>
+      <button class="btn-p" onclick="openDocModal()">+ Dokument</button>
+    </div>
+  </div>
   <div class="stats" style="grid-template-columns:repeat(4,1fr)"><div class="stat orange"><div class="stat-val">${S.docs.length}</div><div class="stat-lbl">Gesamt</div></div><div class="stat ok"><div class="stat-val">${gC}</div><div class="stat-lbl">Aktuell</div></div><div class="stat warn"><div class="stat-val">${yC}</div><div class="stat-lbl">Läuft ab</div></div><div class="stat danger"><div class="stat-val">${rC}</div><div class="stat-lbl">Überfällig</div></div></div>
-  <div class="tabs"><button class="tab ${S.dbTab==='all'?'active':''}" onclick="S.dbTab='all';render()">📄 Alle</button><button class="tab ${S.dbTab==='compliance'?'active':''}" onclick="S.dbTab='compliance';render()">🔍 Compliance</button><button class="tab ${S.dbTab==='expiring'?'active':''}" onclick="S.dbTab='expiring';render()">⏰ Ablauf</button></div>${content}</div>`;
+  <div class="tabs"><button class="tab ${S.dbTab==='all'?'active':''}" onclick="S.dbTab='all';S.dbSearch='';render()">📄 Alle</button><button class="tab ${S.dbTab==='compliance'?'active':''}" onclick="S.dbTab='compliance';render()">🔍 Compliance</button><button class="tab ${S.dbTab==='expiring'?'active':''}" onclick="S.dbTab='expiring';render()">⏰ Ablauf</button></div>
+  <div id="dbContent">${content}</div></div>`;
+}
+function renderDBContent(){
+  const el=document.getElementById('dbContent');
+  if(el)el.innerHTML=S.dbTab==='compliance'?renderCompliance():S.dbTab==='expiring'?renderExpiring():renderAllDocs();
 }
 function renderAllDocs(){
+  const q=(S.dbSearch||'').toLowerCase().trim();
+  let docs=S.docs;
+  if(q)docs=docs.filter(d=>(d.name||'').toLowerCase().includes(q)||(d.category||'').toLowerCase().includes(q)||(d.norms||[]).some(n=>n.toLowerCase().includes(q))||(d.owner||'').toLowerCase().includes(q));
   if(!S.docs.length)return`<div style="text-align:center;padding:24px;opacity:.5">📁 Noch keine Dokumente</div>`;
-  return`<div class="doc-grid">${S.docs.map(d=>{const st=docStatus(d),sl={green:'Aktuell',yellow:'Läuft ab',red:'Überfällig',gray:'–'}[st];return`<div class="doc"><div class="doc-icon">${CATI[d.category]||'📎'}</div><div class="doc-body"><div class="doc-name">${esc(d.name)}</div><div class="doc-meta"><span>${d.category}</span><span>📅 ${d.expiry?new Date(d.expiry).toLocaleDateString('de-DE'):'–'}</span></div><div class="doc-norms">${(d.norms||[]).map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}" style="font-size:.44rem">${n}</span>`).join('')}</div></div><div class="pill ${st}">● ${sl}</div><div style="display:flex;gap:3px"><button class="btn-sm" onclick="openDocModal(${d.id})">✏️</button><button class="btn-sm danger" onclick="if(confirm('Löschen?')){S.docs=S.docs.filter(x=>x.id!==${d.id});save();render();}">🗑️</button></div></div>`;}).join('')}</div>`;
+  if(!docs.length)return`<div style="text-align:center;padding:24px;opacity:.5">🔍 Keine Treffer für „${esc(S.dbSearch)}"</div>`;
+  return`<div class="doc-grid">${docs.map(d=>{const st=docStatus(d),sl={green:'Aktuell',yellow:'Läuft ab',red:'Überfällig',gray:'–'}[st];return`<div class="doc"><div class="doc-icon">${CATI[d.category]||'📎'}</div><div class="doc-body"><div class="doc-name">${esc(d.name)}</div><div class="doc-meta"><span>${d.category}</span><span>📅 ${d.expiry?new Date(d.expiry).toLocaleDateString('de-DE'):'–'}</span></div><div class="doc-norms">${(d.norms||[]).map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}" style="font-size:.44rem">${n}</span>`).join('')}</div></div><div class="pill ${st}">● ${sl}</div><div style="display:flex;gap:3px"><button class="btn-sm" onclick="openDocModal(${d.id})">✏️</button><button class="btn-sm danger" onclick="deleteDoc(${d.id})">🗑️</button></div></div>`;}).join('')}</div>`;
 }
 function renderCompliance(){
   let h='';Object.entries(NORMS).forEach(([nk,nd])=>{if(S.norms.length&&!S.norms.includes(nk))return;const dn=S.docs.filter(d=>d.norms?.includes(nk));const pct=nd.reqs.length?Math.round(Math.min(dn.length,nd.reqs.length)/nd.reqs.length*100):0;const bc=pct>=80?'var(--ok)':pct>=50?'var(--warn)':'var(--danger)';
@@ -657,7 +731,7 @@ function renderMA(){
   const ma=S.massnahmen,o=ma.filter(m=>m.status==='offen').length,p=ma.filter(m=>m.status==='in Bearbeitung').length,d=ma.filter(m=>m.status==='erledigt').length,ue=ma.filter(m=>m.deadline&&new Date(m.deadline)<new Date()&&m.status!=='erledigt').length;
   const krit=[];activeChecks().forEach(ch=>ch.items.forEach(it=>{if(S.findings[it.id]?.status==='kritisch')krit.push({l:it.l,sec:ch.l,note:S.findings[it.id]?.note||''});}));
   let cards=ma.length?`<div class="ma-grid">${ma.map(m=>{const pc={Kritisch:'kritisch',Hoch:'hoch',Mittel:'mittel',Niedrig:'niedrig'}[m.prio]||'';const sc={offen:'var(--danger)','in Bearbeitung':'var(--warn)',erledigt:'var(--ok)'}[m.status]||'var(--muted)';const pr=m.status==='erledigt'?100:m.status==='in Bearbeitung'?50:0;const ov=m.deadline&&new Date(m.deadline)<new Date()&&m.status!=='erledigt';
-  return`<div class="ma-card prio-${pc}"><div class="ma-body"><div class="ma-title">${esc(m.title)}${ov?' <span style="color:var(--danger);font-size:.65rem">⚠ ÜBERFÄLLIG</span>':''}</div><div class="ma-meta"><span>📌 ${m.prio}</span><span>👤 ${esc(m.owner||'–')}</span><span>📅 ${m.deadline?new Date(m.deadline).toLocaleDateString('de-DE'):'–'}</span><span style="color:${sc};font-weight:600">● ${m.status}</span></div><div class="ma-bar"><div class="ma-bar-fill" style="width:${pr}%;background:${pr===100?'var(--ok)':'var(--warn)'}"></div></div></div><div class="ma-right"><button class="btn-sm" onclick="openMaModal(${m.id})">✏️</button><button class="btn-sm danger" onclick="if(confirm('Löschen?')){S.massnahmen=S.massnahmen.filter(x=>x.id!==${m.id});save();render();}">🗑️</button></div></div>`;}).join('')}</div>`:
+  return`<div class="ma-card prio-${pc}"><div class="ma-body"><div class="ma-title">${esc(m.title)}${ov?' <span style="color:var(--danger);font-size:.65rem">⚠ ÜBERFÄLLIG</span>':''}</div><div class="ma-meta"><span>📌 ${m.prio}</span><span>👤 ${esc(m.owner||'–')}</span><span>📅 ${m.deadline?new Date(m.deadline).toLocaleDateString('de-DE'):'–'}</span><span style="color:${sc};font-weight:600">● ${m.status}</span></div><div class="ma-bar"><div class="ma-bar-fill" style="width:${pr}%;background:${pr===100?'var(--ok)':'var(--warn)'}"></div></div></div><div class="ma-right"><button class="btn-sm" onclick="openMaModal(${m.id})">✏️</button><button class="btn-sm danger" onclick="deleteMa(${m.id})">🗑️</button></div></div>`;}).join('')}</div>`:
   `<div style="text-align:center;padding:24px;opacity:.5">📌 Noch keine Maßnahmen</div>`;
   document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px"><div><div class="panel-title">📌 Maßnahmen</div></div><div style="display:flex;gap:4px">${krit.length?`<button class="btn-sm danger" onclick="showEsk()">⚠️ Eskalation</button>`:''}<button class="btn-p" onclick="openMaModal()">+ Maßnahme</button></div></div>
   <div class="stats" style="grid-template-columns:repeat(4,1fr)"><div class="stat danger"><div class="stat-val">${o}</div><div class="stat-lbl">Offen</div></div><div class="stat warn"><div class="stat-val">${p}</div><div class="stat-lbl">In Bearb.</div></div><div class="stat ok"><div class="stat-val">${d}</div><div class="stat-lbl">Erledigt</div></div><div class="stat orange"><div class="stat-val">${ue}</div><div class="stat-lbl">Überfällig</div></div></div>${cards}</div>`;
@@ -687,12 +761,15 @@ function renderDash(){
 
 // ═══ HISTORIE ═══
 function renderHist(){
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px"><div><div class="panel-title">🕐 Historie</div></div><button class="btn-p" onclick="saveSnap()">💾 Snapshot speichern</button></div>
-  ${S.history.length?`<div class="doc-grid">${S.history.map((h,i)=>`<div class="doc"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">${esc(h.meta?.objekt||'Audit')} – ${new Date(h.savedAt).toLocaleDateString('de-DE')}</div><div class="doc-meta"><span>${{security:'Security',qm:'QM',itgov:'IT-Gov',combined:'Kombiniert'}[h.module]||''}</span><span>✓${h.okC||0} ⚠${h.maC||0} ✕${h.krC||0}</span></div></div><button class="btn-sm accent" onclick="loadSnap(${i})">📂</button><button class="btn-sm danger" onclick="if(confirm('Löschen?')){S.history.splice(${i},1);save();render();}">🗑️</button></div>`).join('')}</div>`:
-  `<div style="text-align:center;padding:24px;opacity:.5">🕐 Keine Snapshots</div>`}</div>`;
+  document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px"><div><div class="panel-title">🕐 Historie</div></div><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn-sm accent" onclick="importData()" title="JSON importieren">📥 Import</button><button class="btn-sm accent" onclick="exportData()" title="JSON exportieren">📤 Export</button><button class="btn-p" onclick="saveSnap()">💾 Snapshot</button></div></div>
+  ${S.history.length?`<div class="doc-grid">${S.history.map((h,i)=>`<div class="doc"><div class="doc-icon">📋</div><div class="doc-body"><div class="doc-name">${esc(h.meta?.objekt||'Audit')} – ${new Date(h.savedAt).toLocaleDateString('de-DE')}</div><div class="doc-meta"><span>${{security:'Security',qm:'QM',itgov:'IT-Gov',combined:'Kombiniert'}[h.module]||''}</span><span>✓${h.okC||0} ⚠${h.maC||0} ✕${h.krC||0}</span></div></div><button class="btn-sm accent" onclick="loadSnap(${i})">📂</button><button class="btn-sm danger" onclick="deleteSnap(${i})">🗑️</button></div>`).join('')}</div>`:
+  `<div style="text-align:center;padding:24px;opacity:.5">🕐 Keine Snapshots — <span style="font-size:.72rem">Tipp: <span class="kbd">5</span> für Historie</span></div>`}
+  <div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r);border:1px solid var(--border);font-size:.72rem;color:var(--soft)">
+    <strong style="color:var(--muted)">Tastenkürzel:</strong> &nbsp;<span class="kbd">1</span>–<span class="kbd">5</span> Navigation &nbsp;·&nbsp; <span class="kbd">Ctrl</span>+<span class="kbd">→</span> Nächster Schritt &nbsp;·&nbsp; <span class="kbd">Esc</span> Modal schließen
+  </div></div>`;
 }
-function saveSnap(){const ac=activeChecks();let ok=0,ma=0,kr=0;ac.forEach(ch=>ch.items.forEach(it=>{const s=S.findings[it.id]?.status;if(s==='ok')ok++;else if(s==='mangel')ma++;else if(s==='kritisch')kr++;}));S.history.push({savedAt:new Date().toISOString(),module:S.module,meta:{...S.meta},findings:{...S.findings},maturity:{...S.maturity},norms:[...S.norms],okC:ok,maC:ma,krC:kr});save();render();alert('Gespeichert!');}
-function loadSnap(i){const h=S.history[i];if(!h||!confirm('Überschreiben?'))return;S.module=h.module;S.meta={...h.meta};S.findings={...h.findings};S.maturity={...h.maturity};S.norms=[...h.norms];S.step=0;S.mode='audit';save();render();}
+function saveSnap(){const ac=activeChecks();let ok=0,ma=0,kr=0;ac.forEach(ch=>ch.items.forEach(it=>{const s=S.findings[it.id]?.status;if(s==='ok')ok++;else if(s==='mangel')ma++;else if(s==='kritisch')kr++;}));S.history.push({savedAt:new Date().toISOString(),module:S.module,meta:{...S.meta},findings:{...S.findings},maturity:{...S.maturity},norms:[...S.norms],okC:ok,maC:ma,krC:kr});save();render();toast('Snapshot gespeichert','success');}
+function loadSnap(i){const h=S.history[i];if(!h||!confirm('Aktuellen Stand überschreiben?'))return;S.module=h.module;S.meta={...h.meta};S.findings={...h.findings};S.maturity={...h.maturity};S.norms=[...h.norms];S.step=0;S.mode='audit';save();render();toast('Snapshot geladen','info');}
 
 // ═══ REPORT ═══
 function renderReport(){
@@ -705,16 +782,49 @@ function renderReport(){
   const modN={security:'Security',qm:'QM',itgov:'IT-Governance',combined:'Kombiniertes'}[S.module]||'';
   const fr=(f,p)=>`<div class="finding ${p}"><div class="finding-icon">${f.icon}</div><div class="f-body"><div class="f-label">${f.l} <span class="mi ${modCls(f.m)}">${modLabel(f.m)}</span>${f.m==='itgov'?` <span class="nb it" style="font-size:.42rem;margin:0">COBIT ${f.n}</span>`:''}</div><div class="f-section">${f.sec}${f.m!=='itgov'?' · '+f.n:''}</div>${f.note?`<div class="f-note">"${esc(f.note)}"</div>`:''}</div><div class="f-cost"><div class="f-cost-val">€ ${f.c[p]}</div><div class="f-cost-lbl">Schätzung</div></div></div>`;
   document.getElementById('mainContent').innerHTML=`
-  <div style="display:flex;justify-content:space-between;margin-bottom:12px"><div style="font-size:.68rem;color:var(--muted)">Erstellt: ${new Date().toLocaleDateString('de-DE')}</div><button class="print-btn" onclick="window.print()">🖨 PDF</button></div>
-  <div class="rpt-hdr"><div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px">SecureStay: Analytics · ${modN} Audit</div><div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div><div class="rpt-meta">${S.meta.auftraggeber?`<strong>${esc(S.meta.auftraggeber)}</strong> · `:''}${ds}${S.meta.pruefer?` · ${esc(S.meta.pruefer)}`:''}</div></div>
-  <div class="stats" style="grid-template-columns:repeat(6,1fr)"><div class="stat danger"><div class="stat-val">${k.length}</div><div class="stat-lbl">Kritisch</div></div><div class="stat warn"><div class="stat-val">${m.length}</div><div class="stat-lbl">Mängel</div></div><div class="stat ok"><div class="stat-val">${ok}</div><div class="stat-lbl">OK</div></div><div class="stat total"><div class="stat-val">${assessed}</div><div class="stat-lbl">Bewertet</div></div><div class="stat purple"><div class="stat-val">${comp}%</div><div class="stat-lbl">Compliance</div></div><div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">Reifegrad</div></div></div>
-  <div style="margin-bottom:16px"><div class="risk-level ${rc}">● Risiko: <strong>${rl}</strong></div></div>
-  ${k.length?`<div style="margin-bottom:12px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--danger);margin-bottom:5px">✕ Kritisch (${k.length})</div>${k.map(f=>fr(f,'kritisch')).join('')}</div>`:''}
-  ${m.length?`<div style="margin-bottom:12px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:5px">⚠ Mängel (${m.length})</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
-  ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-weight:700">✅ Keine Mängel</span></div>`:''}
-  <div class="cost-sum"><div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Investitionsbedarf</div><div class="cost-row"><span>Sofort</span><span>€ ${fmtCA(k,'kritisch')}</span></div><div class="cost-row"><span>Mittelfristig</span><span>€ ${fmtCA(m,'mangel')}</span></div><div class="cost-row"><span>Gesamt</span><span>€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div></div>
-  <div style="background:linear-gradient(135deg,rgba(20,184,166,.03),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.1);border-radius:12px;padding:16px;text-align:center"><div style="font-family:var(--fh);font-weight:700;color:var(--text2)">SecureStay: Analytics</div><div style="font-size:.76rem;color:var(--muted)">SecureStay Solutions UG (haftungsbeschränkt)</div><div style="font-size:.66rem;color:var(--soft)">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div></div>
-  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div>`;
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:.68rem;color:var(--muted)">Erstellt: ${new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'})} · ${sessionStorage.getItem('ssa_u')||'Admin'}</div>
+    <div style="display:flex;gap:6px">
+      <button class="print-btn" onclick="exportData()" title="Als JSON sichern">📥 Backup</button>
+      <button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">🖨 PDF drucken</button>
+    </div>
+  </div>
+  <div class="rpt-hdr">
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">SecureStay: Analytics · ${modN} Audit</div>
+    <div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div>
+    <div class="rpt-meta" style="margin-top:6px">
+      ${S.meta.auftraggeber?`<strong>${esc(S.meta.auftraggeber)}</strong> · `:''}${ds}${S.meta.pruefer?` · Auditor: ${esc(S.meta.pruefer)}`:''}
+      ${S.meta.anlass?` · ${esc(S.meta.anlass)}`:''}${S.meta.adresse?`<br style="margin-top:3px">${esc(S.meta.adresse)}`:''}
+    </div>
+    ${S.norms.length?`<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px">${S.norms.map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}">${n}</span>`).join('')}</div>`:''}
+  </div>
+  <div class="stats" style="grid-template-columns:repeat(6,1fr);margin-bottom:14px">
+    <div class="stat danger"><div class="stat-val">${k.length}</div><div class="stat-lbl">Kritisch</div></div>
+    <div class="stat warn"><div class="stat-val">${m.length}</div><div class="stat-lbl">Mängel</div></div>
+    <div class="stat ok"><div class="stat-val">${ok}</div><div class="stat-lbl">OK</div></div>
+    <div class="stat total"><div class="stat-val">${assessed}</div><div class="stat-lbl">Bewertet</div></div>
+    <div class="stat purple"><div class="stat-val">${comp}%</div><div class="stat-lbl">Compliance</div></div>
+    <div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">Reifegrad</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+    <div class="risk-level ${rc}">● Risiko: <strong>${rl}</strong></div>
+    ${assessed>0?`<div style="flex:1;min-width:120px"><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:${comp}%;height:100%;background:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'};border-radius:3px;transition:.5s"></div></div><div style="font-size:.62rem;color:var(--muted);margin-top:3px">${comp}% der bewerteten Punkte konform</div></div>`:''}
+  </div>
+  ${k.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--danger);margin-bottom:7px;padding:5px 10px;background:rgba(239,68,68,.06);border-radius:6px;display:inline-block">✕ Kritische Mängel (${k.length}) — Sofortiger Handlungsbedarf</div>${k.map(f=>fr(f,'kritisch')).join('')}</div>`:''}
+  ${m.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:7px;padding:5px 10px;background:rgba(234,179,8,.06);border-radius:6px;display:inline-block">⚠ Verbesserungsbedarf (${m.length}) — Mittelfristiger Handlungsbedarf</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
+  ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:24px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-size:1.1rem;font-weight:700">✅ Keine Mängel festgestellt</span><div style="font-size:.78rem;color:var(--muted);margin-top:4px">Alle bewerteten Kontrollpunkte erfüllt</div></div>`:''}
+  <div class="cost-sum">
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">💶 Investitionsbedarf (Schätzung)</div>
+    <div class="cost-row"><span>⚡ Sofortmaßnahmen (kritisch)</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
+    <div class="cost-row"><span>📅 Mittelfristig (Mängel)</span><span>€ ${fmtCA(m,'mangel')}</span></div>
+    <div class="cost-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:10px"><span style="color:var(--text2);font-weight:700">Gesamt</span><span style="color:var(--text2);font-weight:700;font-family:var(--fh);font-size:.92rem">€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(20,184,166,.04),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
+    <div style="font-family:var(--fh);font-weight:700;color:var(--text2);font-size:1rem">SecureStay: Analytics</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
+    <div style="font-size:.64rem;color:var(--soft);margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
+  </div>
+  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="window.print()">🖨 PDF drucken</button></div>`;
 }
 
 // ═══ MODALS ═══
@@ -725,7 +835,7 @@ function openDocModal(editId){
   if(editId){const d=S.docs.find(x=>x.id===editId);if(d){document.getElementById('df_n').value=d.name||'';document.getElementById('df_c').value=d.category;document.getElementById('df_e').value=d.expiry||'';document.getElementById('df_v').value=d.version||'';document.getElementById('df_o').value=d.owner||'';document.getElementById('df_nt').value=d.notes||'';(d.norms||[]).forEach(n=>{const c=document.querySelector(`#df_norms [data-norm="${n}"]`);if(c)c.classList.add('active');});(d.checkpoints||[]).forEach(cp=>{const o=document.querySelector(`#df_cp option[value="${cp}"]`);if(o)o.selected=true;});}}
   document.getElementById('docModal').classList.add('open');
 }
-function saveDoc(){const name=document.getElementById('df_n').value.trim();if(!name)return alert('Name!');const obj={name,category:document.getElementById('df_c').value,expiry:document.getElementById('df_e').value,version:document.getElementById('df_v').value.trim(),owner:document.getElementById('df_o').value.trim(),notes:document.getElementById('df_nt').value.trim(),norms:[...document.querySelectorAll('#df_norms .nc.active')].map(e=>e.dataset.norm),checkpoints:[...document.getElementById('df_cp').selectedOptions].map(o=>o.value).filter(v=>v)};if(S.editDocId){const d=S.docs.find(x=>x.id===S.editDocId);if(d)Object.assign(d,obj);}else S.docs.push({id:Date.now(),...obj,addedAt:new Date().toISOString()});save();closeModal('docModal');render();}
+function saveDoc(){const name=document.getElementById('df_n').value.trim();if(!name){toast('Bitte einen Namen eingeben','error');return;}const obj={name,category:document.getElementById('df_c').value,expiry:document.getElementById('df_e').value,version:document.getElementById('df_v').value.trim(),owner:document.getElementById('df_o').value.trim(),notes:document.getElementById('df_nt').value.trim(),norms:[...document.querySelectorAll('#df_norms .nc.active')].map(e=>e.dataset.norm),checkpoints:[...document.getElementById('df_cp').selectedOptions].map(o=>o.value).filter(v=>v)};if(S.editDocId){const d=S.docs.find(x=>x.id===S.editDocId);if(d)Object.assign(d,obj);toast('Dokument aktualisiert','success');}else{S.docs.push({id:Date.now(),...obj,addedAt:new Date().toISOString()});toast('Dokument hinzugefügt','success');}save();closeModal('docModal');render();}
 
 function openMaModal(editId){
   S.editMaId=editId||null;document.getElementById('maModalTitle').textContent=editId?'Bearbeiten':'Neue Maßnahme';
@@ -733,11 +843,102 @@ function openMaModal(editId){
   if(editId){const m=S.massnahmen.find(x=>x.id===editId);if(m){document.getElementById('ma_t').value=m.title;document.getElementById('ma_p').value=m.prio;document.getElementById('ma_s').value=m.status;document.getElementById('ma_o').value=m.owner||'';document.getElementById('ma_d').value=m.deadline||'';document.getElementById('ma_desc').value=m.desc||'';}}
   document.getElementById('maModal').classList.add('open');
 }
-function saveMa(){const t=document.getElementById('ma_t').value.trim();if(!t)return alert('Titel!');const obj={title:t,prio:document.getElementById('ma_p').value,status:document.getElementById('ma_s').value,owner:document.getElementById('ma_o').value.trim(),deadline:document.getElementById('ma_d').value,desc:document.getElementById('ma_desc').value.trim()};if(S.editMaId){const m=S.massnahmen.find(x=>x.id===S.editMaId);if(m)Object.assign(m,obj);}else S.massnahmen.push({id:Date.now(),...obj});save();closeModal('maModal');render();}
+function saveMa(){const t=document.getElementById('ma_t').value.trim();if(!t){toast('Bitte einen Titel eingeben','error');return;}const obj={title:t,prio:document.getElementById('ma_p').value,status:document.getElementById('ma_s').value,owner:document.getElementById('ma_o').value.trim(),deadline:document.getElementById('ma_d').value,desc:document.getElementById('ma_desc').value.trim()};if(S.editMaId){const m=S.massnahmen.find(x=>x.id===S.editMaId);if(m)Object.assign(m,obj);toast('Maßnahme aktualisiert','success');}else{S.massnahmen.push({id:Date.now(),...obj});toast('Maßnahme erstellt','success');}save();closeModal('maModal');render();}
 
 function showEsk(){const krit=[];activeChecks().forEach(ch=>ch.items.forEach(it=>{if(S.findings[it.id]?.status==='kritisch')krit.push({l:it.l,sec:ch.l,note:S.findings[it.id]?.note||''});}));
 document.getElementById('eskText').value=`DRINGEND – Eskalation kritischer Mängel\n\nSehr geehrte Geschäftsleitung,\n\nbei der Begehung am ${S.meta.datum||'[Datum]'} des Objekts "${S.meta.objekt||'[Objekt]'}" wurden ${krit.length} kritische Mängel festgestellt:\n\n${krit.map((k,i)=>`${i+1}. ${k.sec} → ${k.l}${k.note?' ('+k.note+')':''}`).join('\n')}\n\nSofortige Korrekturmaßnahmen gemäß NIS2 §38 / ISO 31000 erforderlich.\n\nMit freundlichen Grüßen,\n${S.meta.pruefer||'[Auditor]'}\nSecureStay Solutions UG (haftungsbeschränkt)`;
 document.getElementById('eskModal').classList.add('open');}
+
+// ═══ TOAST ═══
+function toast(msg, type='info', actionLabel, actionFn, duration=3500) {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const icons = {success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>${actionLabel?`<button class="toast-action">${actionLabel}</button>`:''}`;
+  wrap.appendChild(t);
+  if (actionLabel && actionFn) t.querySelector('.toast-action').addEventListener('click',()=>{actionFn();t.remove();});
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300);},duration);
+}
+
+// ═══ AUTOSAVE ═══
+function triggerAutosave() {
+  const dot = document.getElementById('autosaveDot');
+  if (!dot) return;
+  dot.classList.remove('pulse');
+  void dot.offsetWidth;
+  dot.classList.add('pulse');
+}
+
+// ═══ DELETE WITH UNDO ═══
+function deleteDoc(id) {
+  const idx = S.docs.findIndex(x=>x.id===id);
+  if (idx<0) return;
+  const removed = S.docs.splice(idx,1)[0];
+  save(); render();
+  toast(`„${removed.name}" gelöscht`,'warn','Rückgängig',()=>{S.docs.splice(idx,0,removed);save();render();});
+}
+function deleteMa(id) {
+  const idx = S.massnahmen.findIndex(x=>x.id===id);
+  if (idx<0) return;
+  const removed = S.massnahmen.splice(idx,1)[0];
+  save(); render();
+  toast(`„${removed.title}" gelöscht`,'warn','Rückgängig',()=>{S.massnahmen.splice(idx,0,removed);save();render();});
+}
+function deleteSnap(i) {
+  const removed = S.history.splice(i,1)[0];
+  save(); render();
+  toast('Snapshot gelöscht','warn','Rückgängig',()=>{S.history.splice(i,0,removed);save();render();});
+}
+
+// ═══ EXPORT / IMPORT ═══
+function exportData() {
+  const blob = new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`securestay_backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('Backup exportiert','success');
+}
+function importData() {
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='.json';
+  inp.onchange = e => {
+    const f=e.target.files[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload = ev => {
+      try {
+        const d=JSON.parse(ev.target.result);
+        if(!confirm('Alle aktuellen Daten überschreiben?'))return;
+        Object.assign(S,d); save(); render();
+        toast('Backup importiert','success');
+      } catch {toast('Ungültige Datei','error');}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+// ═══ KEYBOARD SHORTCUTS ═══
+document.addEventListener('keydown', e => {
+  if (!sessionStorage.getItem('ssa_sess')) return;
+  if (e.key==='Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+    return;
+  }
+  const tag=e.target.tagName;
+  if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if (e.ctrlKey && e.key==='ArrowRight'){e.preventDefault();next();return;}
+  if (e.ctrlKey && e.key==='ArrowLeft'){e.preventDefault();prev();return;}
+  if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (e.key==='1') go('audit');
+    else if (e.key==='2') go('database');
+    else if (e.key==='3') go('massnahmen');
+    else if (e.key==='4') go('dashboard');
+    else if (e.key==='5') go('historie');
+  }
+});
 
 // ═══ AUTH ═══
 const _AH = btoa(unescape(encodeURIComponent('Admin\x00TEstpasswort123')));
