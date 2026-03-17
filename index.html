@@ -375,6 +375,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .kva-summary-row span:first-child{color:var(--muted)}.kva-summary-row span:last-child{color:var(--accent);font-family:var(--fm);font-weight:700}
 .kva-summary-row:last-child span{color:var(--text2);font-family:var(--fh)}
 .kva-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+/* ═══ KVA EDIT MODAL ═══ */
+.kva-sug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-top:8px}
+.kva-sug-chip{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.15s;text-align:left}
+.kva-sug-chip:hover{border-color:var(--accent2);background:var(--accentDim)}
+.kva-sug-chip .sug-name{font-size:.74rem;font-weight:600;color:var(--text2);margin-bottom:1px}
+.kva-sug-chip .sug-desc{font-size:.64rem;color:var(--muted);line-height:1.35}
+.kva-cat-select{background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.8rem;outline:none;cursor:pointer;width:100%}
+.kva-cat-select:focus{border-color:var(--accent2)}
 /* ═══ ADMIN LOGIN MODAL ═══ */
 .adm-login-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,.88);backdrop-filter:blur(12px);z-index:400;align-items:center;justify-content:center}
 .adm-login-overlay.open{display:flex}
@@ -461,6 +469,40 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="login-error" id="admLoginError"></div>
       <button class="login-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 6px 20px rgba(239,68,68,.3)" onclick="adminDoLogin()">Intern anmelden →</button>
       <button class="btn-s" style="width:100%;margin-top:2px" onclick="document.getElementById('admLoginOverlay').classList.remove('open');go('audit')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ KVA POSITION EDIT MODAL ═══ -->
+<div class="modal-overlay" id="kvaEditModal">
+  <div class="modal" style="max-width:640px">
+    <button class="modal-close" onclick="closeModal('kvaEditModal')">&times;</button>
+    <div class="modal-title">✏️ Position bearbeiten</div>
+    <div class="modal-sub">Name, Beschreibung und Kategorie anpassen</div>
+    <input type="hidden" id="kvaEditIdx">
+    <div class="mg" style="gap:10px;margin-bottom:14px">
+      <div class="fg fg-full"><label>Leistungsbezeichnung</label><input id="kvaEditName" placeholder="z.B. DSGVO-Beratung und Datenschutzkonzept"></div>
+      <div class="fg"><label>Kategorie</label>
+        <select id="kvaEditCat" class="kva-cat-select">
+          <option value="fix">🔒 Festpreis</option>
+          <option value="begehung">🚶 Begehung / Inspektion</option>
+          <option value="konzept">📐 Konzepterstellung</option>
+          <option value="umsetzung">🔧 Umsetzungsbegleitung</option>
+          <option value="empfehlung">💡 Handlungsempfehlung</option>
+          <option value="custom">✏️ Individuell</option>
+          <option value="optional">◻️ Optional</option>
+        </select>
+      </div>
+      <div class="fg"><label>Stunden</label><input type="number" id="kvaEditH" min="0" step="0.5" placeholder="z.B. 4"></div>
+      <div class="fg fg-full"><label>Beschreibung / Notiz</label><textarea id="kvaEditDesc" rows="3" style="width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical" placeholder="Detaillierte Beschreibung der Leistung…"></textarea></div>
+    </div>
+    <div style="margin-bottom:6px">
+      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">Schnellauswahl — Klick übernimmt Bezeichnung &amp; Beschreibung</div>
+      <div class="kva-sug-grid" id="kvaSugGrid"></div>
+    </div>
+    <div class="nav-row" style="margin-top:14px">
+      <button class="btn-s" onclick="closeModal('kvaEditModal')">Abbrechen</button>
+      <button class="btn-p" onclick="kvaSaveEdit()">💾 Übernehmen</button>
     </div>
   </div>
 </div>
@@ -678,7 +720,7 @@ const TEMPLATES=[
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:''},
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
-kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva'}};
+kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva',kleinunternehmer:false}};
 function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
 load();
@@ -1035,13 +1077,14 @@ function renderKVAPanel() {
   const hasAudit = S.module && Object.keys(S.findings).length>0;
   if(!S.kva.positions.length && hasAudit) generateKVAPositions();
   const rate = S.kva.rate||250;
+  const ku = !!S.kva.kleinunternehmer;
   const pos = S.kva.positions;
   const activePos = pos.filter(p=>p.included!==false);
   const totalH = activePos.reduce((s,p)=>s+(Number(p.h)||0),0);
   const totalBrutto = totalH*rate;
   const disc = Number(S.kva.discount)||0;
   const totalNetto = totalBrutto*(1-disc/100);
-  const mwst = totalNetto*0.19;
+  const mwst = ku ? 0 : totalNetto*0.19;
   const totalBruttofinal = totalNetto+mwst;
 
   const now = new Date();
@@ -1067,6 +1110,10 @@ function renderKVAPanel() {
     <div class="fg"><label>Stundensatz (€)</label><input type="number" value="${rate}" oninput="S.kva.rate=Number(this.value)||250;save();renderAdmin()"></div>
     <div class="fg"><label>Auftraggeber</label><input value="${esc(S.meta.auftraggeber||'')}" oninput="S.meta.auftraggeber=this.value;save()"></div>
     <div class="fg"><label>Rabatt (%)</label><input type="number" min="0" max="100" value="${disc}" oninput="S.kva.discount=Number(this.value)||0;save();renderAdmin()"></div>
+    <div class="fg fg-full" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${ku?'rgba(20,184,166,.06)':'rgba(255,255,255,.02)'};border:1px solid ${ku?'rgba(20,184,166,.2)':'var(--border)'};border-radius:8px;transition:.2s">
+      <input type="checkbox" id="kuToggle" ${ku?'checked':''} onchange="S.kva.kleinunternehmer=this.checked;save();renderAdmin()" style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0">
+      <label for="kuToggle" style="cursor:pointer;margin:0;font-weight:600;color:${ku?'var(--accent)':'var(--text2)'}">Kleinunternehmer (§ 19 UStG) — keine Umsatzsteuer ausweisen</label>
+    </div>
   </div>
   ${pos.length?`
   <div style="overflow-x:auto;margin-bottom:8px">
@@ -1076,10 +1123,10 @@ function renderKVAPanel() {
     ${pos.map((p,i)=>`
       <tr class="kva-row ${p.included===false?'excluded':''}" id="kvr_${i}">
         <td><input type="checkbox" ${p.included!==false?'checked':''} onchange="S.kva.positions[${i}].included=this.checked;save();renderAdmin()" style="accent-color:var(--accent);cursor:pointer"></td>
-        <td><div class="kva-pos-name">${esc(p.name)}</div><div class="kva-pos-desc">${esc(p.desc)}</div><span class="kva-cat ${p.category||'custom'}">${{fix:'Festpreis',begehung:'Begehung',konzept:'Konzept',umsetzung:'Umsetzung',empfehlung:'Empfehlung',custom:'Individuell',optional:'Optional'}[p.category||'custom']||p.category}</span></td>
+        <td style="cursor:pointer" onclick="kvaOpenEdit(${i})"><div class="kva-pos-name">${esc(p.name)}</div><div class="kva-pos-desc">${esc(p.desc||'—')}</div><span class="kva-cat ${p.category||'custom'}">${{fix:'Festpreis',begehung:'Begehung',konzept:'Konzept',umsetzung:'Umsetzung',empfehlung:'Empfehlung',custom:'Individuell',optional:'Optional'}[p.category||'custom']||p.category}</span></td>
         <td><input class="kva-h-input" type="number" min="0" step="0.5" value="${p.h}" oninput="S.kva.positions[${i}].h=Number(this.value)||0;save();renderAdmin()"></td>
         <td style="font-family:var(--fm);font-size:.78rem;color:var(--accent);text-align:right;white-space:nowrap">${((p.included!==false?Number(p.h)||0:0)*rate).toLocaleString('de-DE')} €</td>
-        <td><button class="login-eye" onclick="S.kva.positions.splice(${i},1);save();renderAdmin()" title="Entfernen" style="color:var(--danger)">✕</button></td>
+        <td style="white-space:nowrap"><button class="login-eye" onclick="kvaOpenEdit(${i})" title="Bearbeiten" style="color:var(--muted);margin-right:2px">✏️</button><button class="login-eye" onclick="S.kva.positions.splice(${i},1);save();renderAdmin()" title="Entfernen" style="color:var(--danger)">✕</button></td>
       </tr>`).join('')}
     </tbody>
     <tfoot>
@@ -1089,9 +1136,10 @@ function renderKVAPanel() {
   <div class="kva-summary">
     <div class="kva-summary-row"><span>Nettobetrag</span><span>${totalBrutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
     ${disc>0?`<div class="kva-summary-row"><span>Rabatt (${disc}%)</span><span>– ${(totalBrutto*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
-    <div class="kva-summary-row"><span>Netto nach Rabatt</span><span>${totalNetto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
-    <div class="kva-summary-row"><span>MwSt. 19%</span><span>${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
-    <div class="kva-summary-row"><span>Gesamtbetrag (brutto)</span><span style="font-size:1rem;font-family:var(--fh)">${totalBruttofinal.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    ${disc>0?`<div class="kva-summary-row"><span>Netto nach Rabatt</span><span>${totalNetto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
+    ${ku?`<div class="kva-summary-row"><span style="font-size:.72rem;color:var(--muted)">§ 19 UStG – keine MwSt.</span><span style="font-size:.72rem;color:var(--muted)">0,00 €</span></div>`
+       :`<div class="kva-summary-row"><span>MwSt. 19%</span><span>${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`}
+    <div class="kva-summary-row"><span>${ku?'Gesamtbetrag (netto)':'Gesamtbetrag (brutto)'}</span><span style="font-size:1rem;font-family:var(--fh)">${totalBruttofinal.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
   </div>`:''}
   <div class="fg fg-full"><label>Interne Notizen / Besondere Vereinbarungen</label><textarea rows="3" oninput="S.kva.notes=this.value;save()" style="width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical">${esc(S.kva.notes||'')}</textarea></div>`;
 }
@@ -1133,8 +1181,72 @@ function generateKVAPositions() {
   save();
 }
 function kvaAddCustomPos(){
-  S.kva.positions.push({name:'Individuelle Leistung',desc:'Beschreibung der Leistung',h:2,category:'custom',included:true});
+  const idx=S.kva.positions.push({name:'Individuelle Leistung',desc:'',h:2,category:'custom',included:true})-1;
   save();
+  renderAdmin();
+  setTimeout(()=>kvaOpenEdit(idx),80);
+}
+
+// ═══ KVA POSITION SUGGESTIONS ═══
+const KVA_SUGGESTIONS=[
+  {name:'DSGVO-Beratung & Datenschutzkonzept',desc:'Analyse der datenschutzrechtlichen Anforderungen, Erstellung eines Datenschutzkonzepts, DSGVO-konforme Prozesse und Dokumentation',cat:'konzept',h:8},
+  {name:'Mitarbeiterschulung Sicherheit',desc:'Konzeption und Durchführung einer Schulung zu Sicherheitsrichtlinien, Verhalten im Notfall und Awareness-Training',cat:'fix',h:4},
+  {name:'Notfallplanung & Business Continuity',desc:'Erstellung eines Notfallhandbuchs, Festlegung von Recovery-Zeiten, Übung von Notfallszenarien',cat:'konzept',h:10},
+  {name:'Zertifizierungsvorbereitung ISO 27001',desc:'Gap-Analyse, Dokumentenerstellung, ISMS-Implementierung, Begleitung bis zur externen Zertifizierung',cat:'umsetzung',h:20},
+  {name:'Zertifizierungsvorbereitung ISO 9001',desc:'Prozessaufnahme, Dokumentation nach ISO 9001, Vorbereitung auf externes Audit',cat:'umsetzung',h:16},
+  {name:'Zertifizierungsvorbereitung ISO 45001',desc:'Gefährdungsbeurteilung, Arbeitsschutzmanagement, Dokumentation und Zertifizierungsvorbereitung',cat:'umsetzung',h:14},
+  {name:'Schwachstellenanalyse (technisch)',desc:'Systematische Prüfung technischer Systeme auf Sicherheitslücken, Risikobewertung, Maßnahmenempfehlung',cat:'konzept',h:6},
+  {name:'Penetrationstest (Netzwerk / IT)',desc:'Autorisierter Penetrationstest zur Identifikation von Angriffsvektoren, Bericht mit Priorisierung',cat:'fix',h:12},
+  {name:'Social Engineering Test',desc:'Simulierte Phishing- und Social-Engineering-Angriffe, Auswertung der Ergebnisse, Handlungsempfehlungen',cat:'fix',h:6},
+  {name:'Phishing-Simulation & Awareness',desc:'Planung und Durchführung einer Phishing-Kampagne, Auswertung, gezielte Nachschulung der betroffenen Mitarbeiter',cat:'empfehlung',h:5},
+  {name:'ISMS-Aufbau & Einführungsberatung',desc:'Aufbau eines Informationssicherheits-Managementsystems von Grund auf, Scope-Definition, erste Policies',cat:'konzept',h:16},
+  {name:'Passwort-Audit & Zugangskontrolle',desc:'Analyse bestehender Passwort-Richtlinien, Empfehlungen zu MFA, Zugriffskontrolle und Rollentrennung',cat:'empfehlung',h:4},
+  {name:'Brandschutzberatung',desc:'Prüfung der baulichen und organisatorischen Brandschutzmaßnahmen, Empfehlungen, Flucht- und Rettungswegkonzept',cat:'empfehlung',h:4},
+  {name:'Objektschutzkonzept',desc:'Erstellung eines umfassenden Objektschutzkonzepts inkl. Zutrittskontrolle, Videoüberwachung, Alarmierung',cat:'konzept',h:8},
+  {name:'Lieferantenaudit',desc:'Durchführung eines Lieferantenaudits, Bewertung von Qualitäts- und Sicherheitsstandards, Auditbericht',cat:'begehung',h:6},
+  {name:'Sicherheitshandbuch erstellen',desc:'Erstellung oder Aktualisierung des unternehmensweiten Sicherheitshandbuchs inkl. Richtlinien und Prozessbeschreibungen',cat:'konzept',h:8},
+  {name:'Krisenmanagement & Kommunikationsplan',desc:'Entwicklung eines Krisenmanagement-Konzepts, Kommunikationsleitfaden, Übung von Eskalationspfaden',cat:'konzept',h:6},
+  {name:'Reise-Risikobewertung',desc:'Analyse der Reisesicherheitsrisiken für bestimmte Zielregionen, Handlungsempfehlungen und Reiserichtlinien',cat:'empfehlung',h:3},
+  {name:'Interne Revision / Compliance-Check',desc:'Eigenständige Überprüfung der Einhaltung interner Richtlinien und gesetzlicher Anforderungen, Revisionsbericht',cat:'fix',h:8},
+  {name:'Schulung Führungskräfte (Sicherheit)',desc:'Zielgruppenspezifische Schulung für Führungskräfte zu Sicherheitsverantwortung, Haftung und Maßnahmenpflichten',cat:'fix',h:3},
+];
+
+function kvaOpenEdit(idx){
+  const p=S.kva.positions[idx];
+  if(!p)return;
+  document.getElementById('kvaEditIdx').value=idx;
+  document.getElementById('kvaEditName').value=p.name||'';
+  document.getElementById('kvaEditDesc').value=p.desc||'';
+  document.getElementById('kvaEditCat').value=p.category||'custom';
+  document.getElementById('kvaEditH').value=p.h||2;
+  // Render suggestions
+  const grid=document.getElementById('kvaSugGrid');
+  grid.innerHTML=KVA_SUGGESTIONS.map((s,i)=>`
+    <button class="kva-sug-chip" onclick="kvaApplySug(${i})">
+      <div class="sug-name">${esc(s.name)}</div>
+      <div class="sug-desc">${esc(s.desc.substring(0,60))}…</div>
+    </button>`).join('');
+  document.getElementById('kvaEditModal').classList.add('open');
+  setTimeout(()=>document.getElementById('kvaEditName').focus(),80);
+}
+function kvaApplySug(si){
+  const s=KVA_SUGGESTIONS[si];
+  document.getElementById('kvaEditName').value=s.name;
+  document.getElementById('kvaEditDesc').value=s.desc;
+  document.getElementById('kvaEditCat').value=s.cat;
+  document.getElementById('kvaEditH').value=s.h;
+}
+function kvaSaveEdit(){
+  const idx=Number(document.getElementById('kvaEditIdx').value);
+  const p=S.kva.positions[idx];
+  if(!p)return;
+  p.name=(document.getElementById('kvaEditName').value||'').trim()||'Individuelle Leistung';
+  p.desc=(document.getElementById('kvaEditDesc').value||'').trim();
+  p.category=document.getElementById('kvaEditCat').value||'custom';
+  p.h=Number(document.getElementById('kvaEditH').value)||0;
+  save();
+  closeModal('kvaEditModal');
+  renderAdmin();
 }
 
 // ═══ EMAIL PANEL ═══
@@ -1209,16 +1321,17 @@ function openEmailModal(type) {
   let subject,body;
   if(type==='kva'){
     const rate=S.kva.rate||250;
+    const kuE=!!S.kva.kleinunternehmer;
     const activePos=S.kva.positions.filter(p=>p.included!==false);
     const totalH=activePos.reduce((s,p)=>s+(Number(p.h)||0),0);
     const disc=Number(S.kva.discount)||0;
     const netto=totalH*rate*(1-disc/100);
-    const brutto=netto*1.19;
+    const brutto=kuE?netto:netto*1.19;
     document.getElementById('emailModalTitle').textContent='📋 Kostenvoranschlag senden';
     document.getElementById('emailModalSub').textContent=`Von: securestay@outlook.de · KVA ${S.kva.nr||''}`;
     subject=`Kostenvoranschlag ${S.kva.nr||''} – ${S.meta.objekt||'Audit-Beratung'} | SecureStay Solutions`;
     body=`Sehr geehrte Damen und Herren,${S.meta.auftraggeber?'\nfür '+S.meta.auftraggeber:''},\n\nvielen Dank für Ihr Vertrauen. Anbei erhalten Sie unseren Kostenvoranschlag für die Beratungsleistungen im Rahmen des durchgeführten Audits.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nKOSTENVORANSCHLAG ${S.kva.nr||''}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nObjekt:      ${S.meta.objekt||'–'}\nAuftrag:     ${S.meta.auftraggeber||'–'}\nDatum:       ${S.kva.date?new Date(S.kva.date).toLocaleDateString('de-DE'):ds}\nGültig bis:  ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}\nStundensatz: ${rate} €/h\n\nLEISTUNGSPOSITIONEN:\n${activePos.map((p,i)=>`${String(i+1).padStart(2,'0')}. ${p.name}\n    ${p.desc}\n    Aufwand: ${p.h} Std. × ${rate} € = ${(Number(p.h)*rate).toLocaleString('de-DE')} €`).join('\n\n')}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGESAMT: ${totalH} Std.\nNettobetrag:  ${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €${disc>0?`\nRabatt ${disc}%: – ${(totalH*rate*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €`:''}
-Netto:        ${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\nMwSt. 19%:   ${(netto*0.19).toLocaleString('de-DE',{minimumFractionDigits:2})} €\nGESAMT (brutto): ${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${S.kva.notes?'\nBesondere Vereinbarungen:\n'+S.kva.notes+'\n':''}\nBei Fragen stehen wir Ihnen jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\n\nSecureStay Solutions UG (haftungsbeschränkt)\nKirchstr. 8b · 55270 Essenheim\nsecurestay@outlook.de`;
+Netto:        ${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n${kuE?'§ 19 UStG: keine Umsatzsteuer':'MwSt. 19%:   '+(netto*0.19).toLocaleString('de-DE',{minimumFractionDigits:2})+' €'}\nGESAMT (${kuE?'netto':'brutto'}): ${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${S.kva.notes?'\nBesondere Vereinbarungen:\n'+S.kva.notes+'\n':''}\nBei Fragen stehen wir Ihnen jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\n\nSecureStay Solutions UG (haftungsbeschränkt)\nKirchstr. 8b · 55270 Essenheim\nsecurestay@outlook.de`;
   } else {
     document.getElementById('emailModalTitle').textContent='📝 Begehungsprotokoll senden';
     document.getElementById('emailModalSub').textContent='Von: securestay@outlook.de · Zusammenfassung der Audit-Ergebnisse';
@@ -1262,10 +1375,11 @@ function sendEmail(){
 function printKVA(){
   const pos=S.kva.positions.filter(p=>p.included!==false);
   const rate=S.kva.rate||250;
+  const ku=!!S.kva.kleinunternehmer;
   const totalH=pos.reduce((s,p)=>s+(Number(p.h)||0),0);
   const disc=Number(S.kva.discount)||0;
   const netto=totalH*rate*(1-disc/100);
-  const mwst=netto*0.19;
+  const mwst=ku?0:netto*0.19;
   const brutto=netto+mwst;
   const catColors={fix:'#14b8a6',begehung:'#f97316',konzept:'#a78bfa',umsetzung:'#3b82f6',empfehlung:'#10b981',custom:'#eab308',optional:'#64748b'};
   const catLabel={fix:'Festpreis',begehung:'Begehung',konzept:'Konzept',umsetzung:'Umsetzung',empfehlung:'Empfehlung',custom:'Individuell',optional:'Optional'};
@@ -1341,11 +1455,13 @@ function printKVA(){
 <div class="summary">
   <div class="sum-row"><span class="lbl">Nettobetrag</span><span class="val">${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
   ${disc>0?`<div class="sum-row"><span class="lbl">Rabatt (${disc}%)</span><span class="val">– ${(totalH*rate*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
-  <div class="sum-row"><span class="lbl">Netto nach Rabatt</span><span class="val">${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
-  <div class="sum-row"><span class="lbl">Mehrwertsteuer 19%</span><span class="val">${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
-  <div class="sum-row"><span class="lbl">GESAMTBETRAG</span><span class="val">${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  ${disc>0?`<div class="sum-row"><span class="lbl">Netto nach Rabatt</span><span class="val">${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
+  ${ku?`<div class="sum-row" style="font-size:9px"><span class="lbl" style="color:#94a3b8">Umsatzsteuer gem. § 19 UStG nicht ausgewiesen</span><span class="val" style="color:#94a3b8">entfällt</span></div>`
+     :`<div class="sum-row"><span class="lbl">Mehrwertsteuer 19%</span><span class="val">${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`}
+  <div class="sum-row"><span class="lbl">${ku?'GESAMTBETRAG (netto)':'GESAMTBETRAG (brutto)'}</span><span class="val">${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
 </div>
 ${S.kva.notes?`<div class="notes-box"><strong>Besondere Vereinbarungen:</strong><br>${S.kva.notes.replace(/\n/g,'<br>')}</div>`:''}
+${ku?`<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 14px;font-size:9px;color:#166534;margin-bottom:10px">Gemäß § 19 UStG (Kleinunternehmerregelung) wird keine Umsatzsteuer erhoben und ausgewiesen.</div>`:''}
 <div class="footer">
   <div>SecureStay Solutions UG (haftungsbeschränkt) · Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
   <div>Erstellt: ${new Date().toLocaleDateString('de-DE')} · ${S.kva.nr||''}</div>
