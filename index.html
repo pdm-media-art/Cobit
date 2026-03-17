@@ -4,9 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>SecureStay: Analytics – Audit & Compliance Platform</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect width='32' height='32' rx='8' fill='%230a1628' opacity='.8'/%3E%3Ctext x='2' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%23f8fafc'%3ES%3C/text%3E%3Ctext x='12' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%2314b8a6'%3E%3A%3C/text%3E%3Ctext x='19' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%2314b8a6'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -333,6 +335,52 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .search-icon-lbl{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.78rem;pointer-events:none;opacity:.45}
 /* ═══ SHORTCUTS HINT ═══ */
 .kbd{display:inline-flex;align-items:center;padding:1px 5px;border-radius:4px;border:1px solid var(--border2);background:rgba(255,255,255,.04);font-family:var(--fm);font-size:.5rem;color:var(--muted);line-height:1.6;vertical-align:middle}
+
+/* ═══ ADMIN TAB ═══ */
+.tn.active.t-adm{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.2)}
+/* ═══ ADMIN PANEL ═══ */
+.adm-grid{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
+.adm-sidebar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:sticky;top:80px}
+.adm-nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:.82rem;color:var(--muted);font-weight:500;transition:.15s;border:1px solid transparent;margin-bottom:2px}
+.adm-nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.adm-nav-item.active{color:var(--danger);background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.15)}
+.adm-nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.adm-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px 24px;box-shadow:var(--sh);animation:fadeUp .25s ease}
+.adm-lock-banner{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#fca5a5;display:flex;align-items:center;gap:8px}
+/* ═══ KVA TABLE ═══ */
+.kva-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:.8rem}
+.kva-table th{font-family:var(--fm);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.kva-table th:last-child,.kva-table td:last-child{text-align:right}
+.kva-table th:nth-child(3),.kva-table td:nth-child(3),.kva-table th:nth-child(4),.kva-table td:nth-child(4){text-align:center}
+.kva-row{transition:.15s}
+.kva-row:hover{background:rgba(255,255,255,.015)}
+.kva-row.excluded{opacity:.35}
+.kva-row td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.kva-pos-name{font-weight:600;color:var(--text2);font-size:.8rem}
+.kva-pos-desc{font-size:.68rem;color:var(--muted);margin-top:2px;line-height:1.4}
+.kva-cat{display:inline-flex;font-family:var(--fm);font-size:.42rem;padding:1px 6px;border-radius:var(--rpill);margin-top:3px}
+.kva-cat.fix{color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.15)}
+.kva-cat.begehung{color:var(--orange);background:var(--orangeDim);border:1px solid rgba(249,115,22,.15)}
+.kva-cat.konzept{color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.15)}
+.kva-cat.umsetzung{color:var(--blue);background:var(--blueDim);border:1px solid rgba(59,130,246,.15)}
+.kva-cat.empfehlung{color:var(--emerald);background:var(--emeraldDim);border:1px solid rgba(16,185,129,.15)}
+.kva-cat.custom{color:var(--warn);background:var(--warnDim);border:1px solid rgba(234,179,8,.15)}
+.kva-cat.optional{color:var(--muted);background:rgba(100,116,139,.08);border:1px solid rgba(100,116,139,.2)}
+.kva-h-input{width:52px;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:var(--fm);font-size:.78rem;text-align:center;outline:none;transition:.2s}
+.kva-h-input:focus{border-color:var(--accent2)}
+.kva-total-row td{border-top:2px solid var(--border2);padding-top:10px;font-weight:700;color:var(--text2)}
+.kva-summary{background:rgba(20,184,166,.04);border:1px solid rgba(20,184,166,.12);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.kva-summary-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.82rem}
+.kva-summary-row:last-child{border-top:1px solid rgba(20,184,166,.15);margin-top:6px;padding-top:10px;font-weight:700;font-size:.92rem}
+.kva-summary-row span:first-child{color:var(--muted)}.kva-summary-row span:last-child{color:var(--accent);font-family:var(--fm);font-weight:700}
+.kva-summary-row:last-child span{color:var(--text2);font-family:var(--fh)}
+.kva-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+/* ═══ ADMIN LOGIN MODAL ═══ */
+.adm-login-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,.88);backdrop-filter:blur(12px);z-index:400;align-items:center;justify-content:center}
+.adm-login-overlay.open{display:flex}
+.adm-login-card{background:var(--surface3);border:1px solid rgba(239,68,68,.25);border-radius:var(--r2);padding:30px 36px;max-width:380px;width:95%;box-shadow:0 24px 60px rgba(0,0,0,.7);position:relative;animation:fadeUp .25s ease}
+.adm-login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--danger),#f97316)}
+@media(max-width:768px){.adm-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -375,7 +423,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 <header class="hdr">
 <div class="logo"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
-<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')">🛡️ Audit</button><button class="tn t-db" onclick="go('database')">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')">🕐 Historie</button></div>
+<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')">🛡️ Audit</button><button class="tn t-db" onclick="go('database')">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')">🕐 Historie</button><button class="tn t-adm" onclick="go('admin')">⚙️ Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
 <div class="hdr-badge" id="hdrBadge">–</div>
 <div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
@@ -390,6 +438,56 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div id="auditNav"><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div><div class="stepper" id="stepper"></div></div>
 <div id="mainContent"></div>
 </div>
+<!-- ═══ ADMIN INTERNAL LOGIN ═══ -->
+<div class="adm-login-overlay" id="admLoginOverlay">
+  <div class="adm-login-card" id="admLoginCard">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="width:46px;height:46px;border-radius:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 10px">🔐</div>
+      <div style="font-family:var(--fh);font-size:1.1rem;font-weight:800;color:var(--text2)">Interner Bereich</div>
+      <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions — Nur für interne Nutzung</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="login-field"><label>Internes Login</label>
+        <div class="login-input-wrap"><span class="login-icon">👤</span>
+          <input type="text" id="adm_user" placeholder="Benutzername" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adm_pass').focus()">
+        </div>
+      </div>
+      <div class="login-field"><label>Passwort</label>
+        <div class="login-input-wrap"><span class="login-icon">🔒</span>
+          <input type="password" id="adm_pass" placeholder="Internes Passwort" autocomplete="off" onkeydown="if(event.key==='Enter')adminDoLogin()">
+          <button class="login-eye" id="admEyeBtn" onclick="const i=document.getElementById('adm_pass');const b=document.getElementById('admEyeBtn');if(i.type==='password'){i.type='text';b.textContent='🙈';}else{i.type='password';b.textContent='👁';}">👁</button>
+        </div>
+      </div>
+      <div class="login-error" id="admLoginError"></div>
+      <button class="login-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 6px 20px rgba(239,68,68,.3)" onclick="adminDoLogin()">Intern anmelden →</button>
+      <button class="btn-s" style="width:100%;margin-top:2px" onclick="document.getElementById('admLoginOverlay').classList.remove('open');go('audit')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL COMPOSE MODAL ═══ -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal" style="max-width:580px">
+    <button class="modal-close" onclick="closeModal('emailModal')">&times;</button>
+    <div class="modal-title" id="emailModalTitle">📧 E-Mail senden</div>
+    <div class="modal-sub" id="emailModalSub">Dokument direkt versenden von securestay@outlook.de</div>
+    <div class="mg" id="emailForm">
+      <div class="fg fg-full"><label>Empfänger</label><input type="email" id="em_to" placeholder="kunde@beispiel.de"></div>
+      <div class="fg fg-full"><label>Betreff</label><input id="em_sub"></div>
+      <div class="fg fg-full"><label>Nachricht</label><textarea id="em_body" rows="7" style="font-size:.78rem;line-height:1.6"></textarea></div>
+      <div class="fg fg-full" id="emailjsSetupHint" style="display:none">
+        <div style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:10px 12px;font-size:.74rem;color:var(--warn)">
+          ⚙️ EmailJS noch nicht konfiguriert. Gehe zu <strong>Admin → Einstellungen</strong> und trage Service-ID, Template-ID und Public-Key ein.
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-s" onclick="closeModal('emailModal')">Abbrechen</button>
+      <button class="btn-p" id="emailSendBtn" onclick="sendEmail()">📤 Senden</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="docModal"><div class="modal"><button class="modal-close" onclick="closeModal('docModal')">&times;</button><div class="modal-title" id="docModalTitle">Dokument</div><div class="modal-sub">Metadaten für Audit-Datenbank.</div><div class="mg" id="docForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('docModal')">Abbrechen</button><button class="btn-p" onclick="saveDoc()">💾 Speichern</button></div></div></div>
 <div class="modal-overlay" id="maModal"><div class="modal"><button class="modal-close" onclick="closeModal('maModal')">&times;</button><div class="modal-title" id="maModalTitle">Maßnahme</div><div class="modal-sub">Korrekturmaßnahme erfassen.</div><div class="mg" id="maForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('maModal')">Abbrechen</button><button class="btn-p" onclick="saveMa()">💾 Speichern</button></div></div></div>
 <div class="modal-overlay" id="eskModal"><div class="modal"><button class="modal-close" onclick="closeModal('eskModal')">&times;</button><div class="modal-title">⚠️ Eskalations-E-Mail</div><div class="modal-sub">Vorlage für kritische Mängel.</div><div class="esk-box"><textarea id="eskText" readonly></textarea></div><div class="nav-row"><button class="btn-s" onclick="closeModal('eskModal')">Schließen</button><button class="btn-p" onclick="navigator.clipboard.writeText(document.getElementById('eskText').value).then(()=>toast('In Zwischenablage kopiert','success'))">📋 Kopieren</button></div></div></div>
@@ -579,7 +677,8 @@ const TEMPLATES=[
 
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:''},
-findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null};
+findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
+kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva'}};
 function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
 load();
@@ -595,17 +694,31 @@ function modCls(m){return m==='qm'?'qm':m==='itgov'?'it':'sec';}
 function modLabel(m){return m==='qm'?'QM':m==='itgov'?'ITG':'SEC';}
 </script>
 <script>
-function go(mode){S.mode=mode;document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));const map={audit:0,database:1,massnahmen:2,dashboard:3,historie:4};document.querySelectorAll('.tn')[map[mode]??0]?.classList.add('active');render();save();}
+function go(mode){
+  if(mode==='admin'){
+    if(!sessionStorage.getItem('ssa_adm')){
+      document.getElementById('admLoginOverlay').classList.add('open');
+      document.getElementById('adm_user').value='';
+      document.getElementById('adm_pass').value='';
+      document.getElementById('admLoginError').classList.remove('show');
+      setTimeout(()=>document.getElementById('adm_user').focus(),100);
+      return;
+    }
+  }
+  S.mode=mode;document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
+  const map={audit:0,database:1,massnahmen:2,dashboard:3,historie:4,admin:5};
+  document.querySelectorAll('.tn')[map[mode]??0]?.classList.add('active');render();save();
+}
 function goTo(i){S.step=i;render();scrollTo(0,0);save();}
 function next(){const s=getSteps();if(S.step<s.length-1){S.step++;render();scrollTo(0,0);save();}}
 function prev(){if(S.step>0){S.step--;render();scrollTo(0,0);save();}}
 
 function render(){
-  document.getElementById('auditNav').style.display=S.mode==='audit'?'':'none';
+  document.getElementById('auditNav').style.display=(S.mode==='audit')?'':'none';
   if(S.mode==='audit'){const steps=getSteps();renderStepper(steps);renderProgress(steps);const st=steps[S.step];if(!st)return;if(st.id==='module')renderModule();else if(st.id==='norms')renderNorms();else if(st.id==='meta')renderMeta();else if(st.id==='maturity')renderMaturity();else if(st.id==='report')renderReport();else{const c=CK.find(x=>x.id===st.id);if(c)renderCheck(c);}}
-  else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='historie')renderHist();
+  else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='historie')renderHist();else if(S.mode==='admin')renderAdmin();
   const b=document.getElementById('hdrBadge');
-  if(S.mode!=='audit'){b.textContent={database:'📁 Datenbank',massnahmen:'📌 Maßnahmen',dashboard:'📊 Dashboard',historie:'🕐 Historie'}[S.mode];}
+  if(S.mode!=='audit'){b.textContent={database:'📁 Datenbank',massnahmen:'📌 Maßnahmen',dashboard:'📊 Dashboard',historie:'🕐 Historie',admin:'⚙️ Intern'}[S.mode]||'';}
   else if(!S.module)b.textContent='Modul wählen';
   else b.textContent={security:'🛡️ Security',qm:'📋 QM',itgov:'🖥️ IT-Governance',combined:'🔄 Kombiniert'}[S.module]||'';
 }
@@ -849,6 +962,397 @@ function showEsk(){const krit=[];activeChecks().forEach(ch=>ch.items.forEach(it=
 document.getElementById('eskText').value=`DRINGEND – Eskalation kritischer Mängel\n\nSehr geehrte Geschäftsleitung,\n\nbei der Begehung am ${S.meta.datum||'[Datum]'} des Objekts "${S.meta.objekt||'[Objekt]'}" wurden ${krit.length} kritische Mängel festgestellt:\n\n${krit.map((k,i)=>`${i+1}. ${k.sec} → ${k.l}${k.note?' ('+k.note+')':''}`).join('\n')}\n\nSofortige Korrekturmaßnahmen gemäß NIS2 §38 / ISO 31000 erforderlich.\n\nMit freundlichen Grüßen,\n${S.meta.pruefer||'[Auditor]'}\nSecureStay Solutions UG (haftungsbeschränkt)`;
 document.getElementById('eskModal').classList.add('open');}
 
+// ═══ ADMIN AUTH ═══
+const _ADM_AH = btoa(unescape(encodeURIComponent('SecureStay\x00SS@Intern!25')));
+let _admAttempts = 0;
+
+function adminDoLogin() {
+  const u = (document.getElementById('adm_user').value||'').trim();
+  const p = document.getElementById('adm_pass').value||'';
+  const err = document.getElementById('admLoginError');
+  err.classList.remove('show');
+  if (!u||!p){err.textContent='Bitte alle Felder ausfüllen.';err.classList.add('show');return;}
+  const h = btoa(unescape(encodeURIComponent(u+'\x00'+p)));
+  if (h===_ADM_AH) {
+    _admAttempts=0;
+    sessionStorage.setItem('ssa_adm',_ADM_AH);
+    document.getElementById('admLoginOverlay').classList.remove('open');
+    S.mode='admin';
+    document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tn')[5]?.classList.add('active');
+    render(); save();
+  } else {
+    _admAttempts++;
+    document.getElementById('admLoginCard').classList.add('shake');
+    setTimeout(()=>document.getElementById('admLoginCard').classList.remove('shake'),400);
+    const rem = 5-_admAttempts;
+    err.textContent = rem>0 ? `❌ Falsches Passwort. (${rem} Versuch${rem!==1?'e':''} verbleibend)` : '⛔ Zu viele Fehlversuche.';
+    err.classList.add('show');
+    if(_admAttempts>=5){setTimeout(()=>{_admAttempts=0;err.classList.remove('show');},30000);}
+  }
+}
+function adminDoLogout() {
+  if(!confirm('Internen Bereich verlassen?'))return;
+  sessionStorage.removeItem('ssa_adm');
+  S.kva.admTab='kva';
+  go('audit');
+  toast('Interner Bereich verlassen','info');
+}
+
+// ═══ ADMIN RENDER ═══
+function renderAdmin() {
+  const tab = S.kva.admTab||'kva';
+  const isAdm = !!sessionStorage.getItem('ssa_adm');
+  if(!isAdm){go('audit');return;}
+  document.getElementById('auditNav').style.display='none';
+  const ejsCfg = {svc:localStorage.getItem('ssa_ejs_svc')||'',tpl:localStorage.getItem('ssa_ejs_tpl')||'',key:localStorage.getItem('ssa_ejs_key')||''};
+  const ejsOk = ejsCfg.svc&&ejsCfg.tpl&&ejsCfg.key;
+  document.getElementById('mainContent').innerHTML=`
+  <div class="adm-grid">
+    <div class="adm-sidebar">
+      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px;padding:0 4px">Interner Bereich</div>
+      <div class="adm-nav-item ${tab==='kva'?'active':''}" onclick="S.kva.admTab='kva';renderAdmin()"><span class="adm-nav-icon">📋</span>Kostenvoranschlag</div>
+      <div class="adm-nav-item ${tab==='email'?'active':''}" onclick="S.kva.admTab='email';renderAdmin()"><span class="adm-nav-icon">📧</span>E-Mail senden</div>
+      <div class="adm-nav-item ${tab==='settings'?'active':''}" onclick="S.kva.admTab='settings';renderAdmin()"><span class="adm-nav-icon">⚙️</span>Einstellungen</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <button class="btn-sm danger" style="width:100%" onclick="adminDoLogout()">🔓 Abmelden</button>
+      </div>
+      <div style="margin-top:12px;padding:8px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.1);border-radius:8px;font-size:.62rem;color:var(--muted);text-align:center">
+        Eingeloggt als<br><strong style="color:var(--danger)">SecureStay Intern</strong><br>
+        <span style="font-size:.56rem;color:var(--soft)">Vertraulich</span>
+      </div>
+    </div>
+    <div class="adm-section" id="admContent">${tab==='kva'?renderKVAPanel():tab==='email'?renderEmailPanel():renderSettingsPanel()}</div>
+  </div>`;
+}
+
+// ═══ KVA PANEL ═══
+function renderKVAPanel() {
+  const ac = activeChecks();
+  const hasAudit = S.module && Object.keys(S.findings).length>0;
+  if(!S.kva.positions.length && hasAudit) generateKVAPositions();
+  const rate = S.kva.rate||250;
+  const pos = S.kva.positions;
+  const activePos = pos.filter(p=>p.included!==false);
+  const totalH = activePos.reduce((s,p)=>s+(Number(p.h)||0),0);
+  const totalBrutto = totalH*rate;
+  const disc = Number(S.kva.discount)||0;
+  const totalNetto = totalBrutto*(1-disc/100);
+  const mwst = totalNetto*0.19;
+  const totalBruttofinal = totalNetto+mwst;
+
+  const now = new Date();
+  if(!S.kva.nr)S.kva.nr='KVA-'+now.getFullYear()+'-'+String((S.history?.length||0)+1).padStart(3,'0');
+  if(!S.kva.date)S.kva.date=now.toISOString().split('T')[0];
+  if(!S.kva.validUntil){const v=new Date(now);v.setDate(v.getDate()+30);S.kva.validUntil=v.toISOString().split('T')[0];}
+
+  return`
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+    <div><div class="panel-title">📋 Kostenvoranschlag</div><p class="panel-sub" style="margin:0">Aus Audit-Ergebnissen generiert · 250 €/h</p></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${hasAudit?`<button class="btn-sm accent" onclick="generateKVAPositions();renderAdmin()">🔄 Neu generieren</button>`:''}
+      <button class="btn-sm accent" onclick="kvaAddCustomPos();renderAdmin()">+ Position</button>
+      <button class="btn-sm" onclick="openEmailModal('kva')">📧 Per E-Mail</button>
+      <button class="btn-p" onclick="printKVA()">🖨 PDF</button>
+    </div>
+  </div>
+  ${!hasAudit?`<div style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:16px;margin-bottom:16px;font-size:.82rem;color:var(--warn)">⚠️ Kein Audit geladen. Führe zuerst eine Begehung durch.</div>`:''}
+  <div class="kva-form-grid">
+    <div class="fg"><label>KVA-Nummer</label><input value="${esc(S.kva.nr)}" oninput="S.kva.nr=this.value;save()"></div>
+    <div class="fg"><label>Datum</label><input type="date" value="${S.kva.date}" oninput="S.kva.date=this.value;save()"></div>
+    <div class="fg"><label>Gültig bis</label><input type="date" value="${S.kva.validUntil}" oninput="S.kva.validUntil=this.value;save()"></div>
+    <div class="fg"><label>Stundensatz (€)</label><input type="number" value="${rate}" oninput="S.kva.rate=Number(this.value)||250;save();renderAdmin()"></div>
+    <div class="fg"><label>Auftraggeber</label><input value="${esc(S.meta.auftraggeber||'')}" oninput="S.meta.auftraggeber=this.value;save()"></div>
+    <div class="fg"><label>Rabatt (%)</label><input type="number" min="0" max="100" value="${disc}" oninput="S.kva.discount=Number(this.value)||0;save();renderAdmin()"></div>
+  </div>
+  ${pos.length?`
+  <div style="overflow-x:auto;margin-bottom:8px">
+  <table class="kva-table">
+    <thead><tr><th style="width:28px"></th><th>Position / Leistungsbeschreibung</th><th style="width:60px">Std.</th><th style="width:80px">Preis (€)</th><th style="width:30px"></th></tr></thead>
+    <tbody>
+    ${pos.map((p,i)=>`
+      <tr class="kva-row ${p.included===false?'excluded':''}" id="kvr_${i}">
+        <td><input type="checkbox" ${p.included!==false?'checked':''} onchange="S.kva.positions[${i}].included=this.checked;save();renderAdmin()" style="accent-color:var(--accent);cursor:pointer"></td>
+        <td><div class="kva-pos-name">${esc(p.name)}</div><div class="kva-pos-desc">${esc(p.desc)}</div><span class="kva-cat ${p.category||'custom'}">${{fix:'Festpreis',begehung:'Begehung',konzept:'Konzept',umsetzung:'Umsetzung',empfehlung:'Empfehlung',custom:'Individuell',optional:'Optional'}[p.category||'custom']||p.category}</span></td>
+        <td><input class="kva-h-input" type="number" min="0" step="0.5" value="${p.h}" oninput="S.kva.positions[${i}].h=Number(this.value)||0;save();renderAdmin()"></td>
+        <td style="font-family:var(--fm);font-size:.78rem;color:var(--accent);text-align:right;white-space:nowrap">${((p.included!==false?Number(p.h)||0:0)*rate).toLocaleString('de-DE')} €</td>
+        <td><button class="login-eye" onclick="S.kva.positions.splice(${i},1);save();renderAdmin()" title="Entfernen" style="color:var(--danger)">✕</button></td>
+      </tr>`).join('')}
+    </tbody>
+    <tfoot>
+      <tr class="kva-total-row"><td></td><td style="color:var(--muted);font-size:.74rem">Gesamt (${activePos.length} Positionen, ${totalH} Std.)</td><td style="font-family:var(--fm);text-align:center;color:var(--text2)">${totalH}</td><td style="font-family:var(--fm);color:var(--text2);text-align:right;white-space:nowrap">${totalBrutto.toLocaleString('de-DE')} €</td><td></td></tr>
+    </tfoot>
+  </table></div>
+  <div class="kva-summary">
+    <div class="kva-summary-row"><span>Nettobetrag</span><span>${totalBrutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    ${disc>0?`<div class="kva-summary-row"><span>Rabatt (${disc}%)</span><span>– ${(totalBrutto*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
+    <div class="kva-summary-row"><span>Netto nach Rabatt</span><span>${totalNetto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    <div class="kva-summary-row"><span>MwSt. 19%</span><span>${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    <div class="kva-summary-row"><span>Gesamtbetrag (brutto)</span><span style="font-size:1rem;font-family:var(--fh)">${totalBruttofinal.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  </div>`:''}
+  <div class="fg fg-full"><label>Interne Notizen / Besondere Vereinbarungen</label><textarea rows="3" oninput="S.kva.notes=this.value;save()" style="width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical">${esc(S.kva.notes||'')}</textarea></div>`;
+}
+
+function generateKVAPositions() {
+  const ac = activeChecks();
+  let krit=[], mangel=[];
+  ac.forEach(ch=>ch.items.forEach(it=>{
+    const f=S.findings[it.id];
+    if(f?.status==='kritisch')krit.push({...it,sec:ch.l});
+    else if(f?.status==='mangel')mangel.push({...it,sec:ch.l});
+  }));
+  const assessed=Object.values(S.findings).filter(f=>f.status).length;
+  const secK=krit.filter(f=>f.m==='security'),secM=mangel.filter(f=>f.m==='security');
+  const qmK=krit.filter(f=>f.m==='qm'),qmM=mangel.filter(f=>f.m==='qm');
+  const itK=krit.filter(f=>f.m==='itgov'),itM=mangel.filter(f=>f.m==='itgov');
+  const begehungH=Math.max(4,Math.round(assessed*0.3+krit.length*0.25));
+  const pos=[];
+  pos.push({name:'Projektmanagement & Koordination',desc:'Projektkickoff, Terminplanung, Stakeholder-Abstimmung, Kommunikation während des gesamten Projekts',h:4,category:'fix',included:true});
+  pos.push({name:`Vor-Ort-Begehung & Inspektion`,desc:`Durchführung der ${assessed>0?`Sicherheits- und Compliance-Begehung (${assessed} Prüfpunkte)`:'Begehung'}, Fotodokumentation, Befunderfassung vor Ort`,h:begehungH,category:'begehung',included:true});
+  if(secK.length>0){
+    pos.push({name:`Sicherheitskonzept – Kritische Mängel (${secK.length})`,desc:`Detailliertes Konzept zur Behebung kritischer Sicherheitsmängel: ${secK.slice(0,2).map(f=>f.l).join(', ')}${secK.length>2?` u. ${secK.length-2} weitere`:''}`,h:secK.length*6,category:'konzept',included:true});
+    pos.push({name:'Umsetzungsbegleitung Security (kritisch)',desc:'Begleitende Beratung bei der Maßnahmenumsetzung, Lieferantenkoordination, Abnahme und Wirksamkeitsprüfung',h:secK.length*8,category:'umsetzung',included:true});
+  }
+  if(secM.length>0)pos.push({name:`Handlungsempfehlungen Security (${secM.length} Mängel)`,desc:'Priorisierte Handlungsempfehlungen mit Lösungsvorschlägen und Kostenrahmen',h:secM.length*3,category:'empfehlung',included:true});
+  if(qmK.length>0){
+    pos.push({name:`QM-Konzept – Kritische Abweichungen (${qmK.length})`,desc:'ISO 9001/45001-konforme Konzepterstellung, Prozessoptimierung, Dokumentenvorlagen',h:qmK.length*5,category:'konzept',included:true});
+    pos.push({name:'Umsetzungsbegleitung QM (kritisch)',desc:'Workshop-Durchführung, Prozessimplementierung, Mitarbeiterschulung, Wirksamkeitsprüfung',h:qmK.length*6,category:'umsetzung',included:true});
+  }
+  if(qmM.length>0)pos.push({name:`Handlungsempfehlungen QM (${qmM.length} Abweichungen)`,desc:'Optimierungsempfehlungen mit Muster-Dokumenten und Prozess-Templates',h:qmM.length*2,category:'empfehlung',included:true});
+  if(itK.length>0){
+    pos.push({name:`IT-Governance-Konzept – Kritische Findings (${itK.length})`,desc:'COBIT 2019/ISO 20000 Konzepterstellung, ISMS-Aufbau, Policy- und Richtlinien-Erstellung',h:itK.length*10,category:'konzept',included:true});
+    pos.push({name:'Umsetzungsbegleitung IT-Governance (kritisch)',desc:'Technische Implementierungsbegleitung, Tool-Selektion, Schulungen, Integrations-Tests',h:itK.length*14,category:'umsetzung',included:true});
+  }
+  if(itM.length>0)pos.push({name:`Handlungsempfehlungen IT-Governance (${itM.length} Findings)`,desc:'Best-Practice-Empfehlungen, Gap-Analyse, Roadmap-Erstellung',h:itM.length*4,category:'empfehlung',included:true});
+  pos.push({name:'Auditbericht & Abschlusspräsentation',desc:'Professioneller Auditbericht, Executive Summary, Management-Präsentation der Ergebnisse und Maßnahmen',h:6,category:'fix',included:true});
+  pos.push({name:'Nachprüfung / Re-Audit (optional)',desc:'Überprüfung umgesetzter Maßnahmen auf Wirksamkeit, Nachbericht mit Ergebnisbestätigung',h:8,category:'optional',included:false});
+  S.kva.positions=pos;
+  save();
+}
+function kvaAddCustomPos(){
+  S.kva.positions.push({name:'Individuelle Leistung',desc:'Beschreibung der Leistung',h:2,category:'custom',included:true});
+  save();
+}
+
+// ═══ EMAIL PANEL ═══
+function renderEmailPanel(){
+  const ejsCfg={svc:localStorage.getItem('ssa_ejs_svc')||'',tpl:localStorage.getItem('ssa_ejs_tpl')||'',key:localStorage.getItem('ssa_ejs_key')||''};
+  const ejsOk=ejsCfg.svc&&ejsCfg.tpl&&ejsCfg.key;
+  return`
+  <div class="panel-title" style="margin-bottom:4px">📧 E-Mail-Versand</div>
+  <p class="panel-sub">Kostenvoranschlag oder Begehungsprotokoll direkt versenden.<br>Absender: <strong style="color:var(--accent)">securestay@outlook.de</strong></p>
+  ${!ejsOk?`<div class="adm-lock-banner">⚠️ EmailJS nicht konfiguriert — Gehe zu <strong>Einstellungen</strong> und trage deine Zugangsdaten ein.</div>`:'<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:.78rem;color:var(--ok)">✅ EmailJS verbunden — Versand über securestay@outlook.de aktiv</div>'}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:.2s" onclick="openEmailModal('kva')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:1.5rem;margin-bottom:8px">📋</div>
+      <div style="font-weight:700;color:var(--text2);margin-bottom:4px">Kostenvoranschlag</div>
+      <div style="font-size:.72rem;color:var(--muted)">KVA als formatierte E-Mail mit Positionsliste und Gesamtbetrag senden</div>
+      <button class="btn-sm accent" style="margin-top:10px">📤 Senden</button>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:.2s" onclick="openEmailModal('protokoll')" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:1.5rem;margin-bottom:8px">📝</div>
+      <div style="font-weight:700;color:var(--text2);margin-bottom:4px">Begehungsprotokoll</div>
+      <div style="font-size:.72rem;color:var(--muted)">Zusammenfassung der Audit-Ergebnisse mit Befunden und Empfehlungen senden</div>
+      <button class="btn-sm" style="margin-top:10px;border-color:rgba(249,115,22,.3);color:var(--orange)">📤 Senden</button>
+    </div>
+  </div>`;
+}
+
+// ═══ SETTINGS PANEL ═══
+function renderSettingsPanel(){
+  const svc=localStorage.getItem('ssa_ejs_svc')||'';
+  const tpl=localStorage.getItem('ssa_ejs_tpl')||'';
+  const key=localStorage.getItem('ssa_ejs_key')||'';
+  return`
+  <div class="panel-title" style="margin-bottom:4px">⚙️ Einstellungen</div>
+  <p class="panel-sub">EmailJS-Konfiguration für automatischen E-Mail-Versand.</p>
+  <div style="background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:14px;margin-bottom:18px;font-size:.78rem;color:var(--blue)">
+    ℹ️ <strong>Einrichtung:</strong> Erstelle einen kostenlosen Account auf <strong>emailjs.com</strong>, verknüpfe dein Outlook-Konto (securestay@outlook.de) und erstelle ein E-Mail-Template. Die Zugangsdaten findest du in deinem EmailJS-Dashboard.
+  </div>
+  <div class="mg" style="margin-bottom:16px">
+    <div class="fg fg-full"><label>EmailJS Service-ID</label><input id="ejs_svc" value="${esc(svc)}" placeholder="service_xxxxxxx"></div>
+    <div class="fg fg-full"><label>EmailJS Template-ID</label><input id="ejs_tpl" value="${esc(tpl)}" placeholder="template_xxxxxxx"></div>
+    <div class="fg fg-full"><label>EmailJS Public Key</label><input id="ejs_key" value="${esc(key)}" placeholder="xxxxxxxxxxxxxxx"></div>
+  </div>
+  <div class="nav-row"><div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-sm danger" onclick="localStorage.removeItem('ssa_ejs_svc');localStorage.removeItem('ssa_ejs_tpl');localStorage.removeItem('ssa_ejs_key');renderAdmin();toast('Konfiguration gelöscht','warn')">🗑 Zurücksetzen</button>
+      <button class="btn-p" onclick="saveEmailSettings()">💾 Speichern</button>
+    </div>
+  </div>`;
+}
+function saveEmailSettings(){
+  const svc=(document.getElementById('ejs_svc')?.value||'').trim();
+  const tpl=(document.getElementById('ejs_tpl')?.value||'').trim();
+  const key=(document.getElementById('ejs_key')?.value||'').trim();
+  if(!svc||!tpl||!key){toast('Alle drei Felder ausfüllen','error');return;}
+  localStorage.setItem('ssa_ejs_svc',svc);
+  localStorage.setItem('ssa_ejs_tpl',tpl);
+  localStorage.setItem('ssa_ejs_key',key);
+  try{emailjs.init(key);}catch(e){}
+  toast('EmailJS-Konfiguration gespeichert','success');
+  renderAdmin();
+}
+
+// ═══ EMAIL OPEN MODAL ═══
+function openEmailModal(type) {
+  const ac=activeChecks();
+  let krit=[],mangel=[];
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id];if(f?.status==='kritisch')krit.push({...it,sec:ch.l});else if(f?.status==='mangel')mangel.push({...it,sec:ch.l});}));
+  const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString('de-DE'):'';
+  const ejsCfg={svc:localStorage.getItem('ssa_ejs_svc')||'',tpl:localStorage.getItem('ssa_ejs_tpl')||'',key:localStorage.getItem('ssa_ejs_key')||''};
+  const ejsOk=ejsCfg.svc&&ejsCfg.tpl&&ejsCfg.key;
+  document.getElementById('emailjsSetupHint').style.display=ejsOk?'none':'block';
+  let subject,body;
+  if(type==='kva'){
+    const rate=S.kva.rate||250;
+    const activePos=S.kva.positions.filter(p=>p.included!==false);
+    const totalH=activePos.reduce((s,p)=>s+(Number(p.h)||0),0);
+    const disc=Number(S.kva.discount)||0;
+    const netto=totalH*rate*(1-disc/100);
+    const brutto=netto*1.19;
+    document.getElementById('emailModalTitle').textContent='📋 Kostenvoranschlag senden';
+    document.getElementById('emailModalSub').textContent=`Von: securestay@outlook.de · KVA ${S.kva.nr||''}`;
+    subject=`Kostenvoranschlag ${S.kva.nr||''} – ${S.meta.objekt||'Audit-Beratung'} | SecureStay Solutions`;
+    body=`Sehr geehrte Damen und Herren,${S.meta.auftraggeber?'\nfür '+S.meta.auftraggeber:''},\n\nvielen Dank für Ihr Vertrauen. Anbei erhalten Sie unseren Kostenvoranschlag für die Beratungsleistungen im Rahmen des durchgeführten Audits.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nKOSTENVORANSCHLAG ${S.kva.nr||''}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nObjekt:      ${S.meta.objekt||'–'}\nAuftrag:     ${S.meta.auftraggeber||'–'}\nDatum:       ${S.kva.date?new Date(S.kva.date).toLocaleDateString('de-DE'):ds}\nGültig bis:  ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}\nStundensatz: ${rate} €/h\n\nLEISTUNGSPOSITIONEN:\n${activePos.map((p,i)=>`${String(i+1).padStart(2,'0')}. ${p.name}\n    ${p.desc}\n    Aufwand: ${p.h} Std. × ${rate} € = ${(Number(p.h)*rate).toLocaleString('de-DE')} €`).join('\n\n')}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGESAMT: ${totalH} Std.\nNettobetrag:  ${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €${disc>0?`\nRabatt ${disc}%: – ${(totalH*rate*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €`:''}
+Netto:        ${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\nMwSt. 19%:   ${(netto*0.19).toLocaleString('de-DE',{minimumFractionDigits:2})} €\nGESAMT (brutto): ${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${S.kva.notes?'\nBesondere Vereinbarungen:\n'+S.kva.notes+'\n':''}\nBei Fragen stehen wir Ihnen jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\n\nSecureStay Solutions UG (haftungsbeschränkt)\nKirchstr. 8b · 55270 Essenheim\nsecurestay@outlook.de`;
+  } else {
+    document.getElementById('emailModalTitle').textContent='📝 Begehungsprotokoll senden';
+    document.getElementById('emailModalSub').textContent='Von: securestay@outlook.de · Zusammenfassung der Audit-Ergebnisse';
+    subject=`Begehungsprotokoll${S.meta.objekt?' – '+S.meta.objekt:''} | SecureStay Solutions`;
+    const assessed=Object.values(S.findings).filter(f=>f.status).length;
+    body=`Sehr geehrte Damen und Herren,${S.meta.auftraggeber?'\nfür '+S.meta.auftraggeber:''},\n\nerbei erhalten Sie das Protokoll der durchgeführten Begehung.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nBEGEHUNGSPROTOKOLL\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nObjekt:       ${S.meta.objekt||'–'}\nAdresse:      ${S.meta.adresse||'–'}\nDatum:        ${ds||'–'}\nAuditor:      ${S.meta.pruefer||'–'}\nAnlass:       ${S.meta.anlass||'–'}\nGeprüfte KP: ${assessed}\n\nERGEBNISSE:\nKritische Mängel:  ${krit.length}\nVerbesserungen:    ${mangel.length}\n\n${krit.length?'KRITISCHE MÄNGEL (sofortiger Handlungsbedarf):\n'+krit.map((f,i)=>`${i+1}. ${f.sec} → ${f.l}${S.findings[f.id]?.note?' ('+S.findings[f.id].note+')':''}`).join('\n')+'\n':''}\n${mangel.length?'VERBESSERUNGSBEDARF:\n'+mangel.map((f,i)=>`${i+1}. ${f.sec} → ${f.l}${S.findings[f.id]?.note?' ('+S.findings[f.id].note+')':''}`).join('\n')+'\n':''}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nFür Rückfragen stehen wir jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\n\nSecureStay Solutions UG (haftungsbeschränkt)\nKirchstr. 8b · 55270 Essenheim\nsecurestay@outlook.de`;
+  }
+  document.getElementById('em_to').value=S.kva.recipient||S.meta.auftraggeber||'';
+  document.getElementById('em_sub').value=subject;
+  document.getElementById('em_body').value=body;
+  document.getElementById('emailSendBtn').disabled=false;
+  document.getElementById('emailSendBtn').textContent='📤 Senden';
+  document.getElementById('emailModal').classList.add('open');
+}
+
+function sendEmail(){
+  const to=(document.getElementById('em_to').value||'').trim();
+  const sub=(document.getElementById('em_sub').value||'').trim();
+  const body=(document.getElementById('em_body').value||'').trim();
+  if(!to||!sub||!body){toast('Bitte alle Felder ausfüllen','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){toast('Ungültige E-Mail-Adresse','error');return;}
+  S.kva.recipient=to;save();
+  const ejsCfg={svc:localStorage.getItem('ssa_ejs_svc')||'',tpl:localStorage.getItem('ssa_ejs_tpl')||'',key:localStorage.getItem('ssa_ejs_key')||''};
+  const ejsOk=ejsCfg.svc&&ejsCfg.tpl&&ejsCfg.key;
+  if(!ejsOk){toast('EmailJS nicht konfiguriert – Einstellungen öffnen','error',null,null,5000);return;}
+  const btn=document.getElementById('emailSendBtn');
+  btn.disabled=true;btn.textContent='⏳ Wird gesendet…';
+  try{emailjs.init(ejsCfg.key);}catch(e){}
+  emailjs.send(ejsCfg.svc,ejsCfg.tpl,{to_email:to,subject:sub,message:body,from_name:'SecureStay Solutions UG',reply_to:'securestay@outlook.de'})
+    .then(()=>{
+      toast(`E-Mail erfolgreich gesendet an ${to}`,'success',null,null,5000);
+      closeModal('emailModal');
+    })
+    .catch(err=>{
+      btn.disabled=false;btn.textContent='📤 Erneut senden';
+      toast(`Fehler: ${err?.text||'Versand fehlgeschlagen'}`,'error',null,null,6000);
+    });
+}
+
+// ═══ KVA PDF PRINT ═══
+function printKVA(){
+  const pos=S.kva.positions.filter(p=>p.included!==false);
+  const rate=S.kva.rate||250;
+  const totalH=pos.reduce((s,p)=>s+(Number(p.h)||0),0);
+  const disc=Number(S.kva.discount)||0;
+  const netto=totalH*rate*(1-disc/100);
+  const mwst=netto*0.19;
+  const brutto=netto+mwst;
+  const catColors={fix:'#14b8a6',begehung:'#f97316',konzept:'#a78bfa',umsetzung:'#3b82f6',empfehlung:'#10b981',custom:'#eab308',optional:'#64748b'};
+  const catLabel={fix:'Festpreis',begehung:'Begehung',konzept:'Konzept',umsetzung:'Umsetzung',empfehlung:'Empfehlung',custom:'Individuell',optional:'Optional'};
+  const html=`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>KVA ${S.kva.nr||''}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#1e293b;background:#fff;line-height:1.5}
+  @page{size:A4;margin:16mm 14mm}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #14b8a6;margin-bottom:16px}
+  .logo-block .company{font-size:18px;font-weight:800;color:#0f172a}.logo-block .sub{font-size:9px;color:#64748b;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+  .logo-block .addr{font-size:9px;color:#94a3b8;margin-top:4px;line-height:1.6}
+  .kva-info{text-align:right}.kva-nr{font-size:20px;font-weight:800;color:#14b8a6}.kva-meta{font-size:9px;color:#64748b;margin-top:4px;line-height:1.8}
+  .client-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between}
+  .client-col .label{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:2px}.client-col .val{font-size:11px;font-weight:600;color:#1e293b}
+  .section-title{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;font-weight:700;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #e2e8f0}
+  table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  th{background:#f1f5f9;text-align:left;padding:7px 10px;font-size:8.5px;text-transform:uppercase;letter-spacing:.07em;color:#64748b;border-bottom:1px solid #e2e8f0}
+  th:last-child{text-align:right}th:nth-child(3){text-align:center}th:nth-child(4){text-align:center}
+  td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  td:last-child{text-align:right;font-weight:600;white-space:nowrap;color:#0f766e}
+  td:nth-child(3){text-align:center;font-family:monospace;color:#334155}
+  td:nth-child(4){text-align:center;font-family:monospace;color:#334155}
+  .pos-nr{font-size:9px;color:#94a3b8;font-weight:700;font-family:monospace}
+  .pos-name{font-weight:600;font-size:10.5px;color:#1e293b;margin-bottom:2px}
+  .pos-desc{font-size:9px;color:#64748b;line-height:1.5}
+  .cat-badge{display:inline-block;font-size:7.5px;padding:1px 6px;border-radius:20px;margin-top:3px;font-weight:600;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  .subtotal-row td{background:#f8fafc;font-weight:600;font-size:10.5px}
+  .summary{margin-left:auto;width:280px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px}
+  .sum-row{display:flex;justify-content:space-between;padding:7px 14px;border-bottom:1px solid #f1f5f9;font-size:10px}
+  .sum-row:last-child{border-bottom:none;background:#0f766e;color:#fff;font-weight:700;font-size:11px;padding:10px 14px}
+  .sum-row .lbl{color:#64748b}.sum-row .val{font-weight:600;color:#0f172a;font-family:monospace}
+  .sum-row:last-child .lbl,.sum-row:last-child .val{color:#fff}
+  .notes-box{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:10px;color:#92400e}
+  .footer{border-top:1px solid #e2e8f0;padding-top:10px;display:flex;justify-content:space-between;font-size:9px;color:#94a3b8;margin-top:8px}
+  .validity-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 14px;font-size:9.5px;color:#166534;margin-bottom:14px}
+  .page-break{page-break-before:always}
+</style></head><body>
+<div class="header">
+  <div class="logo-block">
+    <div class="company">SecureStay: Analytics</div>
+    <div class="sub">SecureStay Solutions UG (haftungsbeschränkt)</div>
+    <div class="addr">Kirchstr. 8b · 55270 Essenheim<br>securestay@outlook.de</div>
+  </div>
+  <div class="kva-info">
+    <div class="kva-nr">KOSTENVORANSCHLAG</div>
+    <div class="kva-meta">
+      Nr.: <strong>${S.kva.nr||'–'}</strong><br>
+      Datum: <strong>${S.kva.date?new Date(S.kva.date).toLocaleDateString('de-DE'):new Date().toLocaleDateString('de-DE')}</strong><br>
+      Gültig bis: <strong>${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}</strong><br>
+      Stundensatz: <strong>${rate} €/h (zzgl. MwSt.)</strong>
+    </div>
+  </div>
+</div>
+<div class="client-box">
+  <div class="client-col"><div class="label">Auftraggeber</div><div class="val">${S.meta.auftraggeber||'–'}</div></div>
+  <div class="client-col"><div class="label">Objekt / Projekt</div><div class="val">${S.meta.objekt||'–'}</div></div>
+  <div class="client-col"><div class="label">Adresse</div><div class="val">${S.meta.adresse||'–'}</div></div>
+  <div class="client-col"><div class="label">Begehungsdatum</div><div class="val">${S.meta.datum?new Date(S.meta.datum).toLocaleDateString('de-DE'):'–'}</div></div>
+</div>
+<div class="validity-box">📋 Dieser Kostenvoranschlag ist unverbindlich und gilt bis zum ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}. Alle Preise verstehen sich zzgl. gesetzlicher Mehrwertsteuer.</div>
+<div class="section-title">Leistungsübersicht</div>
+<table>
+  <thead><tr><th style="width:26px">Pos.</th><th>Leistung / Beschreibung</th><th style="width:50px">Std.</th><th style="width:70px">Preis/Std.</th><th style="width:80px">Betrag</th></tr></thead>
+  <tbody>
+  ${pos.map((p,i)=>{const am=Number(p.h)*rate;const cc=catColors[p.category||'custom']||'#64748b';const cl=catLabel[p.category||'custom']||p.category;return`<tr>
+    <td><div class="pos-nr">${String(i+1).padStart(2,'0')}</div></td>
+    <td><div class="pos-name">${p.name}</div><div class="pos-desc">${p.desc}</div><span class="cat-badge" style="background:${cc}18;color:${cc}">${cl}</span></td>
+    <td>${p.h}</td><td>${rate} €</td><td>${am.toLocaleString('de-DE',{minimumFractionDigits:2})} €</td></tr>`;}).join('')}
+  <tr class="subtotal-row"><td></td><td>Zwischensumme (${pos.length} Positionen)</td><td>${totalH}</td><td>${rate} €</td><td>${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €</td></tr>
+  </tbody>
+</table>
+<div class="summary">
+  <div class="sum-row"><span class="lbl">Nettobetrag</span><span class="val">${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  ${disc>0?`<div class="sum-row"><span class="lbl">Rabatt (${disc}%)</span><span class="val">– ${(totalH*rate*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`:''}
+  <div class="sum-row"><span class="lbl">Netto nach Rabatt</span><span class="val">${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  <div class="sum-row"><span class="lbl">Mehrwertsteuer 19%</span><span class="val">${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  <div class="sum-row"><span class="lbl">GESAMTBETRAG</span><span class="val">${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+</div>
+${S.kva.notes?`<div class="notes-box"><strong>Besondere Vereinbarungen:</strong><br>${S.kva.notes.replace(/\n/g,'<br>')}</div>`:''}
+<div class="footer">
+  <div>SecureStay Solutions UG (haftungsbeschränkt) · Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
+  <div>Erstellt: ${new Date().toLocaleDateString('de-DE')} · ${S.kva.nr||''}</div>
+</div>
+</body></html>`;
+  const w=window.open('','_blank','width=900,height=750');
+  w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),600);
+}
+
 // ═══ TOAST ═══
 function toast(msg, type='info', actionLabel, actionFn, duration=3500) {
   const wrap = document.getElementById('toastWrap');
@@ -937,6 +1441,7 @@ document.addEventListener('keydown', e => {
     else if (e.key==='3') go('massnahmen');
     else if (e.key==='4') go('dashboard');
     else if (e.key==='5') go('historie');
+    else if (e.key==='6') go('admin');
   }
 });
 
@@ -1034,6 +1539,9 @@ function togglePw() {
   if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
   else { inp.type = 'password'; btn.textContent = '👁'; }
 }
+
+// Init EmailJS if configured
+(()=>{const k=localStorage.getItem('ssa_ejs_key');if(k)try{emailjs.init(k);}catch(e){}})();
 
 if (checkAuth()) render();
 </script>
