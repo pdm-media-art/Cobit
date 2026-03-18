@@ -388,6 +388,35 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .adm-login-overlay.open{display:flex}
 .adm-login-card{background:var(--surface3);border:1px solid rgba(239,68,68,.25);border-radius:var(--r2);padding:30px 36px;max-width:380px;width:95%;box-shadow:0 24px 60px rgba(0,0,0,.7);position:relative;animation:fadeUp .25s ease}
 .adm-login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--danger),#f97316)}
+/* ═══ LANG TOGGLE ═══ */
+.lang-btn{padding:4px 10px;border-radius:var(--rpill);border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:var(--fm);font-size:.6rem;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.06em;flex-shrink:0}
+.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* ═══ UMFELD ═══ */
+.uf-card{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;transition:.15s}
+.uf-card:hover{border-color:var(--border2)}
+.uf-card.uf-hoch{border-left:4px solid var(--danger);background:var(--dangerDim)}
+.uf-card.uf-mittel{border-left:4px solid var(--warn);background:var(--warnDim)}
+.uf-card.uf-niedrig{border-left:4px solid var(--ok);background:var(--okDim)}
+.uf-card.uf-info{border-left:4px solid var(--cyan);background:var(--cyanDim)}
+.uf-icon{font-size:1.4rem;flex-shrink:0;width:32px;text-align:center}
+.uf-body{flex:1;min-width:0}
+.uf-title{font-weight:700;color:var(--text2);font-size:.84rem;margin-bottom:3px}
+.uf-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:5px}
+.uf-rec{font-size:.73rem;color:var(--text);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:5px 9px}
+.uf-badge{display:inline-flex;font-family:var(--fm);font-size:.46rem;padding:2px 6px;border-radius:999px;margin-left:5px;font-weight:700}
+/* ═══ REPORT TABS ═══ */
+.rpt-tabs{display:flex;gap:2px;margin-bottom:18px;background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:var(--rpill);padding:2px;width:fit-content}
+.rpt-tab{padding:6px 16px;border-radius:var(--rpill);border:none;background:transparent;color:var(--muted);font-family:var(--ff);font-size:.76rem;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
+.rpt-tab:hover{color:var(--text)}
+.rpt-tab.active{background:var(--accentDim);color:var(--accent);border:1px solid rgba(20,184,166,.2)}
+.rpt-tab.active.konzept-tab{background:var(--purpleDim);color:var(--purple);border-color:rgba(167,139,250,.2)}
+/* ═══ KONZEPT ═══ */
+.konzept-section{background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px}
+.konzept-section-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.konzept-measure{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start}
+.konzept-measure .km-prio{font-family:var(--fm);font-size:.48rem;padding:2px 7px;border-radius:999px;flex-shrink:0;margin-top:2px;font-weight:700}
+.konzept-measure .km-text{flex:1;font-size:.78rem;color:var(--text2);line-height:1.5}
+.konzept-measure .km-time{font-family:var(--fm);font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 @media(max-width:768px){.adm-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -431,8 +460,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 <header class="hdr">
 <div class="logo"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
-<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')">🛡️ Audit</button><button class="tn t-db" onclick="go('database')">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')">🕐 Historie</button><button class="tn t-adm" onclick="go('admin')">⚙️ Intern</button></div>
+<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">🛡️ Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">🕐 Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">⚙️ Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
+<button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">🇬🇧 EN</button>
 <div class="hdr-badge" id="hdrBadge">–</div>
 <div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
   <div class="user-avatar" id="userAvatar">A</div>
@@ -594,6 +624,14 @@ const CK=[
 {id:'o4',l:'BIA',n:'ISO 22301 §8.2',d:'RTO/RPO festgelegt.',c:{mangel:'3.000–8.000',kritisch:'8.000–18.000'},m:'security'},
 {id:'o5',l:'Meldepflicht-Prozess',n:'NIS2 §31',d:'24h/72h definiert.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'security'},
 ]},
+{id:'religion',l:'Religionsgemeinschaften',l_en:'Religious Institutions',m:'security',norms:['ISO 31000','NIS2','KRITIS-DachG'],i:'🕍',s:'Sicherheitsanforderungen für religiöse Einrichtungen im Umfeld.',s_en:'Security requirements for religious institutions in the vicinity.',items:[
+{id:'rel1',l:'Synagoge / Jüdische Einrichtung',l_en:'Synagogue / Jewish Institution',n:'ISO 31000 · KRITIS-DachG §13',d:'Jüdische Einrichtung im Umfeld – polizeilicher Schutzstatus prüfen, erhöhte Zutrittskontrolle, Videoüberwachung, Perimeterschutz. Häufig unter Polizeibegleitung und Sonderschutz.',d_en:'Jewish institution in vicinity – check police protection status, enhanced access control, CCTV, perimeter protection. Often under police escort and special protection.',c:{mangel:'3.000–8.000',kritisch:'8.000–25.000'},m:'security'},
+{id:'rel2',l:'Moschee / Islamische Einrichtung',l_en:'Mosque / Islamic Institution',n:'ISO 31000',d:'Islamische Einrichtung im Umfeld – erhöhte Wachsamkeit gegenüber Hasskriminalität. Videoüberwachung an Eingängen, gute Beleuchtung, Kontakt zur Polizei empfohlen.',d_en:'Islamic institution in vicinity – heightened vigilance against hate crime. CCTV at entrances, good lighting, police contact recommended.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'security'},
+{id:'rel3',l:'Kirche / Dom / Kapelle',l_en:'Church / Cathedral / Chapel',n:'ISO 31000',d:'Christliche Einrichtung im Umfeld. Bei Großveranstaltungen erhöhte Personenströme und besondere Sicherheitsmaßnahmen berücksichtigen.',d_en:'Christian institution in vicinity. Account for high foot traffic and special security measures during large events.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'security'},
+{id:'rel4',l:'Tempel / Sonstige Religionsgemeinschaft',l_en:'Temple / Other Religious Community',n:'ISO 31000',d:'Sonstige religiöse Einrichtung im Umfeld. Kulturelle Sensibilität und angepasste Sicherheitsmaßnahmen beachten.',d_en:'Other religious institution in vicinity. Cultural sensitivity and adapted security measures required.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'security'},
+{id:'rel5',l:'Polizeilicher Schutz koordiniert',l_en:'Police Protection Coordinated',n:'KRITIS-DachG §13',d:'Regelmäßige Abstimmung mit der zuständigen Polizeidienststelle bzgl. Schutzbedarfs und Lagebeurteilung erfolgt.',d_en:'Regular coordination with the responsible police authority regarding protection needs and situational assessment carried out.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'security'},
+{id:'rel6',l:'Notfallplan für politisch motivierte Gewalt',l_en:'Emergency Plan for Politically Motivated Violence',n:'ISO 22301 · NIS2',d:'Spezifischer Notfallplan für Anschlagsszenarien, Hasskriminalität und politisch motivierte Gewalt vorhanden und geübt.',d_en:'Specific emergency plan for attack scenarios, hate crime and politically motivated violence exists and has been rehearsed.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'security'},
+]},
 // ═══ QM ═══
 {id:'qm_kf',l:'Kontext & Führung',m:'qm',norms:['ISO 9001','ISO 45001'],i:'🎯',s:'Kontext, Parteien, Politik.',items:[
 {id:'q1',l:'Kontext',n:'ISO 9001 4.1',d:'Themen identifiziert.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'qm'},
@@ -720,13 +758,14 @@ const TEMPLATES=[
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:''},
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
+umfeld:{done:false},reportView:'begehung',
 kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva',kleinunternehmer:false}};
 function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
 load();
 
 function activeChecks(){if(!S.module)return[];if(S.module==='combined')return CK;return CK.filter(c=>c.m===S.module);}
-function getSteps(){const s=[{id:'module',l:'Modul'},{id:'norms',l:'Normen'},{id:'meta',l:'Objektdaten'}];activeChecks().forEach(c=>s.push({id:c.id,l:c.l}));s.push({id:'maturity',l:'Reifegrad'},{id:'report',l:'Bericht'});return s;}
+function getSteps(){const lang=typeof _LANG!=='undefined'?_LANG:'de';const s=[{id:'module',l:lang==='en'?'Module':'Modul'},{id:'norms',l:lang==='en'?'Standards':'Normen'},{id:'meta',l:lang==='en'?'Object Data':'Objektdaten'}];if(S.module==='security'||S.module==='combined')s.push({id:'umfeld',l:lang==='en'?'Site Analysis':'Umfeld'});activeChecks().forEach(c=>s.push({id:c.id,l:(lang==='en'&&c.l_en)?c.l_en:c.l}));s.push({id:'maturity',l:lang==='en'?'Maturity':'Reifegrad'},{id:'report',l:lang==='en'?'Report':'Bericht'});return s;}
 function allCPs(){let a=[];CK.forEach(c=>c.items.forEach(i=>a.push({id:i.id,l:i.l,sec:c.l,m:c.m})));return a;}
 function docStatus(d){if(!d.expiry)return'gray';const now=new Date(),exp=new Date(d.expiry);if(exp<now)return'red';if(exp<=new Date(now.getTime()+30*864e5))return'yellow';return'green';}
 function parseCost(s){if(!s)return[0,0];const p=s.replace(/\./g,'').split('–').map(x=>parseInt(x.replace(/\D/g,''))||0);return[p[0]||0,p[1]||p[0]||0];}
@@ -757,7 +796,7 @@ function prev(){if(S.step>0){S.step--;render();scrollTo(0,0);save();}}
 
 function render(){
   document.getElementById('auditNav').style.display=(S.mode==='audit')?'':'none';
-  if(S.mode==='audit'){const steps=getSteps();renderStepper(steps);renderProgress(steps);const st=steps[S.step];if(!st)return;if(st.id==='module')renderModule();else if(st.id==='norms')renderNorms();else if(st.id==='meta')renderMeta();else if(st.id==='maturity')renderMaturity();else if(st.id==='report')renderReport();else{const c=CK.find(x=>x.id===st.id);if(c)renderCheck(c);}}
+  if(S.mode==='audit'){const steps=getSteps();renderStepper(steps);renderProgress(steps);const st=steps[S.step];if(!st)return;if(st.id==='module')renderModule();else if(st.id==='norms')renderNorms();else if(st.id==='meta')renderMeta();else if(st.id==='umfeld')renderUmfeld();else if(st.id==='maturity')renderMaturity();else if(st.id==='report')renderReport();else{const c=CK.find(x=>x.id===st.id);if(c)renderCheck(c);}}
   else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='historie')renderHist();else if(S.mode==='admin')renderAdmin();
   const b=document.getElementById('hdrBadge');
   if(S.mode!=='audit'){b.textContent={database:'📁 Datenbank',massnahmen:'📌 Maßnahmen',dashboard:'📊 Dashboard',historie:'🕐 Historie',admin:'⚙️ Intern'}[S.mode]||'';}
@@ -809,7 +848,131 @@ function renderMeta(){
     <div class="fg"><label>Auditor</label><input value="${esc(S.meta.pruefer)}" oninput="S.meta.pruefer=this.value;save()"></div>
     <div class="fg"><label>Anlass</label><select onchange="S.meta.anlass=this.value;save()">${['','Erstaudit','Überwachungsaudit','Re-Zertifizierung','KRITIS','NIS2','Internes Audit'].map(o=>`<option ${S.meta.anlass===o?'selected':''}>${o||'Bitte wählen...'}</option>`).join('')}</select></div>
     <div class="fg fg-full"><label>Notizen</label><textarea oninput="S.meta.notizen=this.value;save()">${esc(S.meta.notizen)}</textarea></div>
-  </div><div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">Begehung starten →</button></div></div>`;
+  </div><div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${(typeof _LANG!=='undefined'&&_LANG==='en')?'Start Inspection →':'Begehung starten →'}</button></div></div>`;
+}
+
+// ═══ UMFELD ═══
+function renderUmfeld(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const u=S.umfeld||{};
+  const hasAddr=!!(S.meta.adresse&&S.meta.adresse.trim().length>=5);
+  const riskCol={hoch:'var(--danger)',mittel:'var(--warn)',niedrig:'var(--ok)',info:'var(--cyan)'};
+  const riskIcon={hoch:'🔴',mittel:'🟡',niedrig:'🟢',info:'ℹ️'};
+  let cards='';
+  if(u.done&&u.risks){
+    u.risks.forEach(r=>{
+      cards+=`<div class="uf-card uf-${r.level}">
+        <div class="uf-icon">${r.icon}</div>
+        <div class="uf-body">
+          <div class="uf-title">${r.category}<span class="uf-badge" style="background:${riskCol[r.level]}22;color:${riskCol[r.level]};border:1px solid ${riskCol[r.level]}44">${riskIcon[r.level]} ${r.level.toUpperCase()}</span>${r.count?` <span style="font-family:var(--fm);font-size:.54rem;color:var(--muted)">${r.count} ${L==='en'?'found':'gefunden'}</span>`:''}</div>
+          <div class="uf-desc">${r.desc}</div>
+          ${r.items?.length?`<div style="font-size:.7rem;color:var(--soft);margin-bottom:5px">📍 ${r.items.join(' · ')}</div>`:''}
+          <div class="uf-rec"><span style="color:var(--accent)">💡</span> ${r.recommend}</div>
+        </div>
+      </div>`;
+    });
+    if(!u.risks.length)cards=`<div style="text-align:center;padding:20px;color:var(--ok)">✅ ${L==='en'?'No significant risks identified in the vicinity.':'Keine besonderen Risiken im Umfeld identifiziert.'}</div>`;
+  }
+  const ts=u.timestamp?new Date(u.timestamp).toLocaleString(L==='de'?'de-DE':'en-GB'):'';
+  document.getElementById('mainContent').innerHTML=`
+  <div class="panel">
+    <div class="panel-title">🗺️ ${L==='en'?'Site Environment Analysis':'Umfeldanalyse'}</div>
+    <p class="panel-sub">${L==='en'?'Automated risk analysis of the surrounding area based on OpenStreetMap data (1 km radius).':'Automatische Risikoanalyse der Umgebung auf Basis von OpenStreetMap-Daten (1 km Radius).'}</p>
+    ${!hasAddr?`<div style="background:var(--warnDim);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:.82rem;color:var(--warn)">⚠️ ${L==='en'?'Please enter an address in Object Data first.':'Bitte zuerst eine Adresse in den Objektdaten eingeben.'}</div>`:''}
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">${L==='en'?'Address':'Adresse'}</div>
+      <div style="font-size:.9rem;color:var(--text2);font-weight:600">${esc(S.meta.adresse||'–')}</div>
+      ${u.done?`<div style="font-size:.7rem;color:var(--muted);margin-top:4px">🌍 ${L==='en'?'Coordinates':'Koordinaten'}: ${u.lat?.toFixed(5)}, ${u.lon?.toFixed(5)} · ${ts}</div>`:''}
+    </div>
+    <div id="uf-status" style="margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+      <button class="btn-p" id="uf-btn" onclick="startUmfeldanalyse()" ${!hasAddr?'disabled':''}>🔍 ${u.done?(L==='en'?'Re-analyse':'Neu analysieren'):(L==='en'?'Start Site Analysis':'Umfeldanalyse starten')}</button>
+      ${u.done?`<a href="https://www.openstreetmap.org/#map=15/${u.lat}/${u.lon}" target="_blank" class="btn-sm accent" style="text-decoration:none;display:inline-flex;align-items:center">🗺️ OpenStreetMap</a>`:''}
+      ${u.done?`<button class="btn-sm" onclick="S.umfeld={done:false};save();render()">🗑️ ${L==='en'?'Reset':'Zurücksetzen'}</button>`:''}
+    </div>
+    ${u.done?`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div class="risk-level ${u.overallRiskCls}">● ${L==='en'?'Area Risk':'Umfeld-Risiko'}: <strong>${u.overallRisk}</strong></div>
+      <div style="font-family:var(--fm);font-size:.66rem;color:var(--muted)">${u.poiCount} ${L==='en'?'objects found':'Objekte gefunden'} · ${L==='en'?'radius':'Radius'} ${u.radius}m</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin-bottom:16px">
+      ${u.stats?.synagogues>0?`<div class="stat danger" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.synagogues}</div><div class="stat-lbl">${L==='en'?'Synagogues':'Synagogen'}</div></div>`:''}
+      ${u.stats?.mosques>0?`<div class="stat warn" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.mosques}</div><div class="stat-lbl">${L==='en'?'Mosques':'Moscheen'}</div></div>`:''}
+      ${u.stats?.churches>0?`<div class="stat ok" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.churches}</div><div class="stat-lbl">${L==='en'?'Churches':'Kirchen'}</div></div>`:''}
+      ${u.stats?.government>0?`<div class="stat orange" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.government}</div><div class="stat-lbl">${L==='en'?'Authorities':'Behörden'}</div></div>`:''}
+      ${u.stats?.police>0?`<div class="stat blue" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.police}</div><div class="stat-lbl">${L==='en'?'Police':'Polizei'}</div></div>`:''}
+      ${u.stats?.military>0?`<div class="stat purple" style="padding:8px 6px"><div class="stat-val" style="font-size:1.1rem">${u.stats.military}</div><div class="stat-lbl">${L==='en'?'Military':'Militär'}</div></div>`:''}
+    </div>
+    <div>${cards}</div>
+    `:''}
+    <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${L==='en'?'Continue →':'Weiter →'}</button></div>
+  </div>`;
+}
+
+async function startUmfeldanalyse(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const addr=S.meta.adresse;
+  if(!addr||addr.trim().length<5){toast(L==='en'?'Please enter an address first':'Bitte zuerst Adresse eingeben','warn');return;}
+  const btn=document.getElementById('uf-btn');
+  const status=document.getElementById('uf-status');
+  if(btn){btn.disabled=true;btn.textContent='⏳ '+(L==='en'?'Analysing...':'Analyse läuft...');}
+  if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">🔍 ${L==='en'?'Geocoding address...':'Geocodierung der Adresse...'}</div>`;
+  try{
+    const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr)}&format=json&limit=1&addressdetails=1`,{headers:{'Accept':'application/json','User-Agent':'SecureStay-Analytics/2.0'}});
+    const geoData=await geoRes.json();
+    if(!geoData||!geoData.length){
+      toast(L==='en'?'Address not found':'Adresse nicht gefunden','error');
+      if(btn){btn.disabled=false;btn.textContent='🔍 '+(L==='en'?'Start Site Analysis':'Umfeldanalyse starten');}
+      if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">❌ ${L==='en'?'Address not found. Please check.':'Adresse nicht gefunden. Bitte prüfen.'}</div>`;
+      return;
+    }
+    const {lat,lon}=geoData[0];const latF=parseFloat(lat),lonF=parseFloat(lon);
+    if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">📡 ${L==='en'?'Fetching nearby objects...':'Umgebungsobjekte werden geladen...'}</div>`;
+    const radius=1000;
+    const q=`[out:json][timeout:25];(node(around:${radius},${latF},${lonF})[amenity=place_of_worship];way(around:${radius},${latF},${lonF})[amenity=place_of_worship];node(around:${radius},${latF},${lonF})[amenity=police];node(around:${radius},${latF},${lonF})[amenity=hospital];node(around:${radius},${latF},${lonF})[amenity=school];node(around:${radius},${latF},${lonF})[amenity=university];node(around:${radius},${latF},${lonF})[amenity=bank];node(around:${radius},${latF},${lonF})[amenity=courthouse];node(around:${radius},${latF},${lonF})[amenity=embassy];node(around:${radius},${latF},${lonF})[office=government];node(around:${radius},${latF},${lonF})[landuse=military];node(around:${radius},${latF},${lonF})[amenity=fire_station];node(around:${radius},${latF},${lonF})[railway=station];node(around:${radius},${latF},${lonF})[public_transport=station];node(around:${radius},${latF},${lonF})[shop=mall];node(around:${radius},${latF},${lonF})[amenity=marketplace];node(around:${radius},${latF},${lonF})[tourism=museum];node(around:${radius},${latF},${lonF})[historic=memorial];node(around:${radius},${latF},${lonF})[amenity=prison];);out body qt;`;
+    const ovRes=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+    const ovData=await ovRes.json();
+    const pois=ovData.elements||[];
+    const worship=pois.filter(p=>p.tags?.amenity==='place_of_worship');
+    const syn=worship.filter(p=>p.tags?.religion==='jewish'||(p.tags?.name||'').toLowerCase().includes('synagog')||(p.tags?.name||'').toLowerCase().includes('jüdisch'));
+    const mos=worship.filter(p=>p.tags?.religion==='muslim'||(p.tags?.name||'').toLowerCase().includes('moschee')||(p.tags?.name||'').toLowerCase().includes('mosque'));
+    const chr=worship.filter(p=>!syn.includes(p)&&!mos.includes(p)&&(p.tags?.religion==='christian'||(p.tags?.name||'').toLowerCase().includes('kirche')||(p.tags?.name||'').toLowerCase().includes('church')||(p.tags?.name||'').toLowerCase().includes('dom')));
+    const otherW=worship.filter(p=>!syn.includes(p)&&!mos.includes(p)&&!chr.includes(p));
+    const police=pois.filter(p=>p.tags?.amenity==='police');
+    const hosp=pois.filter(p=>p.tags?.amenity==='hospital');
+    const schools=pois.filter(p=>p.tags?.amenity==='school'||p.tags?.amenity==='university');
+    const banks=pois.filter(p=>p.tags?.amenity==='bank');
+    const gov=pois.filter(p=>p.tags?.amenity==='courthouse'||p.tags?.amenity==='embassy'||p.tags?.office==='government');
+    const mil=pois.filter(p=>p.tags?.landuse==='military'||p.tags?.amenity==='prison');
+    const transit=pois.filter(p=>p.tags?.railway==='station'||p.tags?.public_transport==='station');
+    const pub=pois.filter(p=>p.tags?.shop==='mall'||p.tags?.amenity==='marketplace'||p.tags?.tourism==='museum'||p.tags?.historic==='memorial');
+    const risks=[];let score=0;
+    if(syn.length){score+=3;risks.push({level:'hoch',icon:'🕍',category:L==='en'?'Jewish Institution (Synagogue)':'Jüdische Einrichtung (Synagoge)',count:syn.length,desc:L==='en'?`${syn.length} synagogue(s) within 1 km. High security requirement — frequently under police protection. Heightened vigilance against antisemitic violence.`:`${syn.length} Synagoge(n) im 1-km-Radius. Erhöhter Schutzbedarf – häufig unter Polizeischutz. Besondere Wachsamkeit gegenüber antisemitischer Gewalt erforderlich.`,items:syn.map(p=>p.tags?.name||'Synagoge').slice(0,3),recommend:L==='en'?'Coordinate with local police authority. Review perimeter protection and CCTV coverage.':'Abstimmung mit zuständiger Polizeidienststelle empfohlen. Perimeterschutz und Videoüberwachung prüfen.'});}
+    if(mos.length){score+=2;risks.push({level:'mittel',icon:'🕌',category:L==='en'?'Islamic Institution (Mosque)':'Islamische Einrichtung (Moschee)',count:mos.length,desc:L==='en'?`${mos.length} mosque(s) within 1 km. Potential target for hate crime.`:`${mos.length} Moschee(n) im 1-km-Radius. Mögliches Ziel für Hasskriminalität.`,items:mos.map(p=>p.tags?.name||'Moschee').slice(0,3),recommend:L==='en'?'CCTV at entrances, adequate lighting, police contact recommended.':'Videoüberwachung an Eingängen, gute Beleuchtung, Polizeikontakt empfohlen.'});}
+    if(chr.length){score+=1;risks.push({level:'niedrig',icon:'⛪',category:L==='en'?'Christian Institution (Church)':'Christliche Einrichtung (Kirche)',count:chr.length,desc:L==='en'?`${chr.length} church(es) within 1 km.`:`${chr.length} Kirche(n) im 1-km-Radius.`,items:chr.map(p=>p.tags?.name||'Kirche').slice(0,3),recommend:L==='en'?'Standard security measures. Enhanced presence during major events.':'Standardsicherheitsmaßnahmen ausreichend. Bei Großveranstaltungen erhöhte Präsenz.'});}
+    if(otherW.length){risks.push({level:'info',icon:'🛕',category:L==='en'?'Other Religious Institutions':'Sonstige Religionsgemeinschaften',count:otherW.length,desc:L==='en'?`${otherW.length} other religious institution(s) in vicinity.`:`${otherW.length} sonstige Religionsgemeinde(n) im Umfeld.`,items:otherW.map(p=>p.tags?.name||'Religionsgemeinschaft').slice(0,3),recommend:L==='en'?'Cultural sensitivity and standard security measures.':'Kulturelle Sensibilität und Standardsicherheitsmaßnahmen.'});}
+    if(gov.length){score+=2;risks.push({level:'mittel',icon:'🏛️',category:L==='en'?'Government / Embassy':'Behörde / Botschaft',count:gov.length,desc:L==='en'?`${gov.length} government/embassy building(s) within 1 km. Elevated risk during demonstrations or political events.`:`${gov.length} Behörde(n)/Botschaft(en) im 1-km-Radius. Erhöhtes Risiko bei Demonstrationen oder politischen Ereignissen.`,items:gov.map(p=>p.tags?.name||'Behörde').slice(0,3),recommend:L==='en'?'Prepare for demonstrations and political events. Monitor police situation reports.':'Auf Demonstrationen und politische Ereignisse vorbereiten. Polizeiliche Lageberichte beobachten.'});}
+    if(mil.length){score+=2;risks.push({level:'mittel',icon:'🪖',category:L==='en'?'Military / Detention Facility':'Militärische Einrichtung / JVA',count:mil.length,desc:L==='en'?`${mil.length} military/security facility in vicinity.`:`${mil.length} militärische/sicherheitsrelevante Anlage im Umfeld.`,items:mil.map(p=>p.tags?.name||'Militär').slice(0,3),recommend:L==='en'?'Espionage and sabotage risk. Enhanced access control.':'Spionage- und Sabotagerisiko. Erhöhte Zutrittskontrolle empfohlen.'});}
+    if(transit.length){score+=1;risks.push({level:'niedrig',icon:'🚉',category:L==='en'?'Public Transport Hub':'Öffentlicher Verkehrsknotenpunkt',count:transit.length,desc:L==='en'?`${transit.length} station(s) within 1 km. High foot traffic.`:`${transit.length} Bahnhof/Haltestelle im 1-km-Radius. Hoher Personenverkehr.`,items:transit.map(p=>p.tags?.name||'Haltestelle').slice(0,3),recommend:L==='en'?'Access control and CCTV at entrances especially important.':'Zutrittskontrolle und Videoüberwachung in Eingangsbereichen besonders wichtig.'});}
+    if(banks.length){risks.push({level:'info',icon:'🏦',category:L==='en'?'Banks / Financial Institutions':'Banken / Finanzinstitute',count:banks.length,desc:L==='en'?`${banks.length} bank(s) within 1 km.`:`${banks.length} Bank(en) im 1-km-Radius.`,items:banks.map(p=>p.tags?.name||'Bank').slice(0,3),recommend:L==='en'?'Elevated risk for pickpocketing and cash transit in the area.':'Erhöhtes Risiko für Trickdiebstahl und Geldtransporte im Umfeld.'});}
+    if(hosp.length){risks.push({level:'info',icon:'🏥',category:L==='en'?'Hospitals / Medical Facilities':'Krankenhäuser / Gesundheitseinrichtungen',count:hosp.length,desc:L==='en'?`${hosp.length} hospital(s) within 1 km.`:`${hosp.length} Krankenhaus/Klinik im 1-km-Radius.`,items:hosp.map(p=>p.tags?.name||'Krankenhaus').slice(0,3),recommend:L==='en'?'Keep emergency access routes clear.':'Rettungszufahrten freihalten.'});}
+    if(schools.length){risks.push({level:'info',icon:'🏫',category:L==='en'?'Schools / Educational Institutions':'Schulen / Bildungseinrichtungen',count:schools.length,desc:L==='en'?`${schools.length} school(s) within 1 km. High pedestrian volume at peak times.`:`${schools.length} Schule(n) im 1-km-Radius. Hoher Personenverkehr zu Stoßzeiten.`,items:schools.map(p=>p.tags?.name||'Schule').slice(0,3),recommend:L==='en'?'Account for peak hours in security planning.':'Stoßzeiten bei Sicherheitsplanung berücksichtigen.'});}
+    if(pub.length){risks.push({level:'info',icon:'🏬',category:L==='en'?'Public Spaces / Landmarks':'Öffentliche Plätze / Sehenswürdigkeiten',count:pub.length,desc:L==='en'?`${pub.length} public venue(s) within 1 km.`:`${pub.length} öffentliche Einrichtung(en) im 1-km-Radius.`,items:pub.map(p=>p.tags?.name||'Einrichtung').slice(0,3),recommend:L==='en'?'Consider visitor flows and event calendars.':'Besucherströme und Veranstaltungskalender beachten.'});}
+    let overallRisk,overallRiskCls;
+    if(score>=6){overallRisk=L==='en'?'High':'Hoch';overallRiskCls='hoch';}
+    else if(score>=3){overallRisk=L==='en'?'Medium':'Mittel';overallRiskCls='mittel';}
+    else if(score>=1){overallRisk=L==='en'?'Low':'Gering';overallRiskCls='gering';}
+    else{overallRisk=L==='en'?'Very Low':'Sehr gering';overallRiskCls='gering';}
+    S.umfeld={done:true,lat:latF,lon:lonF,risks,riskScore:score,overallRisk,overallRiskCls,poiCount:pois.length,timestamp:new Date().toISOString(),radius,stats:{worship:worship.length,synagogues:syn.length,mosques:mos.length,churches:chr.length,police:police.length,hospitals:hosp.length,schools:schools.length,banks:banks.length,government:gov.length,military:mil.length,transit:transit.length}};
+    save();render();
+    if(status)status.innerHTML='';
+    toast(L==='en'?'Site analysis complete':'Umfeldanalyse abgeschlossen','success');
+  }catch(err){
+    console.error(err);
+    if(btn){btn.disabled=false;btn.textContent='🔍 '+(L==='en'?'Start Site Analysis':'Umfeldanalyse starten');}
+    if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">❌ ${L==='en'?'Error':'Fehler'}: ${err.message}</div>`;
+    toast(L==='en'?'Analysis failed — check internet connection':'Analyse fehlgeschlagen — Internetverbindung prüfen','error');
+  }
 }
 
 // ═══ CHECK ═══
@@ -936,14 +1099,20 @@ function renderReport(){
   const avgMat=ac.length?ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length:0;
   const modN={security:'Security',qm:'QM',itgov:'IT-Governance',combined:'Kombiniertes'}[S.module]||'';
   const fr=(f,p)=>`<div class="finding ${p}"><div class="finding-icon">${f.icon}</div><div class="f-body"><div class="f-label">${f.l} <span class="mi ${modCls(f.m)}">${modLabel(f.m)}</span>${f.m==='itgov'?` <span class="nb it" style="font-size:.42rem;margin:0">COBIT ${f.n}</span>`:''}</div><div class="f-section">${f.sec}${f.m!=='itgov'?' · '+f.n:''}</div>${f.note?`<div class="f-note">"${esc(f.note)}"</div>`:''}</div><div class="f-cost"><div class="f-cost-val">€ ${f.c[p]}</div><div class="f-cost-lbl">Schätzung</div></div></div>`;
+  if(S.reportView==='konzept'){renderKonzept();return;}
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
   document.getElementById('mainContent').innerHTML=`
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-    <div style="font-size:.68rem;color:var(--muted)">Erstellt: ${new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'})} · ${sessionStorage.getItem('ssa_u')||'Admin'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div class="rpt-tabs">
+      <button class="rpt-tab active" onclick="S.reportView='begehung';render()">📋 ${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
+      <button class="rpt-tab konzept-tab" onclick="S.reportView='konzept';render()">📐 ${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+    </div>
     <div style="display:flex;gap:6px">
-      <button class="print-btn" onclick="exportData()" title="Als JSON sichern">📥 Backup</button>
-      <button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">🖨 PDF drucken</button>
+      <button class="print-btn" onclick="exportData()" title="${L==='en'?'Backup as JSON':'Als JSON sichern'}">📥 Backup</button>
+      <button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">🖨 PDF</button>
     </div>
   </div>
+  <div style="font-size:.68rem;color:var(--muted);margin-bottom:14px">${L==='en'?'Created':'Erstellt'}: ${new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'})} · ${sessionStorage.getItem('ssa_u')||'Admin'}</div>
   <div class="rpt-hdr">
     <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">SecureStay: Analytics · ${modN} Audit</div>
     <div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div>
@@ -979,7 +1148,94 @@ function renderReport(){
     <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
     <div style="font-size:.64rem;color:var(--soft);margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
   </div>
-  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="window.print()">🖨 PDF drucken</button></div>`;
+  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
+}
+
+// ═══ KONZEPT ═══
+function renderKonzept(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const ac=activeChecks();
+  let kritisch=[],mangel=[],ok=[];
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='kritisch')kritisch.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='mangel')mangel.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='ok')ok.push({...it,sec:ch.l});}));
+  const assessed=kritisch.length+mangel.length+ok.length;
+  const comp=assessed?Math.round(ok.length/assessed*100):0;
+  const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
+  const genDate=new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'});
+  // Group kritisch by domain
+  const domainMap={security:L==='en'?'Physical Security':'Physische Sicherheit',qm:L==='en'?'Quality Management':'Qualitätsmanagement',itgov:L==='en'?'IT Governance':'IT-Governance'};
+  const secK=kritisch.filter(f=>f.m==='security'),qmK=kritisch.filter(f=>f.m==='qm'),itK=kritisch.filter(f=>f.m==='itgov');
+  const secM=mangel.filter(f=>f.m==='security'),qmM=mangel.filter(f=>f.m==='qm'),itM=mangel.filter(f=>f.m==='itgov');
+  const mkm=(items,prio,timeframe)=>items.map(f=>{const pc=prio==='kritisch'?'#ef4444':prio==='mangel'?'#eab308':'#22c55e';return`<div class="konzept-measure"><span class="km-prio" style="background:${pc}18;color:${pc};border:1px solid ${pc}33">${prio==='kritisch'?(L==='en'?'URGENT':'SOFORT'):prio==='mangel'?(L==='en'?'MEDIUM':'MITTEL'):(L==='en'?'REC.':'EMPF.')}</span><div class="km-text"><strong>${esc(f.l)}</strong>${f.note?` — <em style="color:var(--muted)">"${esc(f.note)}"</em>`:''}<br><span style="font-size:.7rem;color:var(--muted)">${f.n} · ${f.sec}</span></div><span class="km-time">${timeframe}</span></div>`;}).join('');
+  const umfeldSect=S.umfeld?.done?`
+  <div class="konzept-section">
+    <div class="konzept-section-title">🗺️ ${L==='en'?'Site Environment Analysis':'Umfeldanalyse'}</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <div class="risk-level ${S.umfeld.overallRiskCls}">● ${L==='en'?'Area Risk':'Umfeld-Risiko'}: <strong>${S.umfeld.overallRisk}</strong></div>
+      <div style="font-size:.76rem;color:var(--muted)">${S.umfeld.poiCount} ${L==='en'?'objects analysed':'Objekte analysiert'} · ${S.umfeld.radius}m ${L==='en'?'radius':'Radius'}</div>
+    </div>
+    ${(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel').map(r=>`<div style="padding:8px 12px;border-left:3px solid ${r.level==='hoch'?'var(--danger)':'var(--warn)'};background:${r.level==='hoch'?'var(--dangerDim)':'var(--warnDim)'};border-radius:0 8px 8px 0;margin-bottom:6px"><div style="font-weight:600;font-size:.8rem;color:var(--text2)">${r.icon} ${r.category}</div><div style="font-size:.73rem;color:var(--muted)">${r.recommend}</div></div>`).join('')}
+  </div>`:'';
+  document.getElementById('mainContent').innerHTML=`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div class="rpt-tabs">
+      <button class="rpt-tab" onclick="S.reportView='begehung';render()">📋 ${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
+      <button class="rpt-tab active konzept-tab" onclick="S.reportView='konzept';render()">📐 ${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="print-btn" onclick="exportData()">📥 Backup</button>
+      <button class="print-btn" style="border-color:rgba(167,139,250,.3);color:var(--purple)" onclick="window.print()">🖨 PDF</button>
+    </div>
+  </div>
+  <div class="rpt-hdr" style="background:linear-gradient(135deg,rgba(167,139,250,.07),rgba(59,130,246,.04),rgba(15,23,42,.9));border-color:rgba(167,139,250,.2)">
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:6px">SecureStay: Analytics · ${L==='en'?'Security Concept':'Sicherheitskonzept'}</div>
+    <div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div>
+    <div class="rpt-meta" style="margin-top:6px">
+      ${S.meta.auftraggeber?`<strong>${esc(S.meta.auftraggeber)}</strong> · `:''}${ds}${S.meta.pruefer?` · ${L==='en'?'Author':'Autor'}: ${esc(S.meta.pruefer)}`:''}
+      ${S.meta.adresse?`<br>${esc(S.meta.adresse)}`:''}
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <span style="font-family:var(--fm);font-size:.58rem;color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.2);border-radius:999px;padding:2px 10px">${L==='en'?'Generated':'Erstellt'}: ${genDate}</span>
+      <span style="font-family:var(--fm);font-size:.58rem;color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.2);border-radius:999px;padding:2px 10px">${comp}% ${L==='en'?'Compliance':'Compliance'}</span>
+    </div>
+  </div>
+  <div class="konzept-section">
+    <div class="konzept-section-title">📋 ${L==='en'?'Executive Summary':'Zusammenfassung'}</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
+      ${L==='en'
+        ?`This security concept was prepared on the basis of an on-site inspection at <strong style="color:var(--text2)">${esc(S.meta.objekt)||'the object'}</strong> on ${ds}. A total of <strong style="color:var(--text2)">${assessed}</strong> control points were assessed. <strong style="color:var(--danger)">${kritisch.length}</strong> critical deficiencies and <strong style="color:var(--warn)">${mangel.length}</strong> deficiencies requiring improvement were identified. The overall compliance level is <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`
+        :`Das vorliegende Sicherheitskonzept wurde auf Basis einer Begehung des Objekts <strong style="color:var(--text2)">${esc(S.meta.objekt)||'–'}</strong> am ${ds} erstellt. Es wurden insgesamt <strong style="color:var(--text2)">${assessed}</strong> Prüfpunkte bewertet. Dabei wurden <strong style="color:var(--danger)">${kritisch.length}</strong> kritische Mängel und <strong style="color:var(--warn)">${mangel.length}</strong> Verbesserungsbedarfe festgestellt. Der Gesamterfüllungsgrad beträgt <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`}
+    </div>
+  </div>
+  ${umfeldSect}
+  ${kritisch.length||mangel.length?`
+  <div class="konzept-section">
+    <div class="konzept-section-title">⚡ ${L==='en'?'Immediate Measures (Critical)':'Sofortmaßnahmen (Kritisch)'}</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'Must be remediated immediately (within 4 weeks):':'Unverzüglich umzusetzen (innerhalb von 4 Wochen):'}</p>
+    ${secK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">🛡️ ${domainMap.security}</div>${mkm(secK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+    ${qmK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">📋 ${domainMap.qm}</div>${mkm(qmK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+    ${itK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">🖥️ ${domainMap.itgov}</div>${mkm(itK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+  </div>
+  <div class="konzept-section">
+    <div class="konzept-section-title">📅 ${L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)'}</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'To be addressed within 3–6 months:':'Umzusetzen innerhalb von 3–6 Monaten:'}</p>
+    ${secM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">🛡️ ${domainMap.security}</div>${mkm(secM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+    ${qmM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">📋 ${domainMap.qm}</div>${mkm(qmM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+    ${itM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">🖥️ ${domainMap.itgov}</div>${mkm(itM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+  </div>
+  `:''}
+  <div class="konzept-section">
+    <div class="konzept-section-title">💶 ${L==='en'?'Investment Summary':'Investitionszusammenfassung'}</div>
+    <div class="cost-sum">
+      <div class="cost-row"><span>${L==='en'?'⚡ Immediate (critical)':'⚡ Sofort (kritisch)'}</span><span>€ ${fmtCA(kritisch,'kritisch')}</span></div>
+      <div class="cost-row"><span>${L==='en'?'📅 Medium-term (deficiencies)':'📅 Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(mangel,'mangel')}</span></div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(167,139,250,.04),rgba(59,130,246,.02));border:1px solid rgba(167,139,250,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
+    <div style="font-family:var(--fh);font-weight:700;color:var(--text2)">SecureStay: Analytics</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
+    <div style="font-size:.64rem;color:var(--soft)">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
+  </div>
+  <div class="nav-row"><button class="btn-s" onclick="S.reportView='begehung';render()">← ${L==='en'?'Back to Report':'Zurück zum Bericht'}</button><button class="btn-p" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)" onclick="window.print()">🖨 PDF</button></div>`;
 }
 
 // ═══ MODALS ═══
@@ -1008,6 +1264,7 @@ document.getElementById('eskModal').classList.add('open');}
 const _ADM_USERS = [
   btoa(unescape(encodeURIComponent('SecureStay\x00SS@Intern!25'))),
   btoa(unescape(encodeURIComponent('Grygoriy.Ogorinskyy\x00TEstpasswort123'))),
+  btoa(unescape(encodeURIComponent('Werner.Devosse\x00MOndschein123!'))),
 ];
 let _admAttempts = 0;
 
@@ -1568,6 +1825,7 @@ document.addEventListener('keydown', e => {
 const _USERS = [
   btoa(unescape(encodeURIComponent('Admin\x00TEstpasswort123'))),
   btoa(unescape(encodeURIComponent('Grygoriy.Ogorinskyy\x00TEstpasswort123'))),
+  btoa(unescape(encodeURIComponent('Werner.Devosse\x00MOndschein123!'))),
 ];
 let _loginAttempts = 0;
 let _lockoutTimer = null;
@@ -1665,7 +1923,18 @@ function togglePw() {
 // Init EmailJS if configured
 (()=>{const k=localStorage.getItem('ssa_ejs_key');if(k)try{emailjs.init(k);}catch(e){}})();
 
-if (checkAuth()) render();
+// ═══ LANGUAGE SYSTEM ═══
+let _LANG = localStorage.getItem('ssa_lang')||'de';
+function toggleLang(){_LANG=_LANG==='de'?'en':'de';localStorage.setItem('ssa_lang',_LANG);updateLangUI();render();}
+function updateLangUI(){
+  const btn=document.getElementById('langToggleBtn');
+  if(btn)btn.textContent=_LANG==='de'?'🇬🇧 EN':'🇩🇪 DE';
+  const nav={audit:_LANG==='en'?'🛡️ Audit':'🛡️ Audit',database:_LANG==='en'?'📁 Database':'📁 Datenbank',massnahmen:_LANG==='en'?'📌 Measures':'📌 Maßnahmen',dashboard:_LANG==='en'?'📊 Dashboard':'📊 Dashboard',historie:_LANG==='en'?'🕐 History':'🕐 Historie',admin:_LANG==='en'?'⚙️ Internal':'⚙️ Intern'};
+  Object.keys(nav).forEach(k=>{const el=document.getElementById('nav_'+k);if(el)el.textContent=nav[k];});
+  const ab=document.getElementById('autosaveDot');if(ab)ab.title=_LANG==='en'?'Saved':'Gespeichert';
+}
+
+if (checkAuth()){updateLangUI();render();}
 </script>
 </body>
 </html>
