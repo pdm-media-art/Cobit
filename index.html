@@ -779,8 +779,12 @@ const CATS=['Richtlinie','Zertifikat','Protokoll','Schulung','Wartung','Vertrag'
 const CATI={Richtlinie:'📄',Zertifikat:'🏅',Protokoll:'📝',Schulung:'🎓',Wartung:'🔧',Vertrag:'📋',Plan:'🗺️',Analyse:'📊',Sonstiges:'📎'};
 const FREQ_LABEL={J:'Jährlich',Q:'Quartalsweise',M:'Monatlich',O:'Operativ/Laufend'};
 const TEMPLATES=[
-{id:'logistik',name:'Logistik',icon:'🏭',desc:'Perimeter, Zutritt, Brand, QM.'},{id:'buero',name:'Büro',icon:'🏢',desc:'Zutritt, IT, Brand, QM.'},{id:'produktion',name:'Produktion',icon:'⚙️',desc:'Arbeitsschutz, QM komplett.'},
-{id:'kritis',name:'KRITIS',icon:'🏛️',desc:'Maximaler Umfang.'},{id:'it',name:'IT / RZ',icon:'🖥️',desc:'IT-Governance + Security.'},{id:'custom',name:'Eigene',icon:'✏️',desc:'Individuell.'},
+{id:'logistik',name:'Logistik',name_en:'Logistics',icon:'🏭',desc:'Perimeter, Zutritt, Brand, QM.',desc_en:'Perimeter, access, fire, QM.',mod:'combined'},
+{id:'buero',name:'Büro',name_en:'Office',icon:'🏢',desc:'Zutritt, IT, Brand, QM.',desc_en:'Access, IT, fire, QM.',mod:'combined'},
+{id:'produktion',name:'Produktion',name_en:'Production',icon:'⚙️',desc:'Arbeitsschutz, QM komplett.',desc_en:'Workplace safety, full QM.',mod:'qm'},
+{id:'kritis',name:'KRITIS',name_en:'KRITIS',icon:'🏛️',desc:'Maximaler Umfang.',desc_en:'Maximum scope.',mod:'combined'},
+{id:'it',name:'IT / RZ',name_en:'IT / DC',icon:'🖥️',desc:'IT-Governance + Security.',desc_en:'IT Governance + Security.',mod:'itgov'},
+{id:'religion',name:'Religionsgemeinschaften',name_en:'Religious Institutions',icon:'🕍',desc:'Sicherheit für religiöse Einrichtungen.',desc_en:'Security for religious institutions.',mod:'religion'},
 ];
 
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
@@ -840,7 +844,7 @@ function renderModule(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">${L==='en'?'Select Audit Module':'Audit-Modul wählen'}</div><p class="panel-sub">${L==='en'?'5 modules available. Use industry templates or select manually.':'5 Module verfügbar. Nutzen Sie Branchenvorlagen oder wählen Sie manuell.'}</p>
   <div style="font-family:var(--fm);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">${L==='en'?'Industry Templates':'Branchenvorlagen'}</div>
-  <div class="tpl-cards">${TEMPLATES.map(t=>`<div class="tpl-card" onclick="selMod('combined')"><div class="tpl-icon">${t.icon}</div><div class="tpl-name">${t.name}</div><div class="tpl-desc">${t.desc}</div></div>`).join('')}</div>
+  <div class="tpl-cards">${TEMPLATES.map(t=>`<div class="tpl-card" onclick="selMod('${t.mod}')"><div class="tpl-icon">${t.icon}</div><div class="tpl-name">${L==='en'&&t.name_en?t.name_en:t.name}</div><div class="tpl-desc">${L==='en'&&t.desc_en?t.desc_en:t.desc}</div></div>`).join('')}</div>
   <div class="section-divider"></div>
   <div class="mcards">
     <div class="mcard sec ${S.module==='security'?'selected':''}" onclick="selMod('security')"><div class="mc-check">✓</div><div class="mc-icon">🛡️</div><div class="mc-title">Security</div><div class="mc-desc">${L==='en'?'Physical security, access, CCTV, alarm, BCM.':'Physische Sicherheit, Zutritt, Video, Alarm, BCM.'}</div><div class="mc-norms"><span class="nb sec">ISO 31000</span><span class="nb sec">27001</span><span class="nb sec">NIS2</span></div></div>
