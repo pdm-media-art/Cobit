@@ -299,6 +299,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Footer branding ── */
   [style*="SecureStay Solutions"]{background:#f8fafc!important;border:1px solid #e2e8f0!important;border-radius:6px!important}
   .print-page-break{page-break-before:always}
+  /* ── Dashboard print ── */
+  .chart-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important;margin-top:14px!important}
+  .chart-box{background:#f8fafc!important;border:1.5px solid #e2e8f0!important;border-radius:6px!important;padding:14px!important;page-break-inside:avoid!important}
+  .chart-box-title{color:#0f172a!important;font-size:.72rem!important;font-weight:700!important;margin-bottom:8px!important}
+  .chart-canvas{max-height:180px!important}
   @page{margin:18mm 15mm;size:A4}
 }
 
@@ -487,7 +492,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 <header class="hdr">
-<div class="logo"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
+<div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
 <div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">🛡️ Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">📁 Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">📌 Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">📊 Dashboard</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">🕐 Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">⚙️ Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
 <button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">🇬🇧 EN</button>
@@ -1117,7 +1122,7 @@ function renderDash(){
   const assessed=kC+mC+okC,comp=assessed?Math.round(okC/assessed*100):0;
   const avgMat=ac.length?ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length:0;
   const maO=S.massnahmen.filter(m=>m.status!=='erledigt').length;
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">📊 Dashboard</div><p class="panel-sub">${L==='en'?'Overview.':'Gesamtübersicht.'}</p>
+  document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="panel-title" style="margin-bottom:0">📊 Dashboard</div><button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">🖨 PDF</button></div><p class="panel-sub">${L==='en'?'Overview.':'Gesamtübersicht.'}</p>
   <div class="stats" style="grid-template-columns:repeat(6,1fr)"><div class="stat purple"><div class="stat-val">${comp}%</div><div class="stat-lbl">Compliance</div></div><div class="stat danger"><div class="stat-val">${kC}</div><div class="stat-lbl">${L==='en'?'Critical':'Kritisch'}</div></div><div class="stat warn"><div class="stat-val">${mC}</div><div class="stat-lbl">${L==='en'?'Deficiencies':'Mängel'}</div></div><div class="stat ok"><div class="stat-val">${okC}</div><div class="stat-lbl">OK</div></div><div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">${L==='en'?'Maturity':'Reifegrad'}</div></div><div class="stat orange"><div class="stat-val">${maO}</div><div class="stat-lbl">${L==='en'?'Open':'Offen'}</div></div></div>
   <div class="chart-grid"><div class="chart-box"><div class="chart-box-title">${L==='en'?'Control Point Distribution':'Prüfpunkt-Verteilung'}</div><canvas id="c1" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">${L==='en'?'Maturity by Domain':'Reifegrad pro Bereich'}</div><canvas id="c2" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">${L==='en'?'Measure Status':'Maßnahmen-Status'}</div><canvas id="c3" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">Dokumente</div><canvas id="c4" class="chart-canvas"></canvas></div></div></div>`;
   setTimeout(()=>{
