@@ -851,7 +851,6 @@ function renderModule(){
     <div class="mcard qm ${S.module==='qm'?'selected':''}" onclick="selMod('qm')"><div class="mc-check">✓</div><div class="mc-icon">📋</div><div class="mc-title">QM</div><div class="mc-desc">${L==='en'?'Context, risks, resources, continual improvement.':'Kontext, Risiken, Ressourcen, KVP.'}</div><div class="mc-norms"><span class="nb qm">ISO 9001</span><span class="nb qm">45001</span></div></div>
     <div class="mcard itg ${S.module==='itgov'?'selected':''}" onclick="selMod('itgov')"><div class="mc-check">✓</div><div class="mc-icon">🖥️</div><div class="mc-title">IT-Governance</div><div class="mc-desc">${L==='en'?'COBIT 2019 – 13 domains, 59 control points.':'COBIT 2019 – 13 Prüfbereiche, 59 Kontrollpunkte.'}</div><div class="mc-norms"><span class="nb it">COBIT 2019</span><span class="nb it">ISO 20000</span></div></div>
     <div class="mcard combo ${S.module==='combined'?'selected':''}" onclick="selMod('combined')"><div class="mc-check">✓</div><div class="mc-icon">🔄</div><div class="mc-title">${L==='en'?'Combined':'Kombiniert'}</div><div class="mc-desc">${L==='en'?'Security + QM + IT-Governance.':'Security + QM + IT-Governance.'}</div><div class="mc-norms"><span class="nb comb">${L==='en'?'All':'Alle'}</span></div></div>
-    <div class="mcard rel ${S.module==='religion'?'selected':''}" onclick="selMod('religion')"><div class="mc-check">✓</div><div class="mc-icon">🕍</div><div class="mc-title">${L==='en'?'Religious Institutions':'Religionsgemeinschaften'}</div><div class="mc-desc">${L==='en'?'Security for religious institutions & their vicinity.':'Sicherheit für religiöse Einrichtungen im Umfeld.'}</div><div class="mc-norms"><span class="nb sec">ISO 31000</span><span class="nb sec">NIS2</span><span class="nb sec">KRITIS</span></div></div>
   </div>
   <div class="nav-row"><div></div><button class="btn-p" onclick="next()" ${!S.module?'disabled':''}>${L==='en'?'Continue →':'Weiter →'}</button></div></div>`;
 }
@@ -1340,7 +1339,7 @@ function adminDoLogin() {
   const h = btoa(unescape(encodeURIComponent(u+'\x00'+p)));
   if (_ADM_USERS.includes(h)) {
     _admAttempts=0;
-    sessionStorage.setItem('ssa_adm',_ADM_AH);
+    sessionStorage.setItem('ssa_adm',h);
     document.getElementById('admLoginOverlay').classList.remove('open');
     S.mode='admin';
     document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
