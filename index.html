@@ -95,7 +95,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .mcard:hover{border-color:var(--border2);transform:translateY(-2px)}
 .mcard.selected{border-color:var(--accent);background:rgba(20,184,166,.04)}
 .mcard.selected::before{opacity:1}
-.mcard.selected.sec::before{background:var(--accent)}.mcard.selected.qm::before{background:var(--orange)}.mcard.selected.itg::before{background:var(--emerald)}.mcard.selected.combo::before{background:linear-gradient(90deg,var(--accent),var(--emerald),var(--orange))}
+.mcard.selected.sec::before{background:var(--accent)}.mcard.selected.qm::before{background:var(--orange)}.mcard.selected.itg::before{background:var(--emerald)}.mcard.selected.combo::before{background:linear-gradient(90deg,var(--accent),var(--emerald),var(--orange))}.mcard.selected.rel::before{background:var(--purple)}
 .mcard .mc-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:transparent;transition:.2s}
 .mcard.selected .mc-check{border-color:var(--ok);color:var(--ok);background:var(--okDim)}
 .mc-icon{font-size:1.4rem;margin-bottom:6px}.mc-title{font-family:var(--fh);font-size:.88rem;font-weight:700;color:var(--text2);margin-bottom:2px}.mc-desc{font-size:.68rem;color:var(--muted);line-height:1.4}.mc-norms{margin-top:6px;display:flex;flex-wrap:wrap;gap:2px}
@@ -764,7 +764,7 @@ function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosa
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
 load();
 
-function activeChecks(){if(!S.module)return[];if(S.module==='combined')return CK;return CK.filter(c=>c.m===S.module);}
+function activeChecks(){if(!S.module)return[];if(S.module==='combined')return CK;if(S.module==='religion')return CK.filter(c=>c.id==='religion');return CK.filter(c=>c.m===S.module);}
 function getSteps(){const lang=typeof _LANG!=='undefined'?_LANG:'de';const s=[{id:'module',l:lang==='en'?'Module':'Modul'},{id:'norms',l:lang==='en'?'Standards':'Normen'},{id:'meta',l:lang==='en'?'Object Data':'Objektdaten'}];if(S.module==='security'||S.module==='combined')s.push({id:'umfeld',l:lang==='en'?'Site Analysis':'Umfeld'});activeChecks().forEach(c=>s.push({id:c.id,l:(lang==='en'&&c.l_en)?c.l_en:c.l}));s.push({id:'maturity',l:lang==='en'?'Maturity':'Reifegrad'},{id:'report',l:lang==='en'?'Report':'Bericht'});return s;}
 function allCPs(){let a=[];CK.forEach(c=>c.items.forEach(i=>a.push({id:i.id,l:i.l,sec:c.l,m:c.m})));return a;}
 function docStatus(d){if(!d.expiry)return'gray';const now=new Date(),exp=new Date(d.expiry);if(exp<now)return'red';if(exp<=new Date(now.getTime()+30*864e5))return'yellow';return'green';}
@@ -799,28 +799,31 @@ function render(){
   if(S.mode==='audit'){const steps=getSteps();renderStepper(steps);renderProgress(steps);const st=steps[S.step];if(!st)return;if(st.id==='module')renderModule();else if(st.id==='norms')renderNorms();else if(st.id==='meta')renderMeta();else if(st.id==='umfeld')renderUmfeld();else if(st.id==='maturity')renderMaturity();else if(st.id==='report')renderReport();else{const c=CK.find(x=>x.id===st.id);if(c)renderCheck(c);}}
   else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='historie')renderHist();else if(S.mode==='admin')renderAdmin();
   const b=document.getElementById('hdrBadge');
-  if(S.mode!=='audit'){b.textContent={database:'📁 Datenbank',massnahmen:'📌 Maßnahmen',dashboard:'📊 Dashboard',historie:'🕐 Historie',admin:'⚙️ Intern'}[S.mode]||'';}
-  else if(!S.module)b.textContent='Modul wählen';
-  else b.textContent={security:'🛡️ Security',qm:'📋 QM',itgov:'🖥️ IT-Governance',combined:'🔄 Kombiniert'}[S.module]||'';
+  const bL=typeof _LANG!=='undefined'?_LANG:'de';
+  if(S.mode!=='audit'){b.textContent={database:bL==='en'?'📁 Database':'📁 Datenbank',massnahmen:bL==='en'?'📌 Measures':'📌 Maßnahmen',dashboard:'📊 Dashboard',historie:bL==='en'?'🕐 History':'🕐 Historie',admin:bL==='en'?'⚙️ Internal':'⚙️ Intern'}[S.mode]||'';}
+  else if(!S.module)b.textContent=bL==='en'?'Select Module':'Modul wählen';
+  else b.textContent={security:'🛡️ Security',qm:'📋 QM',itgov:'🖥️ IT-Governance',combined:bL==='en'?'🔄 Combined':'🔄 Kombiniert',religion:bL==='en'?'🕍 Religion':'🕍 Religion'}[S.module]||'';
 }
 function renderStepper(steps){document.getElementById('stepper').innerHTML=steps.map((s,i)=>`<div class="step"><button class="step-btn ${i===S.step?'active':''} ${i<S.step?'done':''}" onclick="goTo(${i})"><span class="step-num">${i<S.step?'✓':(i+1)}</span><span class="step-label">${s.l}</span></button><div class="step-line"></div></div>`).join('');}
 function renderProgress(steps){document.getElementById('progressFill').style.width=Math.round((S.step/Math.max(steps.length-1,1))*100)+'%';}
 
 // ═══ MODULE ═══
 function renderModule(){
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">Audit-Modul wählen</div><p class="panel-sub">4 Module verfügbar. Nutzen Sie Branchenvorlagen oder wählen Sie manuell.</p>
-  <div style="font-family:var(--fm);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">Branchenvorlagen</div>
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">${L==='en'?'Select Audit Module':'Audit-Modul wählen'}</div><p class="panel-sub">${L==='en'?'5 modules available. Use industry templates or select manually.':'5 Module verfügbar. Nutzen Sie Branchenvorlagen oder wählen Sie manuell.'}</p>
+  <div style="font-family:var(--fm);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">${L==='en'?'Industry Templates':'Branchenvorlagen'}</div>
   <div class="tpl-cards">${TEMPLATES.map(t=>`<div class="tpl-card" onclick="selMod('combined')"><div class="tpl-icon">${t.icon}</div><div class="tpl-name">${t.name}</div><div class="tpl-desc">${t.desc}</div></div>`).join('')}</div>
   <div class="section-divider"></div>
   <div class="mcards">
-    <div class="mcard sec ${S.module==='security'?'selected':''}" onclick="selMod('security')"><div class="mc-check">✓</div><div class="mc-icon">🛡️</div><div class="mc-title">Security</div><div class="mc-desc">Physische Sicherheit, Zutritt, Video, Alarm, BCM.</div><div class="mc-norms"><span class="nb sec">ISO 31000</span><span class="nb sec">27001</span><span class="nb sec">NIS2</span></div></div>
-    <div class="mcard qm ${S.module==='qm'?'selected':''}" onclick="selMod('qm')"><div class="mc-check">✓</div><div class="mc-icon">📋</div><div class="mc-title">QM</div><div class="mc-desc">Kontext, Risiken, Ressourcen, KVP.</div><div class="mc-norms"><span class="nb qm">ISO 9001</span><span class="nb qm">45001</span></div></div>
-    <div class="mcard itg ${S.module==='itgov'?'selected':''}" onclick="selMod('itgov')"><div class="mc-check">✓</div><div class="mc-icon">🖥️</div><div class="mc-title">IT-Governance</div><div class="mc-desc">COBIT 2019 – 13 Prüfbereiche, 59 Kontrollpunkte.</div><div class="mc-norms"><span class="nb it">COBIT 2019</span><span class="nb it">ISO 20000</span></div></div>
-    <div class="mcard combo ${S.module==='combined'?'selected':''}" onclick="selMod('combined')"><div class="mc-check">✓</div><div class="mc-icon">🔄</div><div class="mc-title">Kombiniert</div><div class="mc-desc">Security + QM + IT-Governance.</div><div class="mc-norms"><span class="nb comb">Alle</span></div></div>
+    <div class="mcard sec ${S.module==='security'?'selected':''}" onclick="selMod('security')"><div class="mc-check">✓</div><div class="mc-icon">🛡️</div><div class="mc-title">Security</div><div class="mc-desc">${L==='en'?'Physical security, access, CCTV, alarm, BCM.':'Physische Sicherheit, Zutritt, Video, Alarm, BCM.'}</div><div class="mc-norms"><span class="nb sec">ISO 31000</span><span class="nb sec">27001</span><span class="nb sec">NIS2</span></div></div>
+    <div class="mcard qm ${S.module==='qm'?'selected':''}" onclick="selMod('qm')"><div class="mc-check">✓</div><div class="mc-icon">📋</div><div class="mc-title">QM</div><div class="mc-desc">${L==='en'?'Context, risks, resources, continual improvement.':'Kontext, Risiken, Ressourcen, KVP.'}</div><div class="mc-norms"><span class="nb qm">ISO 9001</span><span class="nb qm">45001</span></div></div>
+    <div class="mcard itg ${S.module==='itgov'?'selected':''}" onclick="selMod('itgov')"><div class="mc-check">✓</div><div class="mc-icon">🖥️</div><div class="mc-title">IT-Governance</div><div class="mc-desc">${L==='en'?'COBIT 2019 – 13 domains, 59 control points.':'COBIT 2019 – 13 Prüfbereiche, 59 Kontrollpunkte.'}</div><div class="mc-norms"><span class="nb it">COBIT 2019</span><span class="nb it">ISO 20000</span></div></div>
+    <div class="mcard combo ${S.module==='combined'?'selected':''}" onclick="selMod('combined')"><div class="mc-check">✓</div><div class="mc-icon">🔄</div><div class="mc-title">${L==='en'?'Combined':'Kombiniert'}</div><div class="mc-desc">${L==='en'?'Security + QM + IT-Governance.':'Security + QM + IT-Governance.'}</div><div class="mc-norms"><span class="nb comb">${L==='en'?'All':'Alle'}</span></div></div>
+    <div class="mcard rel ${S.module==='religion'?'selected':''}" onclick="selMod('religion')"><div class="mc-check">✓</div><div class="mc-icon">🕍</div><div class="mc-title">${L==='en'?'Religious Institutions':'Religionsgemeinschaften'}</div><div class="mc-desc">${L==='en'?'Security for religious institutions & their vicinity.':'Sicherheit für religiöse Einrichtungen im Umfeld.'}</div><div class="mc-norms"><span class="nb sec">ISO 31000</span><span class="nb sec">NIS2</span><span class="nb sec">KRITIS</span></div></div>
   </div>
-  <div class="nav-row"><div></div><button class="btn-p" onclick="next()" ${!S.module?'disabled':''}>Weiter →</button></div></div>`;
+  <div class="nav-row"><div></div><button class="btn-p" onclick="next()" ${!S.module?'disabled':''}>${L==='en'?'Continue →':'Weiter →'}</button></div></div>`;
 }
-function selMod(m){S.module=m;const mf={security:'security',qm:'qm',itgov:'itgov',combined:null};S.norms=m==='combined'?Object.keys(NORMS):Object.keys(NORMS).filter(n=>NORMS[n].m===m);render();save();}
+function selMod(m){S.module=m;if(m==='combined')S.norms=Object.keys(NORMS);else if(m==='religion')S.norms=['ISO 31000','KRITIS-DachG','NIS2'];else S.norms=Object.keys(NORMS).filter(n=>NORMS[n].m===m);render();save();}
 
 // ═══ NORMS ═══
 function renderNorms(){
@@ -977,25 +980,32 @@ async function startUmfeldanalyse(){
 
 // ═══ CHECK ═══
 function renderCheck(ck){
+  const chkL=typeof _LANG!=='undefined'?_LANG:'de';
+  const FREQ_LABEL_EN={J:'Annually',Q:'Quarterly',M:'Monthly',O:'Ongoing'};
   const items=ck.items.map(it=>{
     const f=S.findings[it.id]||{},s=f.status||'',mc=modCls(it.m),ml=modLabel(it.m);
+    const itLabel=(chkL==='en'&&it.l_en)?it.l_en:it.l;
+    const itDesc=(chkL==='en'&&it.d_en)?it.d_en:it.d;
     const ld=S.docs.filter(d=>d.checkpoints?.includes(it.id));
-    let dh=ld.length?ld.map(d=>`<div class="ci-doc"><span class="ci-dot ${docStatus(d)}"></span><a href="#" onclick="go('database');return false">${esc(d.name)}</a></div>`).join(''):`<div class="ci-doc"><span class="ci-dot gray"></span><span style="color:var(--soft)">Kein Dokument</span></div>`;
+    let dh=ld.length?ld.map(d=>`<div class="ci-doc"><span class="ci-dot ${docStatus(d)}"></span><a href="#" onclick="go('database');return false">${esc(d.name)}</a></div>`).join(''):`<div class="ci-doc"><span class="ci-dot gray"></span><span style="color:var(--soft)">${chkL==='en'?'No document':'Kein Dokument'}</span></div>`;
     // COBIT extras
     let extras='';
     if(it.m==='itgov'){
       extras=`<div class="ci-extras">`;
       extras+=`<span class="nb it" style="font-size:.44rem">COBIT ${it.n}</span>`;
       if(it.iso20k)extras+=`<span class="nb comb" style="font-size:.44rem">ISO 20000: ${it.iso20k}</span>`;
-      if(it.f)extras+=`<span class="freq-badge">${FREQ_LABEL[it.f]||it.f}</span>`;
+      if(it.f)extras+=`<span class="freq-badge">${(chkL==='en'?(FREQ_LABEL_EN[it.f]||it.f):(FREQ_LABEL[it.f]||it.f))}</span>`;
       extras+=`</div>`;
-      if(it.rd)extras+=`<div class="ci-req-docs">📎 Geforderte Nachweise: ${it.rd}</div>`;
+      if(it.rd)extras+=`<div class="ci-req-docs">📎 ${chkL==='en'?'Required evidence:':'Geforderte Nachweise:'} ${it.rd}</div>`;
     }
-    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${it.l} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${it.d}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button></div></div><div class="ci-note ${s&&s!=='ok'&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="Notiz..." value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div></div>`;
+    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${itLabel} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${itDesc}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button></div></div><div class="ci-note ${s&&s!=='ok'&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="${chkL==='en'?'Note...':'Notiz...'}" value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div></div>`;
   }).join('');
   const done=ck.items.filter(i=>S.findings[i.id]?.status).length;
   const nb=ck.norms.map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}">${n}</span>`).join('');
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div>${nb}</div><div class="panel-title">${ck.i} ${ck.l}</div><p class="panel-sub">${ck.s} <strong style="color:var(--accent)">${done}/${ck.items.length}</strong></p>${items}<div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">Weiter →</button></div></div>`;
+  const ckL=typeof _LANG!=='undefined'?_LANG:'de';
+  const ckTitle=(ckL==='en'&&ck.l_en)?ck.l_en:ck.l;
+  const ckSub=(ckL==='en'&&ck.s_en)?ck.s_en:ck.s;
+  document.getElementById('mainContent').innerHTML=`<div class="panel"><div>${nb}</div><div class="panel-title">${ck.i} ${ckTitle}</div><p class="panel-sub">${ckSub} <strong style="color:var(--accent)">${done}/${ck.items.length}</strong></p>${items}<div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${ckL==='en'?'Continue →':'Weiter →'}</button></div></div>`;
 }
 function setS(id,s){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].status=s;const ci=document.getElementById('ci_'+id);if(ci){ci.className='ci s-'+s;ci.querySelectorAll('.cb').forEach(b=>b.classList.toggle('active',b.classList.contains(s)));const n=document.getElementById('note_'+id);if(n)n.classList.toggle('show',s==='mangel'||s==='kritisch');}save();}
 function setN(id,v){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].note=v;save();}
@@ -1097,7 +1107,7 @@ function renderReport(){
   let rl,rc;if(k.length>=5){rl='Kritisch';rc='kritisch';}else if(k.length>=2||m.length>=6){rl='Hoch';rc='hoch';}else if(k.length>=1||m.length>=3){rl='Mittel';rc='mittel';}else{rl='Gering';rc='gering';}
   const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
   const avgMat=ac.length?ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length:0;
-  const modN={security:'Security',qm:'QM',itgov:'IT-Governance',combined:'Kombiniertes'}[S.module]||'';
+  const modN={security:'Security',qm:'QM',itgov:'IT-Governance',combined:L==='en'?'Combined':'Kombiniertes',religion:L==='en'?'Religious Institutions':'Religionsgemeinschaften'}[S.module]||'';
   const fr=(f,p)=>`<div class="finding ${p}"><div class="finding-icon">${f.icon}</div><div class="f-body"><div class="f-label">${f.l} <span class="mi ${modCls(f.m)}">${modLabel(f.m)}</span>${f.m==='itgov'?` <span class="nb it" style="font-size:.42rem;margin:0">COBIT ${f.n}</span>`:''}</div><div class="f-section">${f.sec}${f.m!=='itgov'?' · '+f.n:''}</div>${f.note?`<div class="f-note">"${esc(f.note)}"</div>`:''}</div><div class="f-cost"><div class="f-cost-val">€ ${f.c[p]}</div><div class="f-cost-lbl">Schätzung</div></div></div>`;
   if(S.reportView==='konzept'){renderKonzept();return;}
   const L=typeof _LANG!=='undefined'?_LANG:'de';
