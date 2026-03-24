@@ -1,0 +1,62 @@
+name: Pull Request Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    name: Auto-label by changed files
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Label PR based on changes
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+        continue-on-error: true
+
+  welcome:
+    runs-on: ubuntu-latest
+    name: First-time contributor welcome
+    if: github.event.action == 'opened'
+
+    steps:
+      - name: Welcome new contributors
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: |
+            Thanks for opening this pull request! 🎉
+
+            **Checklist before merge:**
+            - [ ] `index.html` validates without errors
+            - [ ] No emojis added to UI (enterprise style guide)
+            - [ ] Tested in a modern browser (Chrome/Firefox/Safari)
+            - [ ] DE and EN language variants checked
+
+  size-gate:
+    runs-on: ubuntu-latest
+    name: Enforce size budget
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check total repo size
+        run: |
+          TOTAL=$(du -sb . --exclude=.git | cut -f1)
+          TOTAL_KB=$((TOTAL / 1024))
+          echo "Repo size (excl. .git): ${TOTAL_KB} KB"
+          if [ $TOTAL -gt 10485760 ]; then
+            echo "::error::Repo exceeds 10 MB budget (${TOTAL_KB} KB)"
+            exit 1
+          fi

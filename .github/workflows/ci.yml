@@ -1,0 +1,80 @@
+name: CI — Validate & Quality Check
+
+on:
+  push:
+    branches: [main, 'claude/**', 'feature/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: HTML Validation & Size Check
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+
+      - name: Validate HTML
+        run: |
+          htmlhint index.html --config .htmlhintrc 2>/dev/null || \
+          htmlhint index.html || true
+
+      - name: Check file size
+        run: |
+          SIZE=$(wc -c < index.html)
+          SIZE_KB=$((SIZE / 1024))
+          echo "index.html size: ${SIZE_KB} KB (${SIZE} bytes)"
+          if [ $SIZE -gt 5242880 ]; then
+            echo "::error::index.html exceeds 5 MB limit (${SIZE_KB} KB)"
+            exit 1
+          fi
+          echo "::notice::File size OK: ${SIZE_KB} KB"
+
+      - name: Check for console errors in JS
+        run: |
+          # Warn on leftover debug statements
+          if grep -n 'console\.log' index.html; then
+            echo "::warning::console.log statements found in index.html"
+          fi
+
+      - name: Lint check — no TODO left in prod
+        run: |
+          if grep -in 'TODO\|FIXME\|HACK\|XXX' index.html; then
+            echo "::warning::Unresolved TODO/FIXME markers found"
+          fi
+
+  size-report:
+    runs-on: ubuntu-latest
+    name: Bundle Size Report
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Checkout base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Compare sizes
+        run: |
+          PR_SIZE=$(wc -c < index.html)
+          BASE_SIZE=$(wc -c < base/index.html)
+          DIFF=$((PR_SIZE - BASE_SIZE))
+          PR_KB=$((PR_SIZE / 1024))
+          BASE_KB=$((BASE_SIZE / 1024))
+          echo "Base: ${BASE_KB} KB | PR: ${PR_KB} KB | Delta: ${DIFF} bytes"
+          if [ $DIFF -gt 51200 ]; then
+            echo "::warning::index.html grew by more than 50 KB in this PR"
+          fi
