@@ -801,7 +801,19 @@ const TEMPLATES=[
 ];
 
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
-meta:{objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',eingaenge:'',einfahrten:'',stockwerke:'',mitarbeiter:'',flaeche:'',parkplaetze:'',kameras:''},
+meta:{
+  objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',
+  eingaenge:'',einfahrten:'',stockwerke:'',mitarbeiter:'',flaeche:'',parkplaetze:'',kameras:'',
+  gebaeudetype:'',baujahr:'',anzahlGebaeude:'1',aussengelaende:'',
+  zugangskontrolle:'',alarmanlage:'',sicherheitsdienst:'',bewachung24h:'',
+  schluessel:'',aussenbeleuchtung:'',einzaeunung:'',serverraumgesichert:'',
+  einbrueche:'',diebstahl:'',sabotage:'',brandschaden:'',
+  itVorfaelle:'',versicherungsschaden:'',personaldiebstahl:'',
+  vorfaelle12m:'',letzteRisikoanalyse:'',vorfaelleFreitext:'',
+  schutzbedarf:'',oeffentlichZugaenglich:'',gefaehrlicheStoffe:'',
+  kritischeInfrastruktur:'',datenschutz:'',kassenbereich:'',
+  nachtnutzung:'',besucherverkehr:'',lage:''
+},
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
 umfeld:{done:false},reportView:'begehung',
 kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva',kleinunternehmer:false}};
@@ -885,35 +897,144 @@ function normGroup(label,mod,chipCls){
 }
 function togNorm(k){const i=S.norms.indexOf(k);if(i>-1)S.norms.splice(i,1);else S.norms.push(k);render();save();}
 
+// ═══ OBJEKT-RISIKOSCORE ═══
+function calcObjectRisk(){
+  const m=S.meta;let score=0;
+  // Vorfallhistorie — höchste Gewichtung
+  if(m.einbrueche==='ja')score+=20;else if(m.einbrueche==='unbekannt')score+=8;
+  if(m.sabotage==='ja')score+=20;else if(m.sabotage==='unbekannt')score+=8;
+  if(m.personaldiebstahl==='ja')score+=15;else if(m.personaldiebstahl==='unbekannt')score+=6;
+  if(m.diebstahl==='ja')score+=15;else if(m.diebstahl==='unbekannt')score+=5;
+  if(m.brandschaden==='ja')score+=12;else if(m.brandschaden==='unbekannt')score+=4;
+  if(m.itVorfaelle==='ja')score+=12;else if(m.itVorfaelle==='unbekannt')score+=4;
+  if(m.versicherungsschaden==='ja')score+=8;
+  const v12=parseInt(m.vorfaelle12m)||0;if(v12>=5)score+=15;else if(v12>=2)score+=8;else if(v12>=1)score+=4;
+  // Risikoprofil
+  if(m.schutzbedarf==='sehr hoch')score+=20;else if(m.schutzbedarf==='erhöht')score+=10;
+  if(m.kritischeInfrastruktur==='ja')score+=15;
+  if(m.gefaehrlicheStoffe==='ja')score+=12;
+  if(m.kassenbereich==='ja')score+=10;
+  if(m.datenschutz==='ja')score+=6;
+  if(m.oeffentlichZugaenglich==='ja')score+=6;
+  if(m.nachtnutzung==='ja')score+=5;
+  if(m.lage==='problematisch')score+=15;else if(m.lage==='mittel')score+=6;
+  if(m.besucherverkehr==='sehr hoch')score+=8;else if(m.besucherverkehr==='hoch')score+=5;
+  // Schutzmaßnahmen — Abzug
+  if(m.zugangskontrolle==='vollständig')score-=12;else if(m.zugangskontrolle==='teilweise')score-=5;
+  if(m.alarmanlage==='ja')score-=10;
+  if(m.sicherheitsdienst==='ja')score-=12;
+  if(m.bewachung24h==='ja')score-=10;
+  if(m.einzaeunung==='ja')score-=6;
+  if(m.aussenbeleuchtung==='ja')score-=5;
+  if(m.schluessel==='ja')score-=5;
+  if(m.serverraumgesichert==='ja')score-=4;
+  score=Math.max(0,Math.min(100,score));
+  let level,cls;
+  if(score>=70){level='Kritisch';cls='danger';}else if(score>=45){level='Hoch';cls='orange';}else if(score>=20){level='Mittel';cls='warn';}else{level='Gering';cls='ok';}
+  return{score,level,cls};
+}
+
 // ═══ META ═══
 function renderMeta(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const deOpts=['','Erstaudit','Überwachungsaudit','Re-Zertifizierung','KRITIS','NIS2','Internes Audit'];
   const enOpts=['','Initial Audit','Surveillance Audit','Re-Certification','KRITIS','NIS2','Internal Audit'];
   const opts=L==='en'?enOpts:deOpts;
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">${L==='en'?'Object Data':'Objektdaten'}</div><p class="panel-sub">${L==='en'?'Master data and building parameters for the report and cost estimate.':'Stammdaten und Gebäudeparameter für Bericht und Kalkulation.'}</p>
-  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px;margin-top:4px">${L==='en'?'General':'Allgemein'}</div>
+  const risk=calcObjectRisk();
+  const yn=(key,label,extra='')=>{
+    const v=S.meta[key]||'';
+    const opts3=[['','– '],['ja',L==='en'?'Yes':'Ja'],['nein',L==='en'?'No':'Nein'],['unbekannt',L==='en'?'Unknown':'Unbekannt']];
+    return`<div class="fg"><label>${label}</label><select onchange="S.meta.${key}=this.value;save();document.getElementById('obj-risk-badge').textContent='${L==='en'?'Risk':'Risiko'}: '+calcObjectRisk().level;document.getElementById('obj-risk-badge').style.color='var(--'+calcObjectRisk().cls+')';">${opts3.map(([v2,l2])=>`<option value="${v2}" ${v===v2?'selected':''}>${l2}</option>`).join('')}</select>${extra}</div>`;
+  };
+  const ynOpts=(key,label,optsArr)=>{
+    const v=S.meta[key]||'';
+    return`<div class="fg"><label>${label}</label><select onchange="S.meta.${key}=this.value;save();">${optsArr.map(([v2,l2])=>`<option value="${v2}" ${v===v2?'selected':''}>${l2}</option>`).join('')}</select></div>`;
+  };
+  document.getElementById('mainContent').innerHTML=`<div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+    <div><div class="panel-title">${L==='en'?'Object Data & Risk Profile':'Objektdaten & Risikoprofil'}</div>
+    <p class="panel-sub" style="margin-bottom:0">${L==='en'?'Complete all sections for accurate risk scoring, report, and cost estimate.':'Alle Abschnitte ausfüllen für präzise Risikowertung, Bericht und Kalkulation.'}</p></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px;text-align:center;min-width:110px">
+      <div style="font-family:var(--fm);font-size:1.4rem;font-weight:800;color:var(--${risk.cls})">${risk.score}</div>
+      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-bottom:2px">${L==='en'?'Risk Score':'Risiko-Score'}</div>
+      <div id="obj-risk-badge" style="font-family:var(--fm);font-size:.56rem;font-weight:700;color:var(--${risk.cls})">${risk.level}</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">${L==='en'?'1 · Audit Data':'1 · Auditdaten'}</div>
   <div class="mg" style="margin-bottom:14px">
-    <div class="fg"><label>${L==='en'?'Object':'Objekt'}</label><input value="${esc(S.meta.objekt)}" oninput="S.meta.objekt=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Client':'Auftraggeber'}</label><input value="${esc(S.meta.auftraggeber)}" oninput="S.meta.auftraggeber=this.value;save()"></div>
-    <div class="fg fg-full"><label>${L==='en'?'Address':'Adresse'}</label><input value="${esc(S.meta.adresse)}" oninput="S.meta.adresse=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Date':'Datum'}</label><input type="date" value="${esc(S.meta.datum)}" oninput="S.meta.datum=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Object / Site Name':'Objekt / Standortname'}</label><input value="${esc(S.meta.objekt)}" oninput="S.meta.objekt=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Client / Operator':'Auftraggeber / Betreiber'}</label><input value="${esc(S.meta.auftraggeber)}" oninput="S.meta.auftraggeber=this.value;save()"></div>
+    <div class="fg fg-full"><label>${L==='en'?'Full Address':'Vollständige Adresse'}</label><input value="${esc(S.meta.adresse)}" oninput="S.meta.adresse=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Audit Date':'Auditdatum'}</label><input type="date" value="${esc(S.meta.datum)}" oninput="S.meta.datum=this.value;save()"></div>
     <div class="fg"><label>Auditor</label><input value="${esc(S.meta.pruefer)}" oninput="S.meta.pruefer=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Occasion':'Anlass'}</label><select onchange="S.meta.anlass=this.value;save()">${opts.map(o=>`<option ${S.meta.anlass===o?'selected':''}>${o||(L==='en'?'Please select...':'Bitte wählen...')}</option>`).join('')}</select></div>
+    <div class="fg"><label>${L==='en'?'Occasion / Audit Type':'Anlass / Auditart'}</label><select onchange="S.meta.anlass=this.value;save()">${opts.map(o=>`<option ${S.meta.anlass===o?'selected':''}>${o||(L==='en'?'Please select…':'Bitte wählen…')}</option>`).join('')}</select></div>
   </div>
+
   <div class="section-divider"></div>
-  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">${L==='en'?'Building Parameters (for cost estimate)':'Gebäudeparameter (für Kalkulation)'}</div>
+  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">${L==='en'?'2 · Building & Structure':'2 · Gebäude & Struktur'}</div>
   <div class="mg" style="margin-bottom:14px">
-    <div class="fg"><label>${L==='en'?'Entrances (doors/main access)':'Eingänge (Türen/Hauptzugänge)'}</label><input type="number" min="0" placeholder="z.B. 3" value="${esc(S.meta.eingaenge)}" oninput="S.meta.eingaenge=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Vehicle Gates / Driveways':'Einfahrten / Tore'}</label><input type="number" min="0" placeholder="z.B. 2" value="${esc(S.meta.einfahrten)}" oninput="S.meta.einfahrten=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Floors (incl. basement)':'Stockwerke (inkl. UG)'}</label><input type="number" min="0" placeholder="z.B. 4" value="${esc(S.meta.stockwerke)}" oninput="S.meta.stockwerke=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Employees / Persons':'Mitarbeiter / Personen'}</label><input type="number" min="0" placeholder="z.B. 50" value="${esc(S.meta.mitarbeiter)}" oninput="S.meta.mitarbeiter=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Floor Area (m²)':'Grundfläche (m²)'}</label><input type="number" min="0" placeholder="z.B. 1200" value="${esc(S.meta.flaeche)}" oninput="S.meta.flaeche=this.value;save()"></div>
+    ${ynOpts('gebaeudetype',L==='en'?'Building Type':'Gebäudetyp',[['','– '],['Bürogebäude',L==='en'?'Office Building':'Bürogebäude'],['Produktionshalle',L==='en'?'Production Hall':'Produktionshalle'],['Lager / Logistik',L==='en'?'Warehouse / Logistics':'Lager / Logistik'],['Einzelhandel',L==='en'?'Retail':'Einzelhandel'],['Behörde / Verwaltung',L==='en'?'Authority / Administration':'Behörde / Verwaltung'],['Religiöse Einrichtung',L==='en'?'Religious Institution':'Religiöse Einrichtung'],['Krankenhaus / Klinik',L==='en'?'Hospital / Clinic':'Krankenhaus / Klinik'],['Schule / Bildung',L==='en'?'School / Education':'Schule / Bildung'],['Rechenzentrum / IT',L==='en'?'Data Center / IT':'Rechenzentrum / IT'],['Gemischte Nutzung',L==='en'?'Mixed Use':'Gemischte Nutzung'],['Sonstiges',L==='en'?'Other':'Sonstiges']])}
+    <div class="fg"><label>${L==='en'?'Year of Construction':'Baujahr'}</label><input type="number" min="1800" max="2025" placeholder="z.B. 1998" value="${esc(S.meta.baujahr)}" oninput="S.meta.baujahr=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Number of Buildings on Site':'Anzahl Gebäude auf Gelände'}</label><input type="number" min="1" placeholder="1" value="${esc(S.meta.anzahlGebaeude||'1')}" oninput="S.meta.anzahlGebaeude=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Floors (incl. basement)':'Stockwerke (inkl. UG)'}</label><input type="number" min="0" placeholder="z.B. 3" value="${esc(S.meta.stockwerke)}" oninput="S.meta.stockwerke=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Floor Area (m²)':'Grundfläche gesamt (m²)'}</label><input type="number" min="0" placeholder="z.B. 1200" value="${esc(S.meta.flaeche)}" oninput="S.meta.flaeche=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Employees / Regular Persons':'Mitarbeiter / Regelpersonen'}</label><input type="number" min="0" placeholder="z.B. 50" value="${esc(S.meta.mitarbeiter)}" oninput="S.meta.mitarbeiter=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Entrances (pedestrian)':'Eingänge (Personen)'}</label><input type="number" min="0" placeholder="z.B. 3" value="${esc(S.meta.eingaenge)}" oninput="S.meta.eingaenge=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Vehicle Gates / Driveways':'Einfahrten / Tore (Fahrzeuge)'}</label><input type="number" min="0" placeholder="z.B. 2" value="${esc(S.meta.einfahrten)}" oninput="S.meta.einfahrten=this.value;save()"></div>
     <div class="fg"><label>${L==='en'?'Parking Spaces':'Parkplätze'}</label><input type="number" min="0" placeholder="z.B. 40" value="${esc(S.meta.parkplaetze)}" oninput="S.meta.parkplaetze=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Existing Cameras':'Bestehende Kameras'}</label><input type="number" min="0" placeholder="z.B. 8" value="${esc(S.meta.kameras)}" oninput="S.meta.kameras=this.value;save()"></div>
+    ${ynOpts('aussengelaende',L==='en'?'Outdoor / Perimeter Area':'Außengelände / Freigelände',[['','– '],['ja',L==='en'?'Yes':'Ja'],['nein',L==='en'?'No':'Nein']])}
   </div>
+
   <div class="section-divider"></div>
-  <div class="fg fg-full" style="margin-bottom:0"><label>${L==='en'?'Notes':'Notizen'}</label><textarea oninput="S.meta.notizen=this.value;save()">${esc(S.meta.notizen)}</textarea></div>
+  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">${L==='en'?'3 · Security Infrastructure (existing)':'3 · Vorhandene Sicherheitsinfrastruktur'}</div>
+  <div class="mg" style="margin-bottom:14px">
+    ${ynOpts('zugangskontrolle',L==='en'?'Access Control System':'Zugangskontrollsystem',[['','– '],['vollständig',L==='en'?'Fully implemented':'Vollständig vorhanden'],['teilweise',L==='en'?'Partially implemented':'Teilweise vorhanden'],['nein',L==='en'?'Not present':'Nicht vorhanden'],['veraltet',L==='en'?'Outdated/deficient':'Veraltet / mangelhaft']])}
+    ${ynOpts('alarmanlage',L==='en'?'Intrusion Alarm System':'Einbruchmeldeanlage (EMA)',[['','– '],['ja',L==='en'?'Present & functional':'Vorhanden & funktionsfähig'],['teilweise',L==='en'?'Partial / not all zones':'Nur teilweise / nicht alle Bereiche'],['nein',L==='en'?'Not present':'Nicht vorhanden'],['defekt',L==='en'?'Defective':'Defekt / außer Betrieb']])}
+    <div class="fg"><label>${L==='en'?'Existing CCTV Cameras':'Vorhandene Kameras (Anzahl)'}</label><input type="number" min="0" placeholder="z.B. 8" value="${esc(S.meta.kameras)}" oninput="S.meta.kameras=this.value;save()"></div>
+    ${ynOpts('sicherheitsdienst',L==='en'?'Security Service':'Sicherheitsdienst / Wachdienst',[['','– '],['ja',L==='en'?'Yes, regular':'Ja, regelmäßig'],['nein',L==='en'?'No':'Nein'],['geplant',L==='en'?'Planned':'Geplant']])}
+    ${ynOpts('bewachung24h',L==='en'?'24h Guarding':'24h / 7d Bewachung vor Ort',[['','– '],['ja','Ja'],['nein','Nein'],['teilweise',L==='en'?'Partial (day only)':'Teilweise (nur Tageszeit)']])}
+    ${ynOpts('schluessel',L==='en'?'Key Management System':'Schlüsselmanagement geregelt',[['','– '],['ja',L==='en'?'Yes, documented':'Ja, dokumentiert'],['nein',L==='en'?'No / informal':'Nein / informell'],['teilweise',L==='en'?'Partial':'Teilweise']])}
+    ${ynOpts('einzaeunung',L==='en'?'Perimeter Fence / Enclosure':'Einzäunung / Perimeterschutz',[['','– '],['ja',L==='en'?'Complete perimeter':'Vollständig eingezäunt'],['teilweise',L==='en'?'Partial':'Teilweise'],['nein','Nein']])}
+    ${ynOpts('aussenbeleuchtung',L==='en'?'Outdoor / Perimeter Lighting':'Außenbeleuchtung Gelände',[['','– '],['ja',L==='en'?'Complete':'Vollständig'],['teilweise',L==='en'?'Partial':'Teilweise'],['nein','Nein']])}
+    ${ynOpts('serverraumgesichert',L==='en'?'Server Room / IT Room secured':'Serverraum / IT-Raum gesichert',[['','– '],['ja',L==='en'?'Yes, locked & access controlled':'Ja, gesperrt & zugangskontrolliert'],['nein',L==='en'?'No / accessible':'Nein / frei zugänglich'],['nicht vorhanden',L==='en'?'N/A – no server room':'Nicht vorhanden']])}
+  </div>
+
+  <div class="section-divider"></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--danger)">${L==='en'?'4 · Incident History & Damage Record':'4 · Vorfallhistorie & Schadensdokumentation'}</div>
+    <div style="font-family:var(--fm);font-size:.44rem;padding:2px 7px;border-radius:999px;background:var(--dangerDim);color:var(--danger);border:1px solid rgba(239,68,68,.2)">${L==='en'?'HIGH IMPACT ON RISK SCORE':'HOHER EINFLUSS AUF RISIKO-SCORE'}</div>
+  </div>
+  <div class="mg" style="margin-bottom:14px">
+    ${yn('einbrueche',L==='en'?'Break-ins known / documented':'Einbrüche bekannt / dokumentiert')}
+    ${yn('diebstahl',L==='en'?'Theft incidents (external) known':'Diebstähle (extern) bekannt')}
+    ${yn('personaldiebstahl',L==='en'?'Internal theft / insider incidents known':'Personaldiebstahl / interne Vorfälle bekannt')}
+    ${yn('sabotage',L==='en'?'Sabotage / vandalism known':'Sabotage / Vandalismus bekannt')}
+    ${yn('brandschaden',L==='en'?'Fire damage in the past':'Brandschäden in der Vergangenheit')}
+    ${yn('itVorfaelle',L==='en'?'IT security incidents known (hack, ransomware…)':'IT-Sicherheitsvorfälle bekannt (Hack, Ransomware…)')}
+    ${yn('versicherungsschaden',L==='en'?'Insurance claim filed in last 3 years':'Versicherungsschaden gemeldet (letzte 3 Jahre)')}
+    <div class="fg"><label>${L==='en'?'No. of security incidents last 12 months':'Anzahl Sicherheitsvorfälle letzte 12 Monate'}</label><input type="number" min="0" placeholder="0" value="${esc(S.meta.vorfaelle12m)}" oninput="S.meta.vorfaelle12m=this.value;save()"></div>
+    <div class="fg"><label>${L==='en'?'Last risk analysis performed':'Letzte Risikoanalyse durchgeführt'}</label><input type="date" value="${esc(S.meta.letzteRisikoanalyse)}" oninput="S.meta.letzteRisikoanalyse=this.value;save()"></div>
+    <div class="fg fg-full"><label>${L==='en'?'Description of known incidents / damages (free text)':'Beschreibung bekannter Vorfälle / Schäden (Freitext)'}</label><textarea style="min-height:70px" oninput="S.meta.vorfaelleFreitext=this.value;save()">${esc(S.meta.vorfaelleFreitext)}</textarea></div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">${L==='en'?'5 · Risk Profile & Classification':'5 · Risikoprofil & Einstufung'}</div>
+  <div class="mg" style="margin-bottom:14px">
+    ${ynOpts('schutzbedarf',L==='en'?'Protection Requirement Level (BSI)':'Schutzbedarf (BSI-Einstufung)',[['','– '],['normal','Normal'],['erhöht',L==='en'?'Elevated':'Erhöht'],['sehr hoch',L==='en'?'Very High / Critical':'Sehr hoch / Kritisch']])}
+    ${ynOpts('lage',L==='en'?'Location / Neighbourhood':'Lage / Umfeld (Sicherheit)',[['','– '],['gut',L==='en'?'Good / safe area':'Gut / sicheres Umfeld'],['mittel',L==='en'?'Average':'Mittel'],['problematisch',L==='en'?'Problematic / high-crime':'Problematisch / erhöhte Kriminalität']])}
+    ${ynOpts('besucherverkehr',L==='en'?'Visitor / Public Traffic':'Besucherverkehr / Publikumsverkehr',[['','– '],['gering',L==='en'?'Low (internal only)':'Gering (nur intern)'],['mittel',L==='en'?'Moderate':'Mittel'],['hoch',L==='en'?'High':'Hoch'],['sehr hoch',L==='en'?'Very high (public building)':'Sehr hoch (öffentliche Einrichtung)']])}
+    ${yn('oeffentlichZugaenglich',L==='en'?'Publicly accessible (open to anyone)':'Öffentlich zugänglich (jedermann)')}
+    ${yn('nachtnutzung',L==='en'?'Night / weekend operations':'Nacht- / Wochenendnutzung')}
+    ${yn('kritischeInfrastruktur',L==='en'?'Critical infrastructure (KRITIS)':'Kritische Infrastruktur (KRITIS-relevant)')}
+    ${yn('gefaehrlicheStoffe',L==='en'?'Hazardous materials on site':'Gefährliche Stoffe / Gefahrgut vor Ort')}
+    ${yn('kassenbereich',L==='en'?'Cash handling / valuables storage':'Kassenbereich / Wertaufbewahrung')}
+    ${yn('datenschutz',L==='en'?'Personal data / GDPR sensitive data processed':'Personenbezogene / DSGVO-relevante Daten')}
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="fg fg-full" style="margin-bottom:0"><label>${L==='en'?'General Notes':'Allgemeine Notizen'}</label><textarea oninput="S.meta.notizen=this.value;save()">${esc(S.meta.notizen)}</textarea></div>
   <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${L==='en'?'Start Inspection →':'Begehung starten →'}</button></div></div>`;
 }
 
@@ -1169,24 +1290,154 @@ function renderMA(){
 // ═══ DASHBOARD ═══
 function renderDash(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  const ac=activeChecks();let kC=0,mC=0,okC=0,naC=0,nc=0;
+  // destroy any existing Chart.js instances to prevent "canvas already has chart" errors
+  if(window._dashCharts){window._dashCharts.forEach(c=>{try{c.destroy();}catch(e){}});window._dashCharts=[];}
+  const ac=activeChecks();
+  let kC=0,mC=0,okC=0,naC=0,nc=0;
   ac.forEach(ch=>ch.items.forEach(it=>{const s=S.findings[it.id]?.status;if(s==='ok')okC++;else if(s==='mangel')mC++;else if(s==='kritisch')kC++;else if(s==='na')naC++;else nc++;}));
-  const assessed=kC+mC+okC,comp=assessed?Math.round(okC/assessed*100):0;
-  const avgMat=ac.length?ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length:0;
+  const total=kC+mC+okC+naC+nc;
+  const assessed=kC+mC+okC;
+  const comp=assessed?Math.round(okC/assessed*100):0;
+  const avgMat=ac.length?Math.round(ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length*10)/10:0;
   const maO=S.massnahmen.filter(m=>m.status!=='erledigt').length;
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="panel-title" style="margin-bottom:0">Dashboard</div><button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">PDF</button></div><p class="panel-sub">${L==='en'?'Overview.':'Gesamtübersicht.'}</p>
-  <div class="stats" style="grid-template-columns:repeat(6,1fr)"><div class="stat purple"><div class="stat-val">${comp}%</div><div class="stat-lbl">Compliance</div></div><div class="stat danger"><div class="stat-val">${kC}</div><div class="stat-lbl">${L==='en'?'Critical':'Kritisch'}</div></div><div class="stat warn"><div class="stat-val">${mC}</div><div class="stat-lbl">${L==='en'?'Deficiencies':'Mängel'}</div></div><div class="stat ok"><div class="stat-val">${okC}</div><div class="stat-lbl">OK</div></div><div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">${L==='en'?'Maturity':'Reifegrad'}</div></div><div class="stat orange"><div class="stat-val">${maO}</div><div class="stat-lbl">${L==='en'?'Open':'Offen'}</div></div></div>
-  <div class="chart-grid"><div class="chart-box"><div class="chart-box-title">${L==='en'?'Control Point Distribution':'Prüfpunkt-Verteilung'}</div><canvas id="c1" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">${L==='en'?'Maturity by Domain':'Reifegrad pro Bereich'}</div><canvas id="c2" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">${L==='en'?'Measure Status':'Maßnahmen-Status'}</div><canvas id="c3" class="chart-canvas"></canvas></div><div class="chart-box"><div class="chart-box-title">Dokumente</div><canvas id="c4" class="chart-canvas"></canvas></div></div></div>`;
+  const risk=calcObjectRisk();
+  const riskColor={'ok':'#22c55e','warn':'#eab308','orange':'#f97316','danger':'#ef4444'}[risk.cls]||'#64748b';
+  // per-domain bar data
+  const domStats=ac.map(ck=>{
+    let ok=0,mn=0,kr=0,na=0,op=0;
+    ck.items.forEach(it=>{const s=S.findings[it.id]?.status;if(s==='ok')ok++;else if(s==='mangel')mn++;else if(s==='kritisch')kr++;else if(s==='na')na++;else op++;});
+    const tot=ok+mn+kr;const pct=tot?Math.round(ok/tot*100):0;
+    return{l:(L==='en'&&ck.l_en?ck.l_en:ck.l).substring(0,14),ok,mn,kr,na,op,pct,mat:S.maturity[ck.id]||0};
+  });
+  document.getElementById('mainContent').innerHTML=`
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div class="panel-title" style="margin-bottom:0">Dashboard</div>
+      <button class="print-btn" style="border-color:rgba(20,184,166,.3);color:var(--accent)" onclick="window.print()">PDF</button>
+    </div>
+    <p class="panel-sub">${S.meta.objekt?`<strong style="color:var(--text2)">${esc(S.meta.objekt)}</strong> · `:''} ${new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE')}</p>
+    <div class="stats" style="grid-template-columns:repeat(7,1fr)">
+      <div class="stat purple"><div class="stat-val">${comp}%</div><div class="stat-lbl">Compliance</div></div>
+      <div class="stat danger"><div class="stat-val">${kC}</div><div class="stat-lbl">${L==='en'?'Critical':'Kritisch'}</div></div>
+      <div class="stat warn"><div class="stat-val">${mC}</div><div class="stat-lbl">${L==='en'?'Deficiencies':'Mängel'}</div></div>
+      <div class="stat ok"><div class="stat-val">${okC}</div><div class="stat-lbl">OK</div></div>
+      <div class="stat total"><div class="stat-val">${nc}</div><div class="stat-lbl">${L==='en'?'Open':'Offen'}</div></div>
+      <div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">${L==='en'?'Maturity':'Reifegrad'}</div></div>
+      <div class="stat ${risk.cls}"><div class="stat-val">${risk.score}</div><div class="stat-lbl">${L==='en'?'Risk':'Risiko'}</div></div>
+    </div>
+    ${!S.module?`<div style="text-align:center;padding:30px;opacity:.5;font-size:.85rem">${L==='en'?'No audit module selected yet — start an audit first.':'Noch kein Audit-Modul gewählt — zuerst ein Audit starten.'}</div>`:`
+    <div class="chart-grid">
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Control Points':'Prüfpunkte'} (${total})</div><div style="height:185px;position:relative"><canvas id="c1"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Compliance by Domain':'Compliance pro Bereich'}</div><div style="height:185px;position:relative"><canvas id="c2"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Maturity by Domain':'Reifegrad pro Bereich'}</div><div style="height:185px;position:relative"><canvas id="c3"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Object Risk Profile':'Objekt-Risikoprofil'}</div><div style="height:185px;position:relative"><canvas id="c4"></canvas></div></div>
+    </div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr">
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Measures':'Maßnahmen'}</div><div style="height:140px;position:relative"><canvas id="c5"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Documents':'Dokumente'}</div><div style="height:140px;position:relative"><canvas id="c6"></canvas></div></div>
+    </div>`}
+  </div>`;
+  if(!S.module)return;
+  window._dashCharts=[];
   setTimeout(()=>{
-    const tc='#94a3b8',gc='rgba(30,41,59,.6)',df={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,font:{size:9,family:'DM Sans'}}}}};
-    new Chart(document.getElementById('c1'),{type:'doughnut',data:{labels:L==='en'?['OK','Deficiency','Critical','N/A','Open']:['OK','Mangel','Kritisch','N/A','Offen'],datasets:[{data:[okC,mC,kC,naC,nc],backgroundColor:['#22c55e','#eab308','#ef4444','#64748b','#334155'],borderWidth:0}]},options:{...df,cutout:'65%'}});
-    const ml=ac.map(c=>c.l.substring(0,10)),md=ac.map(c=>S.maturity[c.id]||0);
-    new Chart(document.getElementById('c2'),{type:'radar',data:{labels:ml,datasets:[{label:'Level',data:md,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.12)',borderWidth:2,pointRadius:2,pointBackgroundColor:'#a78bfa'}]},options:{...df,scales:{r:{min:0,max:5,ticks:{stepSize:1,color:tc,backdropColor:'transparent',font:{size:7}},grid:{color:gc},pointLabels:{color:tc,font:{size:7}}}}}});
-    const mO=S.massnahmen.filter(m=>m.status==='offen').length,mP=S.massnahmen.filter(m=>m.status==='in Bearbeitung').length,mD=S.massnahmen.filter(m=>m.status==='erledigt').length;
-    new Chart(document.getElementById('c3'),{type:'bar',data:{labels:L==='en'?['Open','In Progress','Done']:['Offen','In Bearb.','Erledigt'],datasets:[{data:[mO,mP,mD],backgroundColor:['#ef4444','#eab308','#22c55e'],borderRadius:5,borderWidth:0}]},options:{...df,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc},grid:{color:gc}}}}});
-    let dG=0,dY=0,dR=0,dN=0;S.docs.forEach(d=>{const s=docStatus(d);if(s==='green')dG++;else if(s==='yellow')dY++;else if(s==='red')dR++;else dN++;});
-    new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:L==='en'?['Current','Expiring','Overdue','No expiry']:['Aktuell','Läuft ab','Überfällig','Kein Ablauf'],datasets:[{data:[dG,dY,dR,dN],backgroundColor:['#22c55e','#eab308','#ef4444','#64748b'],borderWidth:0}]},options:{...df,cutout:'65%'}});
-  },80);
+    const tc='#94a3b8',gc='rgba(30,41,59,.4)';
+    const df={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,font:{size:9,family:'DM Sans'},boxWidth:10,padding:8}}}};
+    const dfNoLeg={...df,plugins:{legend:{display:false}}};
+    // C1 — doughnut control points
+    const el1=document.getElementById('c1');
+    if(el1&&(okC+mC+kC+naC+nc>0)){
+      window._dashCharts.push(new Chart(el1,{type:'doughnut',
+        data:{labels:L==='en'?['OK','Deficiency','Critical','N/A','Open']:['OK','Mangel','Kritisch','N/A','Offen'],
+          datasets:[{data:[okC,mC,kC,naC,nc],backgroundColor:['#22c55e','#eab308','#ef4444','#64748b','#334155'],borderWidth:0,hoverOffset:4}]},
+        options:{...df,cutout:'60%',plugins:{...df.plugins,
+          tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} (${total?Math.round(ctx.parsed/total*100):0}%)`}}}}}));
+    } else if(el1){el1.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No data yet':'Noch keine Daten'}</div>`;}
+    // C2 — horizontal bar compliance per domain
+    const el2=document.getElementById('c2');
+    if(el2&&domStats.length){
+      window._dashCharts.push(new Chart(el2,{type:'bar',
+        data:{labels:domStats.map(d=>d.l),
+          datasets:[
+            {label:'OK',data:domStats.map(d=>d.ok),backgroundColor:'#22c55e',borderRadius:2,borderWidth:0},
+            {label:L==='en'?'Deficiency':'Mangel',data:domStats.map(d=>d.mn),backgroundColor:'#eab308',borderRadius:2,borderWidth:0},
+            {label:L==='en'?'Critical':'Kritisch',data:domStats.map(d=>d.kr),backgroundColor:'#ef4444',borderRadius:2,borderWidth:0}
+          ]},
+        options:{...df,indexAxis:'y',scales:{
+          x:{stacked:true,ticks:{color:tc,font:{size:8}},grid:{color:gc}},
+          y:{stacked:true,ticks:{color:tc,font:{size:8}},grid:{display:false}}},
+          plugins:{...df.plugins,tooltip:{mode:'index'}}}}));
+    } else if(el2){el2.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No findings yet':'Noch keine Befunde'}</div>`;}
+    // C3 — radar maturity
+    const el3=document.getElementById('c3');
+    if(el3&&domStats.length>=3){
+      window._dashCharts.push(new Chart(el3,{type:'radar',
+        data:{labels:domStats.map(d=>d.l),
+          datasets:[{label:L==='en'?'Maturity':'Reifegrad',data:domStats.map(d=>d.mat),
+            borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.15)',borderWidth:2,pointRadius:3,
+            pointBackgroundColor:'#a78bfa',pointHoverRadius:5}]},
+        options:{...df,scales:{r:{min:0,max:5,ticks:{stepSize:1,color:tc,backdropColor:'transparent',font:{size:7}},
+          grid:{color:gc},pointLabels:{color:tc,font:{size:7}}}}}}));
+    } else if(el3&&domStats.length>0){
+      // fallback bar for <3 domains
+      window._dashCharts.push(new Chart(el3,{type:'bar',
+        data:{labels:domStats.map(d=>d.l),datasets:[{label:L==='en'?'Maturity Level':'Reifegrad',data:domStats.map(d=>d.mat),backgroundColor:'#a78bfa',borderRadius:4,borderWidth:0}]},
+        options:{...dfNoLeg,scales:{x:{ticks:{color:tc},grid:{display:false}},y:{min:0,max:5,ticks:{stepSize:1,color:tc},grid:{color:gc}}}}}));
+    } else if(el3){el3.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No maturity data':'Keine Reifegraddaten'}</div>`;}
+    // C4 — risk profile radar (object meta risk factors)
+    const el4=document.getElementById('c4');
+    if(el4){
+      const m=S.meta;
+      const yn=v=>v==='ja'?100:v==='teilweise'?50:v==='vollständig'?100:v==='nein'||v===''?0:20;
+      const riskFactors=[
+        {l:L==='en'?'Break-ins':'Einbrüche',v:yn(m.einbrueche)},
+        {l:L==='en'?'Theft':'Diebstahl',v:yn(m.diebstahl)},
+        {l:L==='en'?'Sabotage':'Sabotage',v:yn(m.sabotage)},
+        {l:L==='en'?'IT Incidents':'IT-Vorfälle',v:yn(m.itVorfaelle)},
+        {l:L==='en'?'Fire Damage':'Brandschäden',v:yn(m.brandschaden)},
+        {l:L==='en'?'Int. Theft':'Pers.diebst.',v:yn(m.personaldiebstahl)},
+      ];
+      const mitFactors=[
+        {l:L==='en'?'Access Ctrl':'Zugang',v:yn(m.zugangskontrolle)},
+        {l:L==='en'?'Alarm':'Alarm',v:yn(m.alarmanlage==='ja'||m.alarmanlage==='teilweise'?m.alarmanlage:'nein')},
+        {l:L==='en'?'Security':'Wachdienst',v:yn(m.sicherheitsdienst)},
+        {l:L==='en'?'Fence':'Zaun',v:yn(m.einzaeunung)},
+        {l:L==='en'?'Lighting':'Beleuchtg.',v:yn(m.aussenbeleuchtung)},
+        {l:L==='en'?'24h Guard':'24h-Bewachg.',v:yn(m.bewachung24h)},
+      ];
+      window._dashCharts.push(new Chart(el4,{type:'bar',
+        data:{labels:[...riskFactors.map(f=>f.l),...mitFactors.map(f=>f.l)],
+          datasets:[
+            {label:L==='en'?'Risk Factors':'Risikofaktoren',data:[...riskFactors.map(f=>f.v),...mitFactors.map(()=>0)],backgroundColor:'rgba(239,68,68,.7)',borderWidth:0,borderRadius:3},
+            {label:L==='en'?'Mitigations':'Schutzmaßnahmen',data:[...riskFactors.map(()=>0),...mitFactors.map(f=>f.v)],backgroundColor:'rgba(34,197,94,.6)',borderWidth:0,borderRadius:3}
+          ]},
+        options:{...df,scales:{x:{ticks:{color:tc,font:{size:7}},grid:{display:false}},y:{min:0,max:100,ticks:{color:tc,font:{size:8}},grid:{color:gc}}},
+          plugins:{...df.plugins,annotation:{},tooltip:{mode:'index'}}}}));
+    }
+    // C5 — measures
+    const el5=document.getElementById('c5');
+    if(el5){
+      const mO2=S.massnahmen.filter(m=>m.status==='offen').length;
+      const mP2=S.massnahmen.filter(m=>m.status==='in Bearbeitung').length;
+      const mD2=S.massnahmen.filter(m=>m.status==='erledigt').length;
+      window._dashCharts.push(new Chart(el5,{type:'bar',
+        data:{labels:L==='en'?['Open','In Progress','Done']:['Offen','In Bearb.','Erledigt'],
+          datasets:[{data:[mO2,mP2,mD2],backgroundColor:['#ef4444','#eab308','#22c55e'],borderRadius:5,borderWidth:0}]},
+        options:{...dfNoLeg,scales:{x:{ticks:{color:tc,font:{size:9}},grid:{display:false}},y:{ticks:{color:tc,font:{size:8},stepSize:1},grid:{color:gc}}}}}));
+    }
+    // C6 — documents
+    const el6=document.getElementById('c6');
+    if(el6){
+      let dG=0,dY=0,dR=0,dN=0;S.docs.forEach(d=>{const s=docStatus(d);if(s==='green')dG++;else if(s==='yellow')dY++;else if(s==='red')dR++;else dN++;});
+      if(S.docs.length>0){
+        window._dashCharts.push(new Chart(el6,{type:'doughnut',
+          data:{labels:L==='en'?['Current','Expiring','Overdue','No expiry']:['Aktuell','Läuft ab','Überfällig','Kein Ablauf'],
+            datasets:[{data:[dG,dY,dR,dN],backgroundColor:['#22c55e','#eab308','#ef4444','#64748b'],borderWidth:0,hoverOffset:4}]},
+          options:{...df,cutout:'55%'}}));
+      } else {
+        el6.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No documents':'Keine Dokumente'}</div>`;
+      }
+    }
+  },100);
 }
 
 // ═══ HISTORIE ═══
