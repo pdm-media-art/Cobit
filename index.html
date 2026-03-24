@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>SecureStay: Analytics – Audit & Compliance Platform</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect width='32' height='32' rx='8' fill='%230a1628' opacity='.8'/%3E%3Ctext x='2' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%23f8fafc'%3ES%3C/text%3E%3Ctext x='12' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%2314b8a6'%3E%3A%3C/text%3E%3Ctext x='19' y='23' font-family='system-ui,sans-serif' font-size='17' font-weight='900' fill='%2314b8a6'%3EA%3C/text%3E%3C/svg%3E">
+<title>S3:Analytics – Audit & Compliance Platform</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect width='32' height='32' rx='8' fill='%230a1628' opacity='.8'/%3E%3Ctext x='2' y='23' font-family='system-ui,sans-serif' font-size='13' font-weight='900' fill='%23f8fafc'%3ES3%3C/text%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='13' font-weight='900' fill='%2314b8a6'%3E%3AA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -467,8 +467,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <canvas id="loginWebCanvas"></canvas>
   <div class="login-card" id="loginCard">
     <div class="login-brand">
-      <div class="login-logo-mark">S<span style="color:var(--accent)">:</span>A</div>
-      <div class="login-title">SecureStay: Analytics</div>
+      <div class="login-logo-mark" style="font-size:1rem;width:auto;padding:0 14px;letter-spacing:.02em">S3<span style="color:var(--accent)">:</span>A</div>
+      <div class="login-title">S3<span style="color:var(--accent)">:</span>Analytics</div>
       <div class="login-sub">Audit & Compliance Platform — Bitte anmelden</div>
     </div>
     <div class="login-form">
@@ -499,7 +499,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 <header class="hdr">
-<div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark">S<span>:</span>A</div><div class="logo-text"><span class="logo-name">SecureStay: Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
+<div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark" style="width:auto;padding:0 10px;font-size:.72rem;letter-spacing:.02em">S3<span>:</span>A</div><div class="logo-text"><span class="logo-name">S3<span style="color:var(--accent)">:</span>Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
 <div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">Dashboard</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
 <button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">EN</button>
