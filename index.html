@@ -251,67 +251,126 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   .hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right,
-  .toast-wrap,.login-overlay,.user-badge,.autosave-dot,.rpt-tabs{display:none!important}
-  body{background:#fff!important;color:#0f172a!important;font-size:12px}
+  .toast-wrap,.login-overlay,.user-badge,.autosave-dot,.rpt-tabs,
+  .konzept-no-print,.ksk-toc,.ksk-controls{display:none!important}
+  body{background:#fff!important;color:#1e293b!important;font-size:11pt;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.65}
   body::before{display:none}
   .wrap{padding:0!important;max-width:100%!important}
   .panel{background:#fff!important;border:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important}
+  /* ── Page setup ── */
+  @page{margin:25mm 22mm 28mm 22mm;size:A4;
+    @top-center{content:string(doc-title);font-size:8pt;color:#64748b;font-family:'Inter',sans-serif;}
+    @bottom-left{content:"VERTRAULICH — Nur für autorisierten Personenkreis";font-size:7.5pt;color:#94a3b8;font-family:'Inter',sans-serif;}
+    @bottom-right{content:"Seite " counter(page) " von " counter(pages);font-size:8pt;color:#64748b;font-family:'Inter',sans-serif;}
+  }
+  @page:first{margin-top:20mm}
+  /* ── Counter für Seitenzahlen ── */
+  body{counter-reset:page}
+  /* ── Konzept Document Wrapper ── */
+  .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
+  .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
+  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #2563eb!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
+  .ksk-section-number{color:#2563eb!important;margin-right:8pt}
+  /* ── Deckblatt ── */
+  .ksk-cover{text-align:center!important;padding:40pt 0!important;page-break-after:always!important;border:none!important}
+  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #2563eb!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
+  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#1e293b!important;letter-spacing:-0.02em!important;margin-bottom:8pt!important}
+  .ksk-cover-subtitle{font-size:13pt!important;color:#475569!important;margin-bottom:30pt!important}
+  .ksk-cover-meta{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:4pt!important;padding:16pt!important;text-align:left!important;margin:20pt 0!important;font-size:10pt}
+  .ksk-cover-meta table{width:100%;border-collapse:collapse}
+  .ksk-cover-meta td{padding:4pt 8pt;border-bottom:1pt solid #f1f5f9;color:#334155!important;font-size:10pt!important}
+  .ksk-cover-meta td:first-child{font-weight:600;color:#1e293b!important;width:40%;white-space:nowrap}
+  .ksk-vertraulich{background:#fef2f2!important;border:1.5pt solid #dc2626!important;border-radius:3pt!important;padding:8pt 12pt!important;font-weight:700!important;color:#dc2626!important;font-size:9pt!important;letter-spacing:.05em!important;text-transform:uppercase!important;margin-top:20pt!important;display:inline-block!important}
+  /* ── Inhaltsverzeichnis ── */
+  .ksk-toc-print{page-break-after:always}
+  .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #2563eb;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
+  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#334155}
+  .ksk-toc-print .toc-entry-main{font-weight:600;color:#1e293b}
+  /* ── Tabellen ── */
+  .ksk-table{width:100%!important;border-collapse:collapse!important;margin:8pt 0 14pt 0!important;font-size:9.5pt!important;page-break-inside:auto}
+  .ksk-table th{background:#1e293b!important;color:#f1f5f9!important;padding:6pt 8pt!important;text-align:left!important;font-weight:600!important;font-size:9pt!important;border:1pt solid #334155!important}
+  .ksk-table td{padding:5pt 8pt!important;border:1pt solid #cbd5e1!important;color:#1e293b!important;vertical-align:top!important;line-height:1.4!important}
+  .ksk-table tr:nth-child(even) td{background:#f8fafc!important}
+  .ksk-table tr{page-break-inside:avoid}
+  /* ── Befund-Tabellen Risikostufen ── */
+  .ksk-table .risk-krit{color:#dc2626!important;font-weight:700!important}
+  .ksk-table .risk-mangel{color:#b45309!important;font-weight:600!important}
+  .ksk-table .risk-ok{color:#15803d!important;font-weight:600!important}
+  /* ── Textblöcke ── */
+  .ksk-text{font-size:10.5pt!important;color:#334155!important;line-height:1.7!important;margin-bottom:10pt!important}
+  .ksk-text strong{color:#1e293b!important}
+  .ksk-infobox{border-left:3pt solid #2563eb!important;background:#f0f7ff!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
+  .ksk-warnbox{border-left:3pt solid #dc2626!important;background:#fef2f2!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
+  .ksk-okbox{border-left:3pt solid #15803d!important;background:#f0fdf4!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
+  /* ── Norm-Badges für Print ── */
+  .ksk-norm-badge{background:#e0e7ff!important;color:#1e3a8a!important;border:1pt solid #93c5fd!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
   /* ── Report Header ── */
-  .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:5px solid #0d9488!important;border-radius:4px!important;padding:16px 20px!important;margin-bottom:20px!important}
-  .rpt-title{color:#0f172a!important;font-size:1.6rem!important;font-weight:800!important;line-height:1.2!important}
-  .rpt-meta{color:#334155!important;font-size:.8rem!important;line-height:1.6!important}
+  .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:4pt solid #2563eb!important;border-radius:2pt!important;padding:14pt 18pt!important;margin-bottom:18pt!important}
+  .rpt-title{color:#1e293b!important;font-size:18pt!important;font-weight:800!important;line-height:1.2!important}
+  .rpt-meta{color:#334155!important;font-size:9.5pt!important;line-height:1.6!important}
   /* ── Stats ── */
-  .stat{background:#fff!important;border:1.5px solid #cbd5e1!important;border-top:3px solid #cbd5e1!important;border-radius:4px!important;padding:10px 8px!important}
-  .stat-val{font-size:1.5rem!important;font-weight:800!important;color:#0f172a!important}
-  .stat-lbl{color:#475569!important;font-size:.55rem!important;font-weight:700!important;letter-spacing:.05em!important}
+  .stat{background:#fff!important;border:1.5pt solid #cbd5e1!important;border-top:2.5pt solid #cbd5e1!important;border-radius:2pt!important;padding:8pt 6pt!important}
+  .stat-val{font-size:16pt!important;font-weight:800!important;color:#1e293b!important}
+  .stat-lbl{color:#475569!important;font-size:6.5pt!important;font-weight:700!important;letter-spacing:.05em!important}
   .stat.danger{border-top-color:#dc2626!important}.stat.danger .stat-val{color:#dc2626!important}
   .stat.warn{border-top-color:#b45309!important}.stat.warn .stat-val{color:#b45309!important}
-  .stat.ok{border-top-color:#16a34a!important}.stat.ok .stat-val{color:#16a34a!important}
-  .stat.total{border-top-color:#0d9488!important}.stat.total .stat-val{color:#0d9488!important}
+  .stat.ok{border-top-color:#15803d!important}.stat.ok .stat-val{color:#15803d!important}
+  .stat.total{border-top-color:#2563eb!important}.stat.total .stat-val{color:#2563eb!important}
   .stat.purple{border-top-color:#7c3aed!important}.stat.purple .stat-val{color:#7c3aed!important}
   .stat.emerald{border-top-color:#059669!important}.stat.emerald .stat-val{color:#059669!important}
   /* ── Findings ── */
-  .finding{border:1px solid #cbd5e1!important;border-radius:4px!important;background:#fff!important;padding:9px 12px!important;page-break-inside:avoid!important;margin-bottom:5px!important}
-  .finding.kritisch{border-left:4px solid #dc2626!important;background:#fef2f2!important}
-  .finding.mangel{border-left:4px solid #b45309!important;background:#fffbeb!important}
+  .finding{border:1pt solid #cbd5e1!important;border-radius:2pt!important;background:#fff!important;padding:7pt 10pt!important;page-break-inside:avoid!important;margin-bottom:4pt!important}
+  .finding.kritisch{border-left:3pt solid #dc2626!important;background:#fef2f2!important}
+  .finding.mangel{border-left:3pt solid #b45309!important;background:#fffbeb!important}
   .finding-icon{display:none!important}
-  .f-label{color:#0f172a!important;font-size:.82rem!important;font-weight:700!important}
-  .f-section{color:#475569!important;font-size:.72rem!important;margin-top:2px!important}
-  .f-note{color:#334155!important;font-style:italic!important;border-left:2px solid #cbd5e1!important;padding-left:6px!important;margin-top:3px!important}
-  .f-cost{min-width:80px!important}
-  .f-cost-val{color:#0d9488!important;font-weight:700!important;font-size:.88rem!important}
-  .f-cost-lbl{color:#64748b!important;font-size:.52rem!important}
+  .f-label{color:#1e293b!important;font-size:10pt!important;font-weight:700!important}
+  .f-section{color:#475569!important;font-size:8.5pt!important;margin-top:1pt!important}
+  .f-note{color:#334155!important;font-style:italic!important;border-left:2pt solid #cbd5e1!important;padding-left:5pt!important;margin-top:2pt!important;font-size:9pt!important}
+  .f-cost{min-width:70pt!important}
+  .f-cost-val{color:#2563eb!important;font-weight:700!important;font-size:10pt!important}
+  .f-cost-lbl{color:#64748b!important;font-size:7pt!important}
   /* ── Cost Summary ── */
-  .cost-sum{background:#f0fdfa!important;border:1.5px solid #99f6e4!important;border-radius:6px!important;padding:14px 16px!important}
-  .cost-row{padding:3px 0!important}
-  .cost-row span:first-child{color:#334155!important;font-size:.8rem!important}
-  .cost-row span:last-child{color:#0d9488!important;font-weight:700!important;font-size:.85rem!important}
+  .cost-sum{background:#f0f7ff!important;border:1.5pt solid #bfdbfe!important;border-radius:3pt!important;padding:12pt 14pt!important}
+  .cost-row{padding:3pt 0!important;border-bottom:1pt solid #e2e8f0!important}
+  .cost-row:last-child{border-bottom:none!important;padding-top:7pt!important}
+  .cost-row span:first-child{color:#334155!important;font-size:9.5pt!important}
+  .cost-row span:last-child{color:#2563eb!important;font-weight:700!important;font-size:10pt!important}
   /* ── Risk Level ── */
-  .risk-level{border:1.5px solid currentColor!important;border-radius:20px!important;padding:4px 14px!important;font-weight:700!important;font-size:.75rem!important}
+  .risk-level{border:1.5pt solid currentColor!important;border-radius:15pt!important;padding:3pt 12pt!important;font-weight:700!important;font-size:9pt!important}
   .risk-level.gering{background:#f0fdf4!important;color:#15803d!important}
   .risk-level.mittel{background:#fffbeb!important;color:#92400e!important}
   .risk-level.hoch,.risk-level.kritisch{background:#fef2f2!important;color:#dc2626!important}
   /* ── Norm Badges ── */
-  .nb{border:1px solid #e2e8f0!important;border-radius:3px!important;padding:1px 5px!important;font-size:.58rem!important;font-weight:600!important}
-  .nb.sec{color:#0f766e!important;background:#ccfbf1!important;border-color:#5eead4!important}
+  .nb{border:1pt solid #e2e8f0!important;border-radius:2pt!important;padding:1pt 4pt!important;font-size:7pt!important;font-weight:600!important}
+  .nb.sec{color:#1e3a8a!important;background:#dbeafe!important;border-color:#93c5fd!important}
   .nb.qm{color:#9a3412!important;background:#fff7ed!important;border-color:#fdba74!important}
   .nb.it{color:#065f46!important;background:#d1fae5!important;border-color:#6ee7b7!important}
   /* ── Panel title ── */
-  .panel-title{color:#0f172a!important;font-size:1.15rem!important;font-weight:800!important;border-bottom:2px solid #e2e8f0!important;padding-bottom:8px!important;margin-bottom:14px!important}
-  /* ── Section header labels (kritisch / mangel banners) ── */
-  [style*="font-family:var(--fm)"][style*="color:var(--danger)"]{color:#dc2626!important;background:#fef2f2!important;border:1px solid #fecaca!important}
-  [style*="font-family:var(--fm)"][style*="color:var(--warn)"]{color:#92400e!important;background:#fffbeb!important;border:1px solid #fde68a!important}
+  .panel-title{color:#1e293b!important;font-size:14pt!important;font-weight:800!important;border-bottom:2pt solid #e2e8f0!important;padding-bottom:7pt!important;margin-bottom:12pt!important}
+  /* ── Konzept-spezifisch ── */
+  .konzept-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0!important;margin-bottom:0!important}
+  .konzept-section-title{color:#1e293b!important;font-size:12pt!important;font-weight:700!important;border-bottom:1.5pt solid #2563eb!important;padding-bottom:4pt!important;margin-bottom:8pt!important}
+  .konzept-measure{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:2pt!important;padding:7pt 10pt!important;margin-bottom:4pt!important;page-break-inside:avoid!important}
+  .konzept-measure .km-prio{border:1pt solid currentColor!important}
+  .konzept-measure .km-text{color:#1e293b!important}
+  .konzept-measure .km-time{color:#64748b!important}
+  /* ── Seitenzahl-Konfidentialitätsfooter ── */
+  .ksk-footer-stamp{display:none!important}
   /* ── Compliance bar ── */
   [style*="background:var(--border)"][style*="height:6px"]{background:#e2e8f0!important}
-  /* ── Footer branding ── */
-  [style*="SecureStay Solutions"]{background:#f8fafc!important;border:1px solid #e2e8f0!important;border-radius:6px!important}
   .print-page-break{page-break-before:always}
   /* ── Dashboard print ── */
-  .chart-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important;margin-top:14px!important}
-  .chart-box{background:#f8fafc!important;border:1.5px solid #e2e8f0!important;border-radius:6px!important;padding:14px!important;page-break-inside:avoid!important}
-  .chart-box-title{color:#0f172a!important;font-size:.72rem!important;font-weight:700!important;margin-bottom:8px!important}
-  .chart-canvas{max-height:180px!important}
-  @page{margin:18mm 15mm;size:A4}
+  .chart-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12pt!important;margin-top:12pt!important}
+  .chart-box{background:#f8fafc!important;border:1.5pt solid #e2e8f0!important;border-radius:3pt!important;padding:12pt!important;page-break-inside:avoid!important}
+  .chart-box-title{color:#1e293b!important;font-size:9pt!important;font-weight:700!important;margin-bottom:6pt!important}
+  .chart-canvas{max-height:160pt!important}
+  /* ── Signaturen ── */
+  .ksk-sig-box{border-top:1pt solid #94a3b8!important;padding-top:4pt!important;margin-top:30pt!important;min-width:160pt!important;font-size:9pt!important;color:#64748b!important}
+  /* ── Seitenumbrüche ── */
+  .ksk-cover,.ksk-toc-print,.ksk-section.page-break-before{page-break-before:always}
+  h2,h3,.ksk-section-title{page-break-after:avoid}
+  table{page-break-inside:auto}
+  tr{page-break-inside:avoid}
 }
 
 /* ═══ LOGIN ═══ */
@@ -449,14 +508,69 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .rpt-tab:hover{color:var(--text)}
 .rpt-tab.active{background:var(--accentDim);color:var(--accent);border:1px solid rgba(20,184,166,.2)}
 .rpt-tab.active.konzept-tab{background:var(--purpleDim);color:var(--purple);border-color:rgba(167,139,250,.2)}
-/* ═══ KONZEPT ═══ */
+/* ═══ KONZEPT (legacy) ═══ */
 .konzept-section{background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px}
 .konzept-section-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .konzept-measure{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start}
 .konzept-measure .km-prio{font-family:var(--fm);font-size:.48rem;padding:2px 7px;border-radius:999px;flex-shrink:0;margin-top:2px;font-weight:700}
 .konzept-measure .km-text{flex:1;font-size:.78rem;color:var(--text2);line-height:1.5}
 .konzept-measure .km-time{font-family:var(--fm);font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
-@media(max-width:768px){.adm-grid{grid-template-columns:1fr}}
+/* ═══ PROFESSIONELLES SICHERHEITSKONZEPT ═══ */
+.ksk-doc{background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);max-width:880px;margin:0 auto;padding:0;overflow:hidden;color:#1e293b}
+.ksk-cover{background:linear-gradient(160deg,#1e293b 0%,#0f172a 60%,#1e3a5f 100%);padding:60px 52px 48px;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(37,99,235,.12) 0,transparent 70%)}
+.ksk-cover-logo{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 20px;font-family:var(--fh);font-weight:800;font-size:.9rem;color:#f1f5f9;letter-spacing:.01em;margin-bottom:36px;position:relative;z-index:1}
+.ksk-cover-logo span{color:#60a5fa}
+.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:14px;position:relative;z-index:1}
+.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15;position:relative;z-index:1}
+.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#93c5fd;margin-bottom:36px;position:relative;z-index:1}
+.ksk-cover-meta-table{width:100%;max-width:480px;border-collapse:collapse;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;position:relative;z-index:1;font-size:.8rem}
+.ksk-cover-meta-table td{padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;color:#94a3b8}
+.ksk-cover-meta-table td:first-child{font-weight:600;color:#cbd5e1;width:45%;white-space:nowrap}
+.ksk-cover-meta-table tr:last-child td{border-bottom:none}
+.ksk-vertraulich{display:inline-flex;align-items:center;gap:7px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:4px;padding:7px 18px;font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fca5a5;margin-top:28px;position:relative;z-index:1}
+.ksk-body{padding:0}
+.ksk-toc{background:var(--surface2);border-bottom:1px solid rgba(255,255,255,.06);padding:24px 40px}
+.ksk-toc-title{font-family:var(--fm);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.ksk-toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}
+.ksk-toc-entry{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.05);font-size:.76rem;color:var(--muted);cursor:pointer;transition:.15s}
+.ksk-toc-entry:hover{color:var(--accent)}
+.ksk-toc-num{font-family:var(--fm);font-size:.62rem;font-weight:700;color:var(--accent);min-width:22px}
+.ksk-section{padding:28px 40px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ksk-section:last-child{border-bottom:none}
+.ksk-section-title{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:1.05rem;font-weight:800;color:#f1f5f9;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(37,99,235,.2)}
+.ksk-section-number{font-family:var(--fm);font-size:.7rem;font-weight:700;color:#2563eb;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.2);border-radius:999px;padding:2px 9px;flex-shrink:0}
+.ksk-text{font-size:.85rem;color:#94a3b8;line-height:1.75;margin-bottom:12px}
+.ksk-text strong{color:#e2e8f0}
+.ksk-text em{color:#93c5fd;font-style:normal;font-weight:500}
+.ksk-infobox{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-left:3px solid #2563eb;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#93c5fd;line-height:1.65}
+.ksk-infobox strong{color:#bfdbfe}
+.ksk-warnbox{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.18);border-left:3px solid #dc2626;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#fca5a5;line-height:1.65}
+.ksk-okbox{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.18);border-left:3px solid #059669;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#6ee7b7;line-height:1.65}
+.ksk-table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:.79rem;border-radius:8px;overflow:hidden}
+.ksk-table th{background:rgba(30,41,59,.8);color:#cbd5e1;padding:9px 12px;text-align:left;font-family:var(--fm);font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08)}
+.ksk-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#94a3b8;vertical-align:top;line-height:1.45}
+.ksk-table tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+.ksk-table tr:hover td{background:rgba(37,99,235,.04)}
+.ksk-table .risk-krit{color:#fca5a5;font-weight:700}
+.ksk-table .risk-mangel{color:#fde047;font-weight:600}
+.ksk-table .risk-ok{color:#6ee7b7;font-weight:600}
+.ksk-table strong{color:#e2e8f0}
+.ksk-norm-badge{display:inline-flex;font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;padding:2px 7px;border-radius:999px;background:rgba(37,99,235,.12);color:#93c5fd;border:1px solid rgba(37,99,235,.2);margin-right:3px;margin-bottom:2px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.ksk-maturity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:10px 0}
+.ksk-maturity-item{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px}
+.ksk-maturity-label{font-size:.76rem;font-weight:600;color:#e2e8f0;margin-bottom:6px}
+.ksk-maturity-bar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.ksk-maturity-fill{height:100%;border-radius:3px;transition:.4s}
+.ksk-maturity-level{font-family:var(--fm);font-size:.54rem;color:var(--muted)}
+.ksk-sig-row{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.ksk-sig-box{flex:1;min-width:160px;border-top:1px solid rgba(255,255,255,.15);padding-top:8px;margin-top:32px;font-size:.72rem;color:var(--muted)}
+.ksk-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.ksk-domain-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ksk-domain-icon{font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:6px;background:rgba(37,99,235,.1);color:#93c5fd;border:1px solid rgba(37,99,235,.2);text-transform:uppercase}
+.ksk-domain-title{font-size:.92rem;font-weight:700;color:#e2e8f0}
+.ksk-domain-pct{font-family:var(--fm);font-size:.7rem;font-weight:700;margin-left:auto}
+@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover{padding:32px 20px}.ksk-sig-row{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -1105,21 +1219,33 @@ async function startUmfeldanalyse(){
   const status=document.getElementById('uf-status');
   if(btn){btn.disabled=true;btn.textContent='⏳ '+(L==='en'?'Analysing...':'Analyse läuft...');}
   if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">🔍 ${L==='en'?'Geocoding address...':'Geocodierung der Adresse...'}</div>`;
+  const OVERPASS_ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  async function fetchOverpass(q){
+    for(const ep of OVERPASS_ENDPOINTS){
+      try{
+        const r=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+        if(!r.ok)continue;
+        const d=await r.json();
+        if(d&&d.elements!==undefined)return d;
+      }catch(e){continue;}
+    }
+    throw new Error(L==='en'?'Overpass API unavailable — all endpoints failed':'Overpass API nicht erreichbar — alle Endpunkte fehlgeschlagen');
+  }
   try{
-    const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr)}&format=json&limit=1&addressdetails=1`,{headers:{'Accept':'application/json','User-Agent':'SecureStay-Analytics/2.0'}});
+    const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr)}&format=json&limit=1&addressdetails=1`,{headers:{'Accept':'application/json'}});
+    if(!geoRes.ok)throw new Error(L==='en'?'Geocoding failed (HTTP '+geoRes.status+')':'Geocodierung fehlgeschlagen (HTTP '+geoRes.status+')');
     const geoData=await geoRes.json();
     if(!geoData||!geoData.length){
       toast(L==='en'?'Address not found':'Adresse nicht gefunden','error');
-      if(btn){btn.disabled=false;btn.textContent='🔍 '+(L==='en'?'Start Site Analysis':'Umfeldanalyse starten');}
+      if(btn){btn.disabled=false;btn.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
       if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">❌ ${L==='en'?'Address not found. Please check.':'Adresse nicht gefunden. Bitte prüfen.'}</div>`;
       return;
     }
     const {lat,lon}=geoData[0];const latF=parseFloat(lat),lonF=parseFloat(lon);
     if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">📡 ${L==='en'?'Fetching nearby objects...':'Umgebungsobjekte werden geladen...'}</div>`;
     const radius=1000;
-    const q=`[out:json][timeout:25];(node(around:${radius},${latF},${lonF})[amenity=place_of_worship];way(around:${radius},${latF},${lonF})[amenity=place_of_worship];node(around:${radius},${latF},${lonF})[amenity=police];node(around:${radius},${latF},${lonF})[amenity=hospital];node(around:${radius},${latF},${lonF})[amenity=school];node(around:${radius},${latF},${lonF})[amenity=university];node(around:${radius},${latF},${lonF})[amenity=bank];node(around:${radius},${latF},${lonF})[amenity=courthouse];node(around:${radius},${latF},${lonF})[amenity=embassy];node(around:${radius},${latF},${lonF})[office=government];node(around:${radius},${latF},${lonF})[landuse=military];node(around:${radius},${latF},${lonF})[amenity=fire_station];node(around:${radius},${latF},${lonF})[railway=station];node(around:${radius},${latF},${lonF})[public_transport=station];node(around:${radius},${latF},${lonF})[shop=mall];node(around:${radius},${latF},${lonF})[amenity=marketplace];node(around:${radius},${latF},${lonF})[tourism=museum];node(around:${radius},${latF},${lonF})[historic=memorial];node(around:${radius},${latF},${lonF})[amenity=prison];);out body qt;`;
-    const ovRes=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
-    const ovData=await ovRes.json();
+    const q=`[out:json][timeout:30];(node(around:${radius},${latF},${lonF})[amenity=place_of_worship];way(around:${radius},${latF},${lonF})[amenity=place_of_worship];node(around:${radius},${latF},${lonF})[amenity=police];node(around:${radius},${latF},${lonF})[amenity=hospital];node(around:${radius},${latF},${lonF})[amenity=school];node(around:${radius},${latF},${lonF})[amenity=university];node(around:${radius},${latF},${lonF})[amenity=bank];node(around:${radius},${latF},${lonF})[amenity=courthouse];node(around:${radius},${latF},${lonF})[amenity=embassy];node(around:${radius},${latF},${lonF})[office=government];node(around:${radius},${latF},${lonF})[landuse=military];node(around:${radius},${latF},${lonF})[amenity=fire_station];node(around:${radius},${latF},${lonF})[railway=station];node(around:${radius},${latF},${lonF})[public_transport=station];node(around:${radius},${latF},${lonF})[shop=mall];node(around:${radius},${latF},${lonF})[amenity=marketplace];node(around:${radius},${latF},${lonF})[tourism=museum];node(around:${radius},${latF},${lonF})[historic=memorial];node(around:${radius},${latF},${lonF})[amenity=prison];);out body qt;`;
+    const ovData=await fetchOverpass(q);
     const pois=ovData.elements||[];
     const worship=pois.filter(p=>p.tags?.amenity==='place_of_worship');
     const syn=worship.filter(p=>p.tags?.religion==='jewish'||(p.tags?.name||'').toLowerCase().includes('synagog')||(p.tags?.name||'').toLowerCase().includes('jüdisch'));
@@ -1156,10 +1282,13 @@ async function startUmfeldanalyse(){
     if(status)status.innerHTML='';
     toast(L==='en'?'Site analysis complete':'Umfeldanalyse abgeschlossen','success');
   }catch(err){
-    console.error(err);
-    if(btn){btn.disabled=false;btn.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
-    if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">${L==='en'?'Error':'Fehler'}: ${err.message}</div>`;
-    toast(L==='en'?'Analysis failed — check internet connection':'Analyse fehlgeschlagen — Internetverbindung prüfen','error');
+    console.error('Umfeldanalyse error:',err);
+    // Re-query DOM in case elements were replaced
+    const btnE=document.getElementById('uf-btn');
+    const statusE=document.getElementById('uf-status');
+    if(btnE){btnE.disabled=false;btnE.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
+    if(statusE)statusE.innerHTML=`<div style="color:var(--danger);font-size:.82rem;padding:10px 12px;background:var(--dangerDim);border:1px solid rgba(220,38,38,.2);border-radius:8px;margin-bottom:8px">❌ <strong>${L==='en'?'Error':'Fehler'}:</strong> ${err.message}</div>`;
+    toast((L==='en'?'Analysis failed: ':'Analyse fehlgeschlagen: ')+err.message,'error');
   }
 }
 
