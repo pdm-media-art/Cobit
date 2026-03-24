@@ -269,11 +269,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Konzept Document Wrapper ── */
   .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
   .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
-  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #2563eb!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
-  .ksk-section-number{color:#2563eb!important;margin-right:8pt}
+  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #0d9488!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
+  .ksk-section-number{color:#0d9488!important;margin-right:8pt}
   /* ── Deckblatt ── */
   .ksk-cover{text-align:center!important;padding:40pt 0!important;page-break-after:always!important;border:none!important}
-  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #2563eb!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
+  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #0d9488!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
   .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#1e293b!important;letter-spacing:-0.02em!important;margin-bottom:8pt!important}
   .ksk-cover-subtitle{font-size:13pt!important;color:#475569!important;margin-bottom:30pt!important}
   .ksk-cover-meta{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:4pt!important;padding:16pt!important;text-align:left!important;margin:20pt 0!important;font-size:10pt}
@@ -283,7 +283,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .ksk-vertraulich{background:#fef2f2!important;border:1.5pt solid #dc2626!important;border-radius:3pt!important;padding:8pt 12pt!important;font-weight:700!important;color:#dc2626!important;font-size:9pt!important;letter-spacing:.05em!important;text-transform:uppercase!important;margin-top:20pt!important;display:inline-block!important}
   /* ── Inhaltsverzeichnis ── */
   .ksk-toc-print{page-break-after:always}
-  .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #2563eb;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
+  .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #0d9488;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
   .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#334155}
   .ksk-toc-print .toc-entry-main{font-weight:600;color:#1e293b}
   /* ── Tabellen ── */
@@ -299,11 +299,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Textblöcke ── */
   .ksk-text{font-size:10.5pt!important;color:#334155!important;line-height:1.7!important;margin-bottom:10pt!important}
   .ksk-text strong{color:#1e293b!important}
-  .ksk-infobox{border-left:3pt solid #2563eb!important;background:#f0f7ff!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
+  .ksk-infobox{border-left:3pt solid #0d9488!important;background:#f0fdfa!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-warnbox{border-left:3pt solid #dc2626!important;background:#fef2f2!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-okbox{border-left:3pt solid #15803d!important;background:#f0fdf4!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   /* ── Norm-Badges für Print ── */
-  .ksk-norm-badge{background:#e0e7ff!important;color:#1e3a8a!important;border:1pt solid #93c5fd!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
+  .ksk-norm-badge{background:#ccfbf1!important;color:#0f766e!important;border:1pt solid #5eead4!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
   /* ── Report Header ── */
   .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:4pt solid #0d9488!important;border-radius:2pt!important;padding:14pt 18pt!important;margin-bottom:18pt!important}
   .rpt-title{color:#1e293b!important;font-size:18pt!important;font-weight:800!important;line-height:1.2!important}
@@ -1647,6 +1647,32 @@ function renderReport(){
   <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
 }
 
+// ═══ KONZEPT HELPERS ═══
+function _kskMeasureTable(items,prio,idOffset){
+  if(!items.length)return`<div class="ksk-okbox">✓ Keine ${prio==='kritisch'?'kritischen':'mittelfristigen'} Maßnahmen erforderlich.</div>`;
+  let idx=idOffset||0;
+  const rows=items.map(f=>{
+    idx++;
+    const tf=prio==='kritisch'?'≤ 4 Wochen':'3–6 Monate';
+    const costStr=f.c?(f.c[prio]?`€ ${f.c[prio]}`:(f.c.mangel?`€ ${f.c.mangel}`:'auf Anfrage')):'auf Anfrage';
+    const prioCell=prio==='kritisch'?'<span class="risk-krit">SOFORT</span>':'<span class="risk-mangel">MITTEL</span>';
+    return`<tr><td style="font-family:var(--fm);font-size:.65rem;white-space:nowrap">M-${String(idx).padStart(3,'0')}</td><td><strong>${esc(f.l)}</strong>${f.note?`<br><em style="font-size:.72rem">"${esc(f.note)}"</em>`:''}</td><td style="font-size:.72rem">${esc(f.sec)}</td><td>${prioCell}</td><td style="font-size:.72rem;white-space:nowrap">${tf}</td><td style="font-size:.72rem">${costStr}</td><td style="font-size:.65rem">${f.n||'–'}</td></tr>`;
+  }).join('');
+  return`<table class="ksk-table"><thead><tr><th>ID</th><th>Befund / Maßnahme</th><th>Prüfbereich</th><th>Priorität</th><th>Frist</th><th>Invest.</th><th>Norm-Ref.</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function _kskUmfeldHTML(){
+  if(!S.umfeld?.done)return`<p class="ksk-text" style="font-style:italic">Keine Umfeldanalyse durchgeführt. Für ein vollständiges Sicherheitskonzept wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen.</p>`;
+  const highRisks=(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel');
+  const rows=highRisks.map(r=>`<tr><td><strong>${r.category}</strong></td><td style="text-align:center">${r.count}</td><td><span class="${r.level==='hoch'?'risk-krit':'risk-mangel'}">${r.level.toUpperCase()}</span></td><td style="font-size:.72rem">${r.recommend}</td></tr>`).join('');
+  return`<p class="ksk-text">Im Rahmen der Umfeldanalyse wurden <strong>${S.umfeld.poiCount||'–'} sicherheitsrelevante Objekte</strong> in einem Radius von <strong>${S.umfeld.radius||250} m</strong> erfasst. Gesamtbewertung Umfeld-Risiko: <strong>${S.umfeld.overallRisk||'–'}</strong>.</p>${highRisks.length?`<table class="ksk-table"><thead><tr><th>Kategorie</th><th>Anzahl</th><th>Risikostufe</th><th>Handlungsempfehlung</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="ksk-okbox">✓ Keine erhöhten Umfeldrisiken identifiziert.</div>'}`;
+}
+function _kskNormHTML(norms){
+  const descMap={'ISO/IEC 27001':'ISO/IEC 27001:2022 – Informationssicherheits-Managementsystem (ISMS). Internationale Norm für Aufbau, Betrieb und kontinuierliche Verbesserung eines ISMS.','ISO 9001':'ISO 9001:2015 – Qualitätsmanagementsystem. Anforderungen an ein wirksames QMS mit risikobasiertem Ansatz.','COBIT 2019':'COBIT 2019 – Framework für IT-Governance, IT-Management und Kontrollziele zur Steuerung von IT-Risiken.','DSGVO / GDPR':'Datenschutz-Grundverordnung (EU) 2016/679. Europäische Verordnung zum Schutz personenbezogener Daten und Rechenschaftspflicht.','BSI IT-Grundschutz':'BSI IT-Grundschutz – Bundesamt für Sicherheit in der Informationstechnik. Deutsches Rahmenwerk für systematische IT-Sicherheitsmaßnahmen.'};
+  if(!norms||!norms.length)return`<p class="ksk-text">Die Prüfung basiert auf anerkannten Best-Practice-Leitfäden des Sicherheits- und Risikomanagements (u.a. ISO 31000, VdS 3473, DIN EN ISO 45001). Eine Normzuordnung nach ISO/IEC 27001 oder BSI IT-Grundschutz ist auf Wunsch möglich.</p>`;
+  const rows=norms.map(n=>`<tr><td><strong>${n}</strong></td><td style="font-size:.76rem">${descMap[n]||n}</td><td style="font-size:.72rem">Grundlage der Prüfmethodik</td></tr>`).join('');
+  return`<p class="ksk-text">Das Sicherheitskonzept wurde unter Berücksichtigung folgender Normen, Standards und regulatorischer Anforderungen erstellt:</p><table class="ksk-table"><thead><tr><th>Norm / Standard</th><th>Beschreibung</th><th>Relevanz</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 // ═══ KONZEPT ═══
 function renderKonzept(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
@@ -1659,18 +1685,25 @@ function renderKonzept(){
   const genDate=new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'});
   // Group kritisch by domain
   const domainMap={security:L==='en'?'Physical Security':'Physische Sicherheit',qm:L==='en'?'Quality Management':'Qualitätsmanagement',itgov:L==='en'?'IT Governance':'IT-Governance'};
-  const secK=kritisch.filter(f=>f.m==='security'),qmK=kritisch.filter(f=>f.m==='qm'),itK=kritisch.filter(f=>f.m==='itgov');
-  const secM=mangel.filter(f=>f.m==='security'),qmM=mangel.filter(f=>f.m==='qm'),itM=mangel.filter(f=>f.m==='itgov');
-  const mkm=(items,prio,timeframe)=>items.map(f=>{const pc=prio==='kritisch'?'#ef4444':prio==='mangel'?'#eab308':'#22c55e';return`<div class="konzept-measure"><span class="km-prio" style="background:${pc}18;color:${pc};border:1px solid ${pc}33">${prio==='kritisch'?(L==='en'?'URGENT':'SOFORT'):prio==='mangel'?(L==='en'?'MEDIUM':'MITTEL'):(L==='en'?'REC.':'EMPF.')}</span><div class="km-text"><strong>${esc(f.l)}</strong>${f.note?` — <em style="color:var(--muted)">"${esc(f.note)}"</em>`:''}<br><span style="font-size:.7rem;color:var(--muted)">${f.n} · ${f.sec}</span></div><span class="km-time">${timeframe}</span></div>`;}).join('');
-  const umfeldSect=S.umfeld?.done?`
-  <div class="konzept-section">
-    <div class="konzept-section-title">${L==='en'?'Site Environment Analysis':'Umfeldanalyse'}</div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-      <div class="risk-level ${S.umfeld.overallRiskCls}">● ${L==='en'?'Area Risk':'Umfeld-Risiko'}: <strong>${S.umfeld.overallRisk}</strong></div>
-      <div style="font-size:.76rem;color:var(--muted)">${S.umfeld.poiCount} ${L==='en'?'objects analysed':'Objekte analysiert'} · ${S.umfeld.radius}m ${L==='en'?'radius':'Radius'}</div>
-    </div>
-    ${(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel').map(r=>`<div style="padding:8px 12px;border-left:3px solid ${r.level==='hoch'?'var(--danger)':'var(--warn)'};background:${r.level==='hoch'?'var(--dangerDim)':'var(--warnDim)'};border-radius:0 8px 8px 0;margin-bottom:6px"><div style="font-weight:600;font-size:.8rem;color:var(--text2)">${r.icon} ${r.category}</div><div style="font-size:.73rem;color:var(--muted)">${r.recommend}</div></div>`).join('')}
-  </div>`:'';
+  // Computed values
+  const riskLevel=kritisch.length>=5?'HOCH':kritisch.length>=2?'ERHÖHT':kritisch.length>=1?'MITTEL':'GERING';
+  const riskColor=kritisch.length>=5?'#dc2626':kritisch.length>=2?'#ea580c':kritisch.length>=1?'#ca8a04':'#16a34a';
+  const riskText=kritisch.length>=2?'Es wurden kritische Mängel festgestellt, die priorisiert und unverzüglich zu beheben sind. Ohne Mängelbeseitigung ist der Versicherungsschutz möglicherweise eingeschränkt.':kritisch.length===1?'Es wurde ein kritischer Mangel identifiziert, der vorrangig zu beheben ist.':mangel.length>0?'Es wurden keine kritischen Mängel festgestellt. Der vorhandene Verbesserungsbedarf sollte mittelfristig adressiert werden.':'Das Objekt erfüllt alle geprüften Sicherheitsanforderungen. Kein sofortiger Handlungsbedarf.';
+  const objekt=esc(S.meta.objekt||'');
+  const auftraggeber=esc(S.meta.auftraggeber||'');
+  const pruefer=esc(S.meta.pruefer||sessionStorage.getItem('ssa_u')||'–');
+  const adresse=esc(S.meta.adresse||'');
+  const version=esc(S.meta.konzeptVersion||'1.0');
+  const status=esc(S.meta.konzeptStatus||'Entwurf');
+  const genDate=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
+  const genDateTime=new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const selectedMods=(S.modules||[]).map(id=>{const t=(typeof TEMPLATES!=='undefined'?TEMPLATES:[]).find(t=>t.id===id);return t?t.name:'';}).filter(Boolean);
+  const modsText=selectedMods.length?selectedMods.join(', '):'allgemeine Sicherheitsbegehung';
+  const normBadges=(S.norms||[]).map(n=>`<span class="ksk-norm-badge">${n}</span>`).join(' ');
+  // Schutzziele (auto-generated)
+  const sz=[{id:'SZ-01',z:'Physische Sicherheit',d:'Schutz von Personen, Sachwerten und Gebäude vor unbefugtem Zutritt, Diebstahl, Vandalismus und sonstigen physischen Bedrohungen.',p:'HOCH'},{id:'SZ-02',z:'Betriebskontinuität (BCM)',d:'Sicherstellung des ununterbrochenen Geschäftsbetriebs sowie schnelle Wiederherstellung nach Störungen oder sicherheitsrelevanten Ereignissen.',p:'HOCH'},{id:'SZ-03',z:'Compliance & Rechtssicherheit',d:'Einhaltung aller relevanten gesetzlichen, regulatorischen und normativen Anforderungen im Bereich Sicherheit und Datenschutz.',p:'HOCH'},{id:'SZ-04',z:'Informationssicherheit (CIA)',d:'Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit aller schützenswerten Informationen und IT-Systeme (ISO/IEC 27001).',p:'MITTEL'},{id:'SZ-05',z:'Schadensminimierung',d:'Reduktion von Eintrittswahrscheinlichkeit und Schadensauswirkung identifizierter Risiken durch präventive und reaktive Maßnahmen (ISO 31000).',p:'MITTEL'}];
+  // Investment summary helper
+  const fmtCostRange=(arr,prio)=>{let mn=0,mx=0;arr.forEach(f=>{if(!f.c)return;const r=f.c[prio]||'';const m=r.match(/(\d[\d.]*)\s*[–-]\s*(\d[\d.]*)/);if(m){mn+=parseInt(m[1].replace(/\./g,''));mx+=parseInt(m[2].replace(/\./g,''));}});return mn||mx?`€ ${mn.toLocaleString('de-DE')} – ${mx.toLocaleString('de-DE')}`:'auf Anfrage';};
   document.getElementById('mainContent').innerHTML=`
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
     <div class="rpt-tabs">
