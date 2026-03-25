@@ -421,15 +421,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 }
 
 /* ═══ LOGIN ═══ */
-.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
 #loginWebCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .login-card{position:relative;z-index:1}
 .login-overlay.hidden{display:none!important}
-.login-card{background:rgba(2,6,23,.72);border:1px solid rgba(255,255,255,.06);border-radius:var(--r2);padding:36px 40px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative;overflow:hidden;animation:fadeUp .35s ease;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.login-card{background:rgba(2,6,23,.82);border:1px solid rgba(255,255,255,.07);border-radius:var(--r2);padding:32px 40px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative;animation:fadeUp .35s ease}
 .login-card::before{display:none}
 .login-brand{text-align:center;margin-bottom:28px}
 .login-logo-mark{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(20,184,166,.2),rgba(249,115,22,.15));border:1px solid rgba(20,184,166,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:1.2rem;color:var(--text2);margin:0 auto 12px}
-.login-logo-img{width:148px;height:148px;object-fit:cover;border-radius:14px;display:block;margin:0 auto 12px;opacity:.9;filter:brightness(.96) contrast(1.05) saturate(1.1);transition:opacity .3s}
+.login-logo-img{width:120px;height:120px;object-fit:cover;border-radius:12px;display:block;margin:0 auto 10px;opacity:.88;filter:brightness(.95) contrast(1.05) saturate(1.1);transition:opacity .3s}
 .login-logo-img:hover{opacity:1}
 .login-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--text2);margin-bottom:3px}
 .login-sub{font-size:.78rem;color:var(--muted)}
@@ -442,6 +442,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .login-icon{position:absolute;left:11px;font-size:.9rem;pointer-events:none;opacity:.5}
 .login-eye{position:absolute;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;line-height:1;transition:.15s}
 .login-eye:hover{color:var(--text)}
+.login-lang-select{width:100%;background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:.88rem;font-family:var(--ff);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none}
+.login-lang-select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
 .login-btn{background:linear-gradient(135deg,var(--accent),#0d9488);color:#0f172a;border:none;border-radius:var(--rpill);padding:11px 20px;font-size:.88rem;font-weight:700;font-family:var(--ff);cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(20,184,166,.3);margin-top:4px}
 .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(20,184,166,.4)}
 .login-btn:active{transform:none}
@@ -666,13 +668,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       </div>
       <div class="login-field">
         <label id="li_lang_label">Sprache / Language</label>
-        <div class="login-input-wrap">
-          <span class="login-icon">🌐</span>
-          <select id="li_lang" onchange="setLoginLang(this.value)" class="login-lang-select">
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-          </select>
-        </div>
+        <select id="li_lang" onchange="setLoginLang(this.value)" class="login-lang-select">
+          <option value="de">Deutsch</option>
+          <option value="en">English</option>
+        </select>
       </div>
       <div class="login-error" id="loginError"></div>
       <div class="login-lockout" id="loginLockout"></div>
