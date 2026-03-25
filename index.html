@@ -269,12 +269,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Konzept Document Wrapper ── */
   .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
   .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
-  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #2563eb!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
-  .ksk-section-number{color:#2563eb!important;margin-right:8pt}
+  .ksk-section-title{color:#0f172a!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #14b8a6!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
+  .ksk-section-number{color:#14b8a6!important;margin-right:8pt}
   /* ── Deckblatt ── */
-  .ksk-cover{text-align:center!important;padding:40pt 0!important;page-break-after:always!important;border:none!important}
-  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #2563eb!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
-  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#1e293b!important;letter-spacing:-0.02em!important;margin-bottom:8pt!important}
+  .ksk-cover{text-align:center!important;padding:0!important;page-break-after:always!important;page-break-before:avoid!important;break-before:avoid!important;border:none!important;background:#fff!important}
+  .ksk-cover-hband{background:#020617!important;color:#f8fafc!important;padding:16pt 26pt!important;display:flex!important;align-items:center!important;gap:14pt!important;text-align:left!important;margin-bottom:40pt!important}
+  .ksk-cover-lmark{font-size:15pt!important;font-weight:900!important;color:#f8fafc!important;background:rgba(20,184,166,.18)!important;border:2pt solid #14b8a6!important;padding:5pt 12pt!important;border-radius:3pt!important;letter-spacing:-.01em!important;flex-shrink:0!important}
+  .ksk-cover-lacc{color:#14b8a6!important}
+  .ksk-cover-lname{font-size:11pt!important;font-weight:700!important;color:#f8fafc!important;letter-spacing:-.01em!important}
+  .ksk-cover-lsub{font-size:7pt!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#14b8a6!important;margin-top:2pt!important}
+  .ksk-cover-body{padding:0 28pt 24pt!important;text-align:center!important}
+  .ksk-cover-tline{height:3pt!important;background:#14b8a6!important;width:72pt!important;margin:10pt auto 18pt!important;border-radius:2pt!important;display:block!important}
+  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#0f172a!important;letter-spacing:-0.02em!important;margin-bottom:6pt!important}
   .ksk-cover-subtitle{font-size:13pt!important;color:#475569!important;margin-bottom:30pt!important}
   .ksk-cover-meta{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:4pt!important;padding:16pt!important;text-align:left!important;margin:20pt 0!important;font-size:10pt}
   .ksk-cover-meta table{width:100%;border-collapse:collapse}
@@ -284,8 +290,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Inhaltsverzeichnis ── */
   .ksk-toc-print{page-break-after:always}
   .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #2563eb;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
-  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#334155}
-  .ksk-toc-print .toc-entry-main{font-weight:600;color:#1e293b}
+  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#1e293b}
+  .ksk-toc-print .toc-entry-main{font-weight:600;color:#0f172a}
   /* ── Tabellen ── */
   .ksk-table{width:100%!important;border-collapse:collapse!important;margin:8pt 0 14pt 0!important;font-size:9.5pt!important;page-break-inside:auto}
   .ksk-table th{background:#1e293b!important;color:#f1f5f9!important;padding:6pt 8pt!important;text-align:left!important;font-weight:600!important;font-size:9pt!important;border:1pt solid #334155!important}
@@ -297,13 +303,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .ksk-table .risk-mangel{color:#b45309!important;font-weight:600!important}
   .ksk-table .risk-ok{color:#15803d!important;font-weight:600!important}
   /* ── Textblöcke ── */
-  .ksk-text{font-size:10.5pt!important;color:#334155!important;line-height:1.7!important;margin-bottom:10pt!important}
-  .ksk-text strong{color:#1e293b!important}
+  .ksk-text{font-size:10.5pt!important;color:#111827!important;line-height:1.7!important;margin-bottom:10pt!important}
+  .ksk-text strong{color:#0f172a!important}
   .ksk-infobox{border-left:3pt solid #2563eb!important;background:#f0f7ff!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-warnbox{border-left:3pt solid #dc2626!important;background:#fef2f2!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-okbox{border-left:3pt solid #15803d!important;background:#f0fdf4!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   /* ── Norm-Badges für Print ── */
-  .ksk-norm-badge{background:#e0e7ff!important;color:#1e3a8a!important;border:1pt solid #93c5fd!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
+  .ksk-norm-badge{background:#ccfbf1!important;color:#0f766e!important;border:1pt solid #5eead4!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
   /* ── Report Header ── */
   .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:4pt solid #0d9488!important;border-radius:2pt!important;padding:14pt 18pt!important;margin-bottom:18pt!important}
   .rpt-title{color:#1e293b!important;font-size:18pt!important;font-weight:800!important;line-height:1.2!important}
@@ -367,14 +373,25 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Signaturen ── */
   .ksk-sig-box{border-top:1pt solid #94a3b8!important;padding-top:4pt!important;margin-top:30pt!important;min-width:160pt!important;font-size:9pt!important;color:#64748b!important}
   .ksk-sig-row{display:flex!important;gap:24pt!important;margin-top:20pt!important;flex-wrap:wrap!important}
+  /* ── Executive Summary ── */
+  .ksk-exec-sum{background:#f0fdf9!important;border:1.5pt solid #14b8a6!important;border-radius:2pt!important;padding:10pt 14pt!important;margin-bottom:14pt!important;page-break-inside:avoid!important}
+  .ksk-exec-sum-title{font-size:9pt!important;font-weight:700!important;color:#0f766e!important;text-transform:uppercase!important;letter-spacing:.05em!important;margin-bottom:7pt!important}
+  .ksk-exec-table{margin:0!important}
+  /* ── Empfehlungsblöcke ── */
+  .ksk-rec-block{background:#f0fdf9!important;border:1pt solid #99f6e4!important;border-radius:2pt!important;padding:10pt 14pt!important;margin-top:12pt!important;page-break-inside:avoid!important}
+  .ksk-rec-title{font-size:10pt!important;font-weight:700!important;color:#0f766e!important;margin-bottom:8pt!important;padding-bottom:4pt!important;border-bottom:1pt solid #99f6e4!important}
+  .ksk-rec-domain{margin-bottom:10pt!important}
+  .ksk-rec-domain-name{font-size:9.5pt!important;font-weight:700!important;color:#0f172a!important;margin-bottom:4pt!important}
+  .ksk-rec-list{margin-left:14pt!important;display:block!important}
+  .ksk-rec-list li{font-size:9.5pt!important;color:#1e293b!important;line-height:1.55!important;margin-bottom:3pt!important}
   /* ── Cover Meta Table (neues Deckblatt) ── */
   .ksk-cover-meta-table{width:auto!important;min-width:320pt!important;border-collapse:collapse!important;margin:16pt auto!important;font-size:10pt!important;border:1pt solid #e2e8f0!important;background:#f8fafc!important}
   .ksk-cover-meta-table td{padding:5pt 10pt!important;border-bottom:1pt solid #f1f5f9!important;color:#334155!important;font-size:10pt!important;text-align:left!important}
   .ksk-cover-meta-table td:first-child{font-weight:600!important;color:#1e293b!important;width:42%!important;white-space:nowrap!important}
   .ksk-cover-meta-table tr:last-child td{border-bottom:none!important}
   /* ── Cover Elemente ── */
-  .ksk-cover-type{font-size:9pt!important;letter-spacing:.12em!important;color:#2563eb!important;text-transform:uppercase!important;margin-bottom:8pt!important}
-  .ksk-cover-objekt{font-size:16pt!important;font-weight:700!important;color:#1e293b!important;margin-bottom:20pt!important}
+  .ksk-cover-type{font-size:9pt!important;letter-spacing:.12em!important;color:#14b8a6!important;text-transform:uppercase!important;margin-bottom:8pt!important}
+  .ksk-cover-objekt{font-size:16pt!important;font-weight:700!important;color:#0f172a!important;margin-bottom:20pt!important}
   /* ── Domain Header (Bestandsaufnahme) ── */
   .ksk-domain-header{display:flex!important;align-items:baseline!important;gap:8pt!important;margin:14pt 0 4pt!important;padding-bottom:3pt!important;border-bottom:1pt solid #e2e8f0!important}
   .ksk-domain-icon{font-size:8pt!important;color:#2563eb!important;background:#eff6ff!important;border:1pt solid #bfdbfe!important;padding:1pt 5pt!important;border-radius:2pt!important}
@@ -397,7 +414,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     @bottom-right{content:''!important}
   }
   /* ── Seitenumbrüche ── */
-  .ksk-cover,.ksk-toc-print,.ksk-section.page-break-before{page-break-before:always;break-before:page}
+  .ksk-toc-print,.ksk-section.page-break-before{page-break-before:always;break-before:page}
   h2,h3,.ksk-section-title,.ksk-domain-header{page-break-after:avoid;break-after:avoid}
   table{page-break-inside:auto}
   tr{page-break-inside:avoid;break-inside:avoid}
@@ -412,6 +429,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--orange),var(--purple))}
 .login-brand{text-align:center;margin-bottom:28px}
 .login-logo-mark{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(20,184,166,.2),rgba(249,115,22,.15));border:1px solid rgba(20,184,166,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:1.2rem;color:var(--text2);margin:0 auto 12px}
+.login-logo-img{width:148px;height:148px;object-fit:cover;border-radius:14px;display:block;margin:0 auto 12px;opacity:.9;filter:brightness(.96) contrast(1.05) saturate(1.1);transition:opacity .3s}
+.login-logo-img:hover{opacity:1}
 .login-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--text2);margin-bottom:3px}
 .login-sub{font-size:.78rem;color:var(--muted)}
 .login-form{display:flex;flex-direction:column;gap:14px}
@@ -547,13 +566,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .konzept-measure .km-time{font-family:var(--fm);font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 /* ═══ PROFESSIONELLES SICHERHEITSKONZEPT ═══ */
 .ksk-doc{background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);max-width:880px;margin:0 auto;padding:0;overflow:hidden;color:#1e293b}
-.ksk-cover{background:linear-gradient(160deg,#1e293b 0%,#0f172a 60%,#1e3a5f 100%);padding:60px 52px 48px;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
-.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(37,99,235,.12) 0,transparent 70%)}
-.ksk-cover-logo{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 20px;font-family:var(--fh);font-weight:800;font-size:.9rem;color:#f1f5f9;letter-spacing:.01em;margin-bottom:36px;position:relative;z-index:1}
-.ksk-cover-logo span{color:#60a5fa}
-.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:14px;position:relative;z-index:1}
-.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15;position:relative;z-index:1}
-.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#93c5fd;margin-bottom:36px;position:relative;z-index:1}
+.ksk-cover{background:linear-gradient(160deg,#0a1628 0%,#020617 60%,#0f1f3d 100%);padding:0;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0}
+.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(20,184,166,.07) 0,transparent 70%);pointer-events:none}
+.ksk-cover-hband{background:rgba(2,6,23,.92);border-bottom:1px solid rgba(20,184,166,.2);padding:14px 28px;display:flex;align-items:center;gap:12px;text-align:left;flex-shrink:0;position:relative;z-index:1}
+.ksk-cover-lmark{display:inline-flex;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.35);border-radius:6px;padding:6px 14px;font-family:var(--fh);font-weight:900;font-size:.9rem;color:#f1f5f9;flex-shrink:0}
+.ksk-cover-lacc{color:#14b8a6}
+.ksk-cover-linfo{display:flex;flex-direction:column;gap:0}
+.ksk-cover-lname{font-family:var(--fh);font-weight:700;font-size:.8rem;color:#f1f5f9;letter-spacing:-.01em}
+.ksk-cover-lsub{font-family:var(--fm);font-size:.44rem;letter-spacing:.12em;text-transform:uppercase;color:#14b8a6;margin-top:2px;opacity:.9}
+.ksk-cover-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 52px 40px;position:relative;z-index:1}
+.ksk-cover-tline{width:60px;height:3px;background:linear-gradient(90deg,#14b8a6,#2dd4bf);border-radius:2px;margin:10px auto 22px}
+.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#14b8a6;margin-bottom:14px}
+.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15}
+.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#2dd4bf;margin-bottom:36px}
 .ksk-cover-meta-table{width:100%;max-width:480px;border-collapse:collapse;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;position:relative;z-index:1;font-size:.8rem}
 .ksk-cover-meta-table td{padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;color:#94a3b8}
 .ksk-cover-meta-table td:first-child{font-weight:600;color:#cbd5e1;width:45%;white-space:nowrap}
@@ -594,13 +619,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ksk-maturity-fill{height:100%;border-radius:3px;transition:.4s}
 .ksk-maturity-level{font-family:var(--fm);font-size:.54rem;color:var(--muted)}
 .ksk-sig-row{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.ksk-exec-sum{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:18px}
+.ksk-exec-sum-title{font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--accent);letter-spacing:.03em;text-transform:uppercase;margin-bottom:10px}
+.ksk-exec-table{margin:0!important}
+.ksk-rec-block{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.15);border-radius:var(--r);padding:16px 20px;margin-top:16px}
+.ksk-rec-title{font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--text2);letter-spacing:.02em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(20,184,166,.2)}
+.ksk-rec-domain{margin-bottom:14px}
+.ksk-rec-domain-name{font-family:var(--fh);font-size:.75rem;font-weight:700;color:var(--accent);margin-bottom:6px}
+.ksk-rec-list{margin-left:18px;display:flex;flex-direction:column;gap:6px}
+.ksk-rec-list li{font-size:.78rem;color:var(--muted);line-height:1.55}
 .ksk-sig-box{flex:1;min-width:160px;border-top:1px solid rgba(255,255,255,.15);padding-top:8px;margin-top:32px;font-size:.72rem;color:var(--muted)}
 .ksk-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .ksk-domain-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .ksk-domain-icon{font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:6px;background:rgba(37,99,235,.1);color:#93c5fd;border:1px solid rgba(37,99,235,.2);text-transform:uppercase}
 .ksk-domain-title{font-size:.92rem;font-weight:700;color:#e2e8f0}
 .ksk-domain-pct{font-family:var(--fm);font-size:.7rem;font-weight:700;margin-left:auto}
-@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover{padding:32px 20px}.ksk-sig-row{flex-direction:column}}
+@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover-body{padding:20px}.ksk-sig-row{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -611,9 +645,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <canvas id="loginWebCanvas"></canvas>
   <div class="login-card" id="loginCard">
     <div class="login-brand">
-      <div class="login-logo-mark" style="font-size:1rem;width:auto;padding:0 14px;letter-spacing:.02em">S3<span style="color:var(--accent)">:</span>A</div>
-      <div class="login-title">S3<span style="color:var(--accent)">:</span>Analytics</div>
-      <div class="login-sub">Audit & Compliance Platform — Bitte anmelden</div>
+      <img class="login-logo-img" src="data:image/webp;base64,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" alt="SecureStay Analytics">
+      <div class="login-sub" style="margin-top:4px">Audit &amp; Compliance Platform — Bitte anmelden</div>
     </div>
     <div class="login-form">
       <div class="login-field">
@@ -1674,9 +1707,9 @@ function renderReport(){
   ${m.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:7px;padding:5px 10px;background:rgba(234,179,8,.06);border-radius:6px;display:inline-block">${L==='en'?`⚠ Deficiencies (${m.length}) — Medium-term action required`:`⚠ Verbesserungsbedarf (${m.length}) — Mittelfristiger Handlungsbedarf`}</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
   ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:24px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-size:1.1rem;font-weight:700">${L==='en'?'No deficiencies found':'Keine Mängel festgestellt'}</span><div style="font-size:.78rem;color:var(--muted);margin-top:4px">${L==='en'?'All assessed control points compliant':'Alle bewerteten Kontrollpunkte erfüllt'}</div></div>`:''}
   <div class="cost-sum">
-    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'💶 Investment Required (Estimate)':'💶 Investitionsbedarf (Schätzung)'}</div>
-    <div class="cost-row"><span>${L==='en'?'⚡ Immediate measures (critical)':'⚡ Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
-    <div class="cost-row"><span>${L==='en'?'📅 Medium-term (deficiencies)':'📅 Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'Investment Required (Estimate)':'Investitionsbedarf (Schätzung)'}</div>
+    <div class="cost-row"><span>${L==='en'?'Immediate measures (critical)':'Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
+    <div class="cost-row"><span>${L==='en'?'Medium-term (deficiencies)':'Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
     <div class="cost-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:10px"><span style="color:var(--text2);font-weight:700">${L==='en'?'Total':'Gesamt'}</span><span style="color:var(--text2);font-weight:700;font-family:var(--fh);font-size:.92rem">€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(20,184,166,.04),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
@@ -1684,7 +1717,7 @@ function renderReport(){
     <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
     <div style="font-size:.64rem;color:var(--soft);margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
   </div>
-  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
+  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">PDF</button></div></div>`;
 }
 
 // ═══ KONZEPT HELPERS ═══
@@ -1692,9 +1725,15 @@ function _kskCover(L,ds,genDate,comp,risk){
   const v=esc(S.meta.konzeptVersion||'1.0');const st=esc(S.meta.konzeptStatus||'Entwurf');
   const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
   return '<div class="ksk-cover">'
-    +'<div class="ksk-cover-logo"><span>S3</span>:A &nbsp;·&nbsp; SecureStay Analytics</div>'
+    +'<div class="ksk-cover-hband">'
+    +'<div class="ksk-cover-lmark">S3<span class="ksk-cover-lacc">:A</span></div>'
+    +'<div class="ksk-cover-linfo"><div class="ksk-cover-lname">SecureStay Analytics</div>'
+    +'<div class="ksk-cover-lsub">Security &amp; Compliance Platform</div></div>'
+    +'</div>'
+    +'<div class="ksk-cover-body">'
     +'<div class="ksk-cover-type">'+(L==='en'?'Confidential Security Document':'Vertrauliches Sicherheitsdokument')+'</div>'
     +'<div class="ksk-cover-title">'+(L==='en'?'Security Concept':'Sicherheitskonzept')+'</div>'
+    +'<div class="ksk-cover-tline"></div>'
     +'<div class="ksk-cover-objekt">'+esc(S.meta.objekt||'–')+'</div>'
     +'<table class="ksk-cover-meta-table">'
     +'<tr><td>'+(L==='en'?'Client':'Auftraggeber')+'</td><td>'+esc(S.meta.auftraggeber||'–')+'</td></tr>'
@@ -1708,15 +1747,31 @@ function _kskCover(L,ds,genDate,comp,risk){
     +'<tr><td>Compliance</td><td>'+comp+'%</td></tr>'
     +'</table>'
     +'<div class="ksk-vertraulich">&#9888; '+(L==='en'?'CONFIDENTIAL – Authorised Personnel Only':'VERTRAULICH – Nur für autorisierten Personenkreis')+'</div>'
-    +'</div>';
+    +'</div></div>';
 }
-function _kskSec1(L,ds,actN){
+function _kskSec1(L,ds,actN,kritisch,mangel,comp,risk){
   const nb=actN.map(k=>'<span class="ksk-norm-badge">'+esc(k)+'</span>').join(' ');
-  return '<p class="ksk-text">'+(L==='en'
+  const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
+  const rc=risk.cls==='danger'?'risk-krit':risk.cls==='orange'||risk.cls==='warn'?'risk-mangel':'risk-ok';
+  const execSum='<div class="ksk-exec-sum">'
+    +'<div class="ksk-exec-sum-title">'+(L==='en'?'Executive Summary':'Zusammenfassung der Prüfungsergebnisse')+'</div>'
+    +'<table class="ksk-table ksk-exec-table"><tbody>'
+    +'<tr><td><strong>'+(L==='en'?'Critical Deficiencies':'Kritische Befunde')+'</strong></td>'
+    +'<td class="risk-krit"><strong>'+kritisch.length+'</strong> '+(L==='en'?'— Immediate action required (≤ 4 weeks)':'— Sofortiger Handlungsbedarf (≤ 4 Wochen)')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Deficiencies (medium-term)':'Mängel (mittelfristig)')+'</strong></td>'
+    +'<td class="risk-mangel"><strong>'+mangel.length+'</strong> '+(L==='en'?'— Remediation within 3–6 months':'— Behebung innerhalb 3–6 Monate')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Compliance Score':'Compliance-Quote')+'</strong></td>'
+    +'<td><strong>'+comp+'%</strong> '+(L==='en'?'of assessed control points compliant':'der bewerteten Kontrollpunkte erfüllt')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Overall Risk Level':'Gesamtrisiko')+'</strong></td>'
+    +'<td><strong class="'+rc+'">'+(rl[risk.cls]||risk.level)+'</strong> ('+risk.score+'/100)</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Active Standards':'Aktive Normen')+'</strong></td>'
+    +'<td>'+(nb||'–')+'</td></tr>'
+    +'</tbody></table></div>';
+  return execSum
+  +'<p class="ksk-text">'+(L==='en'
     ?'This security concept was prepared for object <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' at '+esc(S.meta.adresse):'')+'. Audit date: '+ds+(S.meta.pruefer?', author: '+esc(S.meta.pruefer):'')+', commissioned by <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
     :'Das vorliegende Sicherheitskonzept wurde für das Objekt <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' in '+esc(S.meta.adresse):'')+' erstellt. Auditdatum: '+ds+(S.meta.pruefer?', Ersteller: '+esc(S.meta.pruefer):'')+', im Auftrag von <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
   )+'</p>'
-  +'<p class="ksk-text"><strong>'+(L==='en'?'Active Standards: ':'Aktive Normen: ')+'</strong>'+(nb||'–')+'</p>'
   +'<div class="ksk-infobox"><strong>'+(L==='en'?'Scope:':'Geltungsbereich:')+'</strong> '+(L==='en'?'All areas, access points, technical systems and organisational processes of the assessed object. Findings and recommendations apply as of the audit date.':'Alle Bereiche, Zugangspunkte, technische Systeme und organisatorische Prozesse des Bewertungsobjekts. Befunde und Empfehlungen gelten mit Stand des Auditdatums.')+'</div>';
 }
 function _kskSec2(L,actN){
@@ -1842,7 +1897,13 @@ function _kskSec7(L,ac){
 }
 function _kskSec8(L,kritisch){
   if(!kritisch.length)return '<div class="ksk-okbox">'+(L==='en'?'No critical deficiencies identified.':'Keine kritischen Befunde festgestellt.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
+  const byDom={};kritisch.forEach(f=>{const k=f.sec||'Sonstige';if(!byDom[k])byDom[k]=[];byDom[k].push(f);});
+  const doms=Object.keys(byDom);
+  const intro='<p class="ksk-text">'+(L==='en'
+    ?'The audit identified <strong>'+kritisch.length+' critical deficiency/ies</strong> across <strong>'+doms.length+' domain(s)</strong> requiring immediate remediation. The table below provides a complete overview including applicable standards, recommendations, deadlines and cost estimates. Non-remediation may result in legal liability pursuant to NIS2 §38 / ISO 31000 and adverse insurance consequences.'
+    :'Die Prüfung hat <strong>'+kritisch.length+' kritischen Befund/Befunde</strong> in <strong>'+doms.length+' Prüfbereich(en)</strong> ergeben, die unverzüglich zu beheben sind. Die nachfolgende Tabelle enthält eine vollständige Übersicht der Feststellungen, maßgeblichen Normen, Empfehlungen, Fristen und Kostenschätzungen. Nichtbehebung kann zu rechtlicher Haftung gemäß NIS2 §38 / ISO 31000 sowie zu versicherungsrechtlichen Konsequenzen führen.'
+  )+'</p>';
+  const tbl='<table class="ksk-table"><thead><tr><th>Nr.</th>'
     +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
     +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
     +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
@@ -1858,12 +1919,23 @@ function _kskSec8(L,kritisch){
       +'<td>'+esc(f.d||'')+'</td>'
       +'<td class="risk-krit">'+(L==='en'?'≤ 4 wks':'≤ 4 Wo.')+'</td>'
       +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
-    +'</tbody></table>'
-    +'<div class="ksk-warnbox"><strong>'+(L==='en'?'Note:':'Hinweis:')+'</strong> '+(L==='en'?'Critical deficiencies must be remediated within 4 weeks. Non-remediation may result in legal liability and adverse insurance implications.':'Kritische Befunde sind innerhalb von 4 Wochen zu beheben. Nichtbehebung kann zu rechtlicher Haftung und versicherungsrechtlichen Konsequenzen führen.')+'</div>';
+    +'</tbody></table>';
+  const warn='<div class="ksk-warnbox"><strong>'+(L==='en'?'Note:':'Hinweis:')+'</strong> '+(L==='en'?'Critical deficiencies must be remediated within 4 weeks. Non-remediation may result in legal liability and adverse insurance implications.':'Kritische Befunde sind innerhalb von 4 Wochen zu beheben. Nichtbehebung kann zu rechtlicher Haftung und versicherungsrechtlichen Konsequenzen führen.')+'</div>';
+  const recs='<div class="ksk-rec-block"><div class="ksk-rec-title">'+(L==='en'?'Detailed Recommendations by Domain':'Detaillierte Handlungsempfehlungen nach Prüfbereich')+'</div>'
+    +Object.entries(byDom).map(([dom,items])=>'<div class="ksk-rec-domain"><div class="ksk-rec-domain-name">'+esc(dom)+'</div><ul class="ksk-rec-list">'
+      +items.map(f=>'<li><strong>'+esc(f.l)+'</strong>'+(f.n?' <span class="ksk-norm-badge">'+esc(f.n)+'</span>':'')+': '+(L==='en'?'Immediate implementation required — ':'Sofortige Umsetzung erforderlich — ')+esc(f.d||'–')+(f.note?'<br><em>'+(L==='en'?'Auditor note: ':'Prüferhinweis: ')+esc(f.note)+'</em>':'')+'</li>').join('')
+      +'</ul></div>').join('')+'</div>';
+  return intro+tbl+warn+recs;
 }
 function _kskSec9(L,mangel){
   if(!mangel.length)return '<div class="ksk-okbox">'+(L==='en'?'No medium-term deficiencies.':'Keine mittelfristigen Mängel.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
+  const byDom={};mangel.forEach(f=>{const k=f.sec||'Sonstige';if(!byDom[k])byDom[k]=[];byDom[k].push(f);});
+  const doms=Object.keys(byDom);
+  const intro='<p class="ksk-text">'+(L==='en'
+    ?'The audit identified <strong>'+mangel.length+' deficiency/ies</strong> across <strong>'+doms.length+' domain(s)</strong> requiring remediation within 3–6 months. These represent partial fulfilment of applicable standards and are to be resolved within a structured improvement programme with defined milestones and responsible parties.'
+    :'Die Prüfung hat <strong>'+mangel.length+' Mangel/Mängel</strong> in <strong>'+doms.length+' Prüfbereich(en)</strong> ergeben, die innerhalb von 3–6 Monaten zu beheben sind. Diese stellen eine unvollständige Erfüllung der einschlägigen Normen dar und sind im Rahmen eines strukturierten Verbesserungsprogramms mit definierten Meilensteinen und Verantwortlichkeiten zu schließen.'
+  )+'</p>';
+  const tbl='<table class="ksk-table"><thead><tr><th>Nr.</th>'
     +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
     +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
     +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
@@ -1880,6 +1952,11 @@ function _kskSec9(L,mangel){
       +'<td>'+(L==='en'?'3–6 months':'3–6 Monate')+'</td>'
       +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
     +'</tbody></table>';
+  const recs='<div class="ksk-rec-block"><div class="ksk-rec-title">'+(L==='en'?'Improvement Recommendations by Domain':'Verbesserungsempfehlungen nach Prüfbereich')+'</div>'
+    +Object.entries(byDom).map(([dom,items])=>'<div class="ksk-rec-domain"><div class="ksk-rec-domain-name">'+esc(dom)+'</div><ul class="ksk-rec-list">'
+      +items.map(f=>'<li><strong>'+esc(f.l)+'</strong>'+(f.n?' <span class="ksk-norm-badge">'+esc(f.n)+'</span>':'')+': '+esc(f.d||'–')+(f.note?'<br><em>'+(L==='en'?'Auditor note: ':'Prüferhinweis: ')+esc(f.note)+'</em>':'')+'</li>').join('')
+      +'</ul></div>').join('')+'</div>';
+  return intro+tbl+recs;
 }
 function _kskSec10(L,kritisch,mangel){
   let p1A=0,p1B=0,p2A=0,p2B=0;
@@ -2015,7 +2092,7 @@ function renderKonzept(){
   // Build sections dynamically
   const sects=[];let sn=0;
   const push=(title,body)=>{sn++;sects.push({n:sn,title,body});};
-  push(L==='en'?'Introduction & Scope':'Einleitung und Geltungsbereich',_kskSec1(L,ds,actN));
+  push(L==='en'?'Introduction & Scope':'Einleitung und Geltungsbereich',_kskSec1(L,ds,actN,kritisch,mangel,comp,risk));
   push(L==='en'?'Legal & Normative Framework':'Rechtliche und normative Grundlagen',_kskSec2(L,actN));
   push(L==='en'?'Object Description':'Objektbeschreibung',_kskSec3(L));
   push(L==='en'?'Protection Requirements':'Schutzbedarfsfeststellung',_kskSec4(L,risk));
