@@ -974,8 +974,7 @@ function renderKonzept(){
   const adresse=esc(S.meta.adresse||'');
   const version=esc(S.meta.konzeptVersion||'1.0');
   const status=esc(S.meta.konzeptStatus||'Entwurf');
-  const genDate=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
-  const genDateTime=new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const genDateTime=new Date().toLocaleString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   const selectedMods=(S.modules||[]).map(id=>{const t=(typeof TEMPLATES!=='undefined'?TEMPLATES:[]).find(t=>t.id===id);return t?t.name:'';}).filter(Boolean);
   const modsText=selectedMods.length?selectedMods.join(', '):'allgemeine Sicherheitsbegehung';
   const normBadges=(S.norms||[]).map(n=>`<span class="ksk-norm-badge">${n}</span>`).join(' ');
@@ -1756,6 +1755,7 @@ function togglePw() {
 
 // ═══ LANGUAGE SYSTEM ═══
 let _LANG = localStorage.getItem('ssa_lang')||'de';
+function setLoginLang(lang){_LANG=lang;localStorage.setItem('ssa_lang',lang);updateLangUI();}
 function toggleLang(){_LANG=_LANG==='de'?'en':'de';localStorage.setItem('ssa_lang',_LANG);updateLangUI();render();}
 function updateLangUI(){
   const btn=document.getElementById('langToggleBtn');
@@ -1767,11 +1767,14 @@ function updateLangUI(){
   const liSub=document.querySelector('.login-sub');
   if(liSub)liSub.textContent=_LANG==='en'?'Audit & Compliance Platform — Please sign in':'Audit & Compliance Platform — Bitte anmelden';
   const liUser=document.getElementById('li_user');
-  if(liUser)liUser.placeholder=_LANG==='en'?'Username':'Nutzername';
+  if(liUser){liUser.placeholder=_LANG==='en'?'Username':'Nutzername';const ul=liUser.closest('.login-field')?.querySelector('label');if(ul)ul.textContent=_LANG==='en'?'Username':'Nutzername';}
   const liPass=document.getElementById('li_pass');
-  if(liPass)liPass.placeholder=_LANG==='en'?'Password':'Passwort';
+  if(liPass){liPass.placeholder=_LANG==='en'?'Password':'Passwort';const pl=liPass.closest('.login-field')?.querySelector('label');if(pl)pl.textContent=_LANG==='en'?'Password':'Passwort';}
   const liBtn=document.getElementById('loginBtn');
   if(liBtn)liBtn.textContent=_LANG==='en'?'Sign in →':'Anmelden →';
+  // Language dropdown sync
+  const liLang=document.getElementById('li_lang');
+  if(liLang)liLang.value=_LANG;
   // User badge logout label
   const logoutLbl=document.querySelector('.user-logout-lbl');
   if(logoutLbl)logoutLbl.textContent=_LANG==='en'?'Sign out':'Abmelden';
@@ -1780,7 +1783,8 @@ function updateLangUI(){
   if(userBadge)userBadge.title=_LANG==='en'?'Sign out':'Abmelden';
 }
 
-if (checkAuth()){updateLangUI();render();}
+updateLangUI();
+if (checkAuth()){render();}
 
 /* ═══ LOGIN BACKGROUND — Digital Web ═══ */
 (function(){
