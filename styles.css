@@ -381,6 +381,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .login-icon{position:absolute;left:11px;font-size:.9rem;pointer-events:none;opacity:.5}
 .login-eye{position:absolute;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;line-height:1;transition:.15s}
 .login-eye:hover{color:var(--text)}
+.login-input-wrap:has(.login-lang-select){background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:10px;padding:0 12px 0 38px;transition:.2s}
+.login-input-wrap:has(.login-lang-select):focus-within{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+.login-lang-select{flex:1;appearance:none;-webkit-appearance:none;background:transparent;border:none;color:var(--text);font-size:.88rem;font-family:var(--ff);outline:none;cursor:pointer;padding:10px 0;width:100%}
+.login-lang-select option{background:#0f172a;color:var(--text)}
 .login-btn{background:linear-gradient(135deg,var(--accent),#0d9488);color:#0f172a;border:none;border-radius:var(--rpill);padding:11px 20px;font-size:.88rem;font-weight:700;font-family:var(--ff);cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(20,184,166,.3);margin-top:4px}
 .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(20,184,166,.4)}
 .login-btn:active{transform:none}
