@@ -1,763 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>S3:Analytics – Audit & Compliance Platform</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect width='32' height='32' rx='8' fill='%230a1628' opacity='.8'/%3E%3Ctext x='2' y='23' font-family='system-ui,sans-serif' font-size='13' font-weight='900' fill='%23f8fafc'%3ES3%3C/text%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='13' font-weight='900' fill='%2314b8a6'%3E%3AA%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
---bg:#020617;--bg2:#0a1628;--bg3:#0f1f3d;
---surface:rgba(10,22,40,.75);--surface2:rgba(15,30,56,.65);--surface3:rgba(8,18,35,.95);
---border:#1e293b;--border2:#334155;
---text:#e2e8f0;--text2:#f8fafc;--muted:#94a3b8;--soft:#64748b;
---accent:#14b8a6;--accent2:#2dd4bf;--accentDim:rgba(20,184,166,.12);
---orange:#f97316;--orangeDim:rgba(249,115,22,.12);
---warn:#eab308;--warnDim:rgba(234,179,8,.1);
---danger:#ef4444;--dangerDim:rgba(239,68,68,.08);
---ok:#22c55e;--okDim:rgba(34,197,94,.08);
---na:#64748b;
---purple:#a78bfa;--purpleDim:rgba(167,139,250,.1);
---blue:#3b82f6;--blueDim:rgba(59,130,246,.1);
---cyan:#06b6d4;--cyanDim:rgba(6,182,212,.1);
---emerald:#10b981;--emeraldDim:rgba(16,185,129,.1);
---r:10px;--r2:12px;--rpill:999px;
---sh:0 4px 24px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
---ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fh:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace;
-}
-html{scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--ff);font-size:14px;line-height:1.6;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(20,184,166,.04) 0,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(249,115,22,.02) 0,transparent 50%);pointer-events:none;z-index:0}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes pulse-d{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.2)}50%{box-shadow:0 0 0 5px rgba(239,68,68,0)}}
-
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:rgba(2,6,23,.97);border-bottom:1px solid rgba(20,184,166,.1);position:sticky;top:0;z-index:200;backdrop-filter:blur(20px);gap:10px}
-.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.logo-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,rgba(20,184,166,.15),rgba(20,184,166,.08));border:1px solid rgba(20,184,166,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:.78rem;color:var(--text2)}
-.logo-mark span{color:var(--accent)}
-.logo-text{display:flex;flex-direction:column}.logo-name{font-family:var(--fh);font-weight:700;font-size:.85rem;color:var(--text2);letter-spacing:-.01em}.logo-sub{font-family:var(--fm);font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);opacity:.8}
-.top-nav{display:flex;gap:1px;background:rgba(15,23,42,.6);border-radius:8px;padding:3px;border:1px solid rgba(20,184,166,.08);overflow-x:auto;flex-shrink:1}
-.tn{padding:5px 13px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-family:var(--ff);font-size:.72rem;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap;letter-spacing:-.01em}
-.tn:hover{color:var(--text);background:rgba(255,255,255,.05)}.tn.active{background:var(--accentDim);color:var(--accent);border:1px solid rgba(20,184,166,.2)}
-.tn.active.t-db{background:rgba(217,119,6,.15);color:#fbbf24}
-.tn.active.t-ma{background:rgba(124,58,237,.15);color:#c4b5fd}
-.tn.active.t-da{background:var(--accentDim);color:var(--accent)}
-.tn.active.t-hi{background:rgba(8,145,178,.15);color:#67e8f9}
-.hdr-badge{font-family:var(--fm);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:var(--rpill);border:1px solid rgba(20,184,166,.2);color:var(--accent);background:var(--accentDim);flex-shrink:0}
-
-.wrap{max-width:1200px;margin:0 auto;padding:18px 20px 80px;position:relative;z-index:1}
-.progress-bar{height:3px;background:var(--border);border-radius:3px;margin-bottom:18px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--orange));border-radius:3px;transition:.5s}
-.stepper{display:flex;gap:0;margin-bottom:24px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}
-.step{display:flex;align-items:center;flex-shrink:0}
-.step-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;background:none;border:none;cursor:pointer;border-radius:var(--r);transition:.2s}
-.step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.5rem;font-weight:700;border:2px solid var(--border2);color:var(--soft);background:var(--bg2);transition:.2s;flex-shrink:0}
-.step-label{font-size:.6rem;color:var(--muted);white-space:nowrap;font-weight:500}
-.step-btn.active .step-num{border-color:var(--accent);background:var(--accentDim);color:var(--accent)}
-.step-btn.active .step-label{color:var(--accent);font-weight:600}
-.step-btn.done .step-num{border-color:var(--ok);background:var(--okDim);color:var(--ok)}
-.step-btn.done .step-label{color:var(--ok)}
-.step-line{width:12px;height:2px;background:var(--border);flex-shrink:0}
-.step:last-child .step-line{display:none}
-
-.panel{background:var(--surface);border:1px solid rgba(255,255,255,.06);border-radius:var(--r2);padding:22px 26px;box-shadow:var(--sh);animation:fadeUp .3s ease}
-.panel-title{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--text2);margin-bottom:2px;letter-spacing:-.02em}
-.panel-sub{font-size:.8rem;color:var(--muted);margin-bottom:18px;line-height:1.6}
-.section-divider{height:1px;background:rgba(255,255,255,.05);margin:18px 0}
-
-.nb{display:inline-flex;font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:var(--rpill);margin-right:2px;margin-bottom:2px}
-.nb.sec{color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.12)}
-.nb.qm{color:var(--orange);background:var(--orangeDim);border:1px solid rgba(249,115,22,.12)}
-.nb.it{color:var(--emerald);background:var(--emeraldDim);border:1px solid rgba(16,185,129,.12)}
-.nb.comb{color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.12)}
-.mi{display:inline-flex;font-family:var(--fm);font-size:.44rem;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;border-radius:var(--rpill)}
-.mi.sec{color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.08)}
-.mi.qm{color:var(--orange);background:var(--orangeDim);border:1px solid rgba(249,115,22,.08)}
-.mi.it{color:var(--emerald);background:var(--emeraldDim);border:1px solid rgba(16,185,129,.08)}
-.freq-badge{display:inline-flex;font-family:var(--fm);font-size:.44rem;letter-spacing:.04em;text-transform:uppercase;padding:1px 5px;border-radius:var(--rpill);color:var(--cyan);background:var(--cyanDim);border:1px solid rgba(6,182,212,.1);margin-left:3px}
-
-.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
-.fg input,.fg select,.fg textarea{background:rgba(15,23,42,.9);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:8px 11px;color:var(--text);font-size:.82rem;font-family:var(--ff);outline:none;transition:.15s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(20,184,166,.08)}
-.fg select option{background:#0f172a}.fg textarea{resize:vertical;min-height:55px}.fg-full{grid-column:1/-1}
-
-.mcards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
-.mcard{background:var(--surface2);border:2px solid var(--border);border-radius:var(--r2);padding:18px 14px;cursor:pointer;transition:.25s;position:relative;overflow:hidden}
-.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:.25s}
-.mcard:hover{border-color:var(--border2);transform:translateY(-2px)}
-.mcard.selected{border-color:var(--accent);background:rgba(20,184,166,.04)}
-.mcard.selected::before{opacity:1}
-.mcard.selected.sec::before{background:var(--accent)}.mcard.selected.qm::before{background:var(--orange)}.mcard.selected.itg::before{background:var(--emerald)}.mcard.selected.combo::before{background:linear-gradient(90deg,var(--accent),var(--emerald),var(--orange))}.mcard.selected.rel::before{background:var(--purple)}
-.mcard .mc-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:transparent;transition:.2s}
-.mcard.selected .mc-check{border-color:var(--ok);color:var(--ok);background:var(--okDim)}
-.mc-icon{font-family:var(--fm);font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:6px;margin-bottom:10px;display:inline-block;width:fit-content}
-.mcard.sec .mc-icon{background:var(--accentDim);color:var(--accent);border:1px solid rgba(20,184,166,.25)}
-.mcard.qm .mc-icon{background:var(--orangeDim);color:var(--orange);border:1px solid rgba(249,115,22,.25)}
-.mcard.itg .mc-icon{background:var(--emeraldDim);color:var(--emerald);border:1px solid rgba(16,185,129,.25)}
-.mcard.combo .mc-icon{background:var(--purpleDim);color:var(--purple);border:1px solid rgba(167,139,250,.25)}
-.mcard.rel .mc-icon{background:var(--blueDim);color:var(--blue);border:1px solid rgba(59,130,246,.25)}
-.mc-title{font-family:var(--fh);font-size:.88rem;font-weight:700;color:var(--text2);margin-bottom:2px}.mc-desc{font-size:.68rem;color:var(--muted);line-height:1.4}.mc-norms{margin-top:6px;display:flex;flex-wrap:wrap;gap:2px}
-
-.tpl-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.tpl-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:.2s;text-align:center}
-.tpl-card:hover{border-color:var(--accent);transform:translateY(-1px)}
-.tpl-icon{font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:5px;margin-bottom:6px;display:inline-block;background:var(--surface3);color:var(--muted);border:1px solid var(--border2)}
-.tpl-name{font-family:var(--fh);font-size:.82rem;font-weight:700;color:var(--text2)}.tpl-desc{font-size:.66rem;color:var(--muted);margin-top:1px}
-
-.norm-chips{display:flex;flex-wrap:wrap;gap:4px}
-.nc{padding:5px 11px;border-radius:var(--rpill);border:1px solid var(--border);background:var(--bg2);font-size:.7rem;color:var(--muted);cursor:pointer;transition:.2s;font-weight:500;user-select:none}
-.nc:hover{border-color:var(--border2);color:var(--text)}
-.nc.active{border-color:var(--accent);color:var(--accent);background:var(--accentDim)}
-.nc.active.qc{border-color:var(--orange);color:var(--orange);background:var(--orangeDim)}
-.nc.active.ic{border-color:var(--emerald);color:var(--emerald);background:var(--emeraldDim)}
-
-.nd{margin-top:8px;background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.nd-h{padding:9px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.15s}
-.nd-h:hover{background:rgba(255,255,255,.015)}
-.nd-t{font-size:.76rem;font-weight:600;color:var(--text2)}
-.nd-a{font-size:.55rem;color:var(--soft);transition:.2s}.nd-h.open .nd-a{transform:rotate(180deg)}
-.nd-b{max-height:0;overflow:hidden;transition:.3s}.nd-b.open{max-height:3000px}
-.nd-c{padding:0 12px 10px}
-.nd-r{padding:4px 0;border-bottom:1px solid var(--border);font-size:.73rem;color:var(--muted);display:flex;gap:6px}
-.nd-r:last-child{border-bottom:none}
-.nd-n{font-family:var(--fm);font-size:.55rem;color:var(--accent);min-width:30px;flex-shrink:0}
-.nd-r.qr .nd-n{color:var(--orange)}.nd-r.ir .nd-n{color:var(--emerald)}
-
-.ci{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:5px;transition:.2s}
-.ci:hover{border-color:var(--border2)}
-.ci.s-ok{border-left:3px solid var(--ok)}.ci.s-mangel{border-left:3px solid var(--warn)}.ci.s-kritisch{border-left:3px solid var(--danger)}.ci.s-na{border-left:3px solid var(--na);opacity:.5}
-.ci-top{display:flex;align-items:flex-start;gap:8px}
-.ci-text{flex:1;min-width:0}
-.ci-label{font-size:.8rem;color:var(--text2);font-weight:600;margin-bottom:1px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.ci-norm{font-family:var(--fm);font-size:.5rem;color:var(--accent);letter-spacing:.04em}.ci-norm.qm{color:var(--orange)}.ci-norm.it{color:var(--emerald)}
-.ci-desc{font-size:.7rem;color:var(--muted);margin-top:1px;line-height:1.4}
-.ci-extras{margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.ci-req-docs{font-size:.62rem;color:var(--soft);font-style:italic;margin-top:3px}
-.ci-doc{display:flex;align-items:center;gap:3px;font-size:.64rem;margin-top:3px}
-.ci-doc a{color:var(--accent);text-decoration:none;font-weight:500}
-.ci-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.ci-dot.green{background:var(--ok)}.ci-dot.yellow{background:var(--warn)}.ci-dot.red{background:var(--danger)}.ci-dot.gray{background:var(--na)}
-.ci-btns{display:flex;gap:3px;flex-shrink:0;flex-wrap:wrap}
-.cb{padding:3px 8px;border-radius:var(--rpill);border:1px solid transparent;font-size:.62rem;font-weight:600;cursor:pointer;transition:.15s;font-family:var(--ff)}
-.cb.ok{border-color:rgba(34,197,94,.2);color:#86efac;background:rgba(34,197,94,.04)}
-.cb.ok.active{background:rgba(34,197,94,.15);border-color:#22c55e;color:#22c55e}
-.cb.mangel{border-color:rgba(234,179,8,.2);color:#fde047;background:rgba(234,179,8,.04)}
-.cb.mangel.active{background:rgba(234,179,8,.15);border-color:#eab308;color:#eab308}
-.cb.kritisch{border-color:rgba(239,68,68,.2);color:#fca5a5;background:rgba(239,68,68,.04)}
-.cb.kritisch.active{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ef4444}
-.cb.na{border-color:rgba(100,116,139,.2);color:var(--muted)}
-.cb.na.active{background:rgba(100,116,139,.1);border-color:var(--na)}
-.ci-note{margin-top:6px;display:none}.ci-note.show{display:block}
-.ci-note input{width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.74rem;font-family:var(--ff);outline:none}
-
-.mat-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}.mat-row:last-child{border-bottom:none}
-.mat-label{flex:1;font-size:.78rem;color:var(--text2);font-weight:500}
-.mat-btns{display:flex;gap:2px}
-.mat-btn{width:28px;height:24px;border-radius:5px;border:1px solid var(--border);background:var(--bg2);color:var(--soft);font-family:var(--fm);font-size:.6rem;font-weight:700;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
-.mat-btn.active.l1{background:rgba(239,68,68,.12);border-color:var(--danger);color:var(--danger)}
-.mat-btn.active.l2{background:var(--orangeDim);border-color:var(--orange);color:var(--orange)}
-.mat-btn.active.l3{background:var(--warnDim);border-color:var(--warn);color:var(--warn)}
-.mat-btn.active.l4{background:var(--accentDim);border-color:var(--accent);color:var(--accent)}
-.mat-btn.active.l5{background:var(--okDim);border-color:var(--ok);color:var(--ok)}
-
-.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:8px}
-.btn-p{background:linear-gradient(135deg,var(--accent),#0d9488);color:#0f172a;border:none;border-radius:var(--rpill);padding:8px 20px;font-size:.82rem;font-weight:700;font-family:var(--ff);cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(20,184,166,.3);transition:.2s}
-.btn-p:hover{transform:translateY(-1px)}.btn-p:disabled{opacity:.4;pointer-events:none}
-.btn-s{background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--rpill);padding:8px 14px;font-size:.8rem;font-weight:500;font-family:var(--ff);cursor:pointer;transition:.2s}
-.btn-s:hover{border-color:var(--border2)}
-.btn-sm{padding:4px 10px;font-size:.7rem;border-radius:var(--rpill);border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:var(--ff);cursor:pointer;transition:.15s;font-weight:500}
-.btn-sm:hover{border-color:var(--border2)}.btn-sm.accent{border-color:rgba(20,184,166,.3);color:var(--accent);background:var(--accentDim)}.btn-sm.danger{border-color:rgba(239,68,68,.3);color:#fca5a5;background:var(--dangerDim)}
-
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:7px;margin-bottom:18px}
-.stat{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
-.stat-val{font-family:var(--fh);font-size:1.4rem;font-weight:800;line-height:1;margin-bottom:2px}
-.stat-lbl{font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
-.stat.ok .stat-val{color:var(--ok)}.stat.warn .stat-val{color:var(--warn)}.stat.danger .stat-val{color:var(--danger)}.stat.total .stat-val{color:var(--accent)}.stat.purple .stat-val{color:var(--purple)}.stat.orange .stat-val{color:var(--orange)}.stat.blue .stat-val{color:var(--blue)}.stat.cyan .stat-val{color:var(--cyan)}.stat.emerald .stat-val{color:var(--emerald)}
-
-.tabs{display:flex;gap:2px;margin-bottom:18px;background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:var(--rpill);padding:2px;width:fit-content}
-.tab{padding:5px 12px;border-radius:var(--rpill);border:none;background:transparent;color:var(--muted);font-family:var(--ff);font-size:.72rem;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
-.tab:hover{color:var(--text)}.tab.active{background:var(--orangeDim);color:var(--orange);border:1px solid rgba(249,115,22,.15)}
-.tab .cnt{font-family:var(--fm);font-size:.52rem;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:var(--rpill)}
-
-.doc-grid{display:grid;gap:6px}
-.doc{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;transition:.2s}
-.doc:hover{border-color:var(--border2)}
-.doc-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.44rem;font-weight:700;letter-spacing:.04em;color:var(--muted);flex-shrink:0;background:var(--surface2);border:1px solid var(--border)}
-.doc-body{flex:1;min-width:0}
-.doc-name{font-size:.82rem;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.doc-meta{font-size:.65rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
-.doc-norms{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px}
-.pill{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:var(--rpill);font-family:var(--fm);font-size:.5rem;font-weight:600}
-.pill.green{color:var(--ok);background:var(--okDim);border:1px solid rgba(34,197,94,.15)}
-.pill.yellow{color:var(--warn);background:var(--warnDim);border:1px solid rgba(234,179,8,.15)}
-.pill.red{color:var(--danger);background:var(--dangerDim);border:1px solid rgba(239,68,68,.15)}
-.pill.gray{color:var(--na);background:rgba(100,116,139,.06);border:1px solid rgba(100,116,139,.15)}
-
-.ma-grid{display:grid;gap:6px}
-.ma-card{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;transition:.2s}
-.ma-card:hover{border-color:var(--border2)}
-.ma-card.prio-kritisch{border-left:3px solid var(--danger)}.ma-card.prio-hoch{border-left:3px solid var(--orange)}.ma-card.prio-mittel{border-left:3px solid var(--warn)}.ma-card.prio-niedrig{border-left:3px solid var(--ok)}
-.ma-body{flex:1;min-width:0}.ma-title{font-size:.82rem;font-weight:600;color:var(--text2)}.ma-meta{font-size:.66rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
-.ma-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}.ma-bar-fill{height:100%;border-radius:2px;transition:.3s}
-.ma-right{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
-
-.cn{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
-.cn-h{padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.15s}.cn-h:hover{background:rgba(255,255,255,.015)}
-.cn-bar{flex:1;height:5px;background:var(--border);border-radius:3px;min-width:50px;max-width:120px;overflow:hidden;margin:0 8px}.cn-bar-fill{height:100%;border-radius:3px;transition:.4s}
-.cn-pct{font-family:var(--fm);font-size:.65rem;font-weight:600;min-width:30px;text-align:right}
-.cn-arrow{color:var(--soft);font-size:.5rem;transition:.2s}.cn-h.open .cn-arrow{transform:rotate(180deg)}
-.cn-body{max-height:0;overflow:hidden;transition:.3s}.cn-body.open{max-height:5000px}
-
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
-.chart-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
-.chart-box-title{font-family:var(--fm);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
-.chart-canvas{width:100%;max-height:200px}
-
-.rpt-hdr{background:linear-gradient(135deg,rgba(20,184,166,.07),rgba(16,185,129,.04),rgba(249,115,22,.03),rgba(15,23,42,.9));border:1px solid rgba(20,184,166,.2);border-radius:var(--r2);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
-.rpt-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--text2);margin-bottom:3px}.rpt-meta{font-size:.76rem;color:var(--muted);line-height:1.7}
-.finding{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:5px;display:flex;gap:10px;align-items:flex-start;transition:.15s}.finding:hover{border-color:var(--border2)}
-.finding.kritisch{border-color:rgba(239,68,68,.2);background:var(--dangerDim)}.finding.mangel{border-color:rgba(234,179,8,.2);background:var(--warnDim)}
-.finding-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
-.finding.kritisch .finding-icon{background:rgba(239,68,68,.1)}.finding.mangel .finding-icon{background:rgba(234,179,8,.1)}
-.f-body{flex:1;min-width:0}.f-label{font-size:.8rem;font-weight:600;color:var(--text2)}.f-section{font-size:.64rem;color:var(--muted)}.f-note{font-size:.7rem;color:var(--muted);font-style:italic;margin-top:2px}
-.f-cost{margin-left:auto;text-align:right;flex-shrink:0}.f-cost-val{font-family:var(--fm);font-size:.74rem;font-weight:700;color:var(--accent)}.f-cost-lbl{font-family:var(--fm);font-size:.44rem;color:var(--soft)}
-.cost-sum{background:rgba(20,184,166,.03);border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:14px 18px;margin-bottom:16px}
-.cost-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}.cost-row:last-child{border-bottom:none;padding-top:8px;font-weight:700}
-.cost-row span:first-child{color:var(--muted);font-size:.78rem}.cost-row span:last-child{color:var(--accent);font-weight:600;font-family:var(--fm);font-size:.78rem}.cost-row:last-child span{color:var(--text2)}
-.risk-level{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:var(--rpill);font-size:.78rem;font-weight:700}
-.risk-level.gering{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#4ade80}
-.risk-level.mittel{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);color:#fbbf24}
-.risk-level.hoch{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#f87171}
-.risk-level.kritisch{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);color:#fca5a5;animation:pulse-d 2s infinite}
-
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,.82);backdrop-filter:blur(8px);z-index:300;align-items:center;justify-content:center}.modal-overlay.open{display:flex}
-.modal{background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r2);padding:22px 24px;max-width:600px;width:95%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.6);animation:fadeUp .2s;position:relative}
-.modal-title{font-family:var(--fh);font-size:1.05rem;font-weight:800;color:var(--text2)}.modal-sub{font-size:.78rem;color:var(--muted);margin-bottom:14px}
-.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer}
-.esk-box{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.18);border-radius:var(--r);padding:14px;margin-bottom:14px}
-.esk-box textarea{width:100%;min-height:120px;background:rgba(15,23,42,.7);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);font-family:var(--ff);font-size:.8rem;line-height:1.6;outline:none;resize:vertical}
-.print-btn{background:rgba(15,23,42,.8);color:var(--text);border:1px solid var(--border2);border-radius:var(--rpill);padding:6px 14px;font-size:.78rem;font-family:var(--ff);cursor:pointer;transition:.2s;font-weight:500}.print-btn:hover{border-color:var(--accent);color:var(--accent)}
-
-@media(max-width:1024px){.mcards{grid-template-columns:1fr 1fr}}
-@media(max-width:768px){.hdr{padding:6px 10px;flex-wrap:wrap}.wrap{padding:10px 8px 60px}.mg{grid-template-columns:1fr}.panel{padding:14px 12px}.mcards,.tpl-cards{grid-template-columns:1fr}.chart-grid{grid-template-columns:1fr}.top-nav{order:10;width:100%}}
-@media print{
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  .hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right,
-  .toast-wrap,.login-overlay,.user-badge,.autosave-dot,.rpt-tabs,
-  .konzept-no-print,.ksk-toc,.ksk-controls{display:none!important}
-  body{background:#fff!important;color:#1e293b!important;font-size:11pt;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.65}
-  body::before{display:none}
-  .wrap{padding:0!important;max-width:100%!important}
-  .panel{background:#fff!important;border:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important}
-  /* ── Page setup ── */
-  @page{margin:25mm 22mm 28mm 22mm;size:A4;
-    @top-center{content:string(doc-title);font-size:8pt;color:#64748b;font-family:'Inter',sans-serif;}
-    @bottom-left{content:"VERTRAULICH — Nur für autorisierten Personenkreis";font-size:7.5pt;color:#94a3b8;font-family:'Inter',sans-serif;}
-    @bottom-right{content:"Seite " counter(page) " von " counter(pages);font-size:8pt;color:#64748b;font-family:'Inter',sans-serif;}
-  }
-  @page:first{margin-top:20mm}
-  /* ── Counter für Seitenzahlen ── */
-  body{counter-reset:page}
-  /* ── Konzept Document Wrapper ── */
-  .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
-  .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
-  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #2563eb!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
-  .ksk-section-number{color:#2563eb!important;margin-right:8pt}
-  /* ── Deckblatt ── */
-  .ksk-cover{text-align:center!important;padding:40pt 0!important;page-break-after:always!important;border:none!important}
-  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #2563eb!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
-  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#1e293b!important;letter-spacing:-0.02em!important;margin-bottom:8pt!important}
-  .ksk-cover-subtitle{font-size:13pt!important;color:#475569!important;margin-bottom:30pt!important}
-  .ksk-cover-meta{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:4pt!important;padding:16pt!important;text-align:left!important;margin:20pt 0!important;font-size:10pt}
-  .ksk-cover-meta table{width:100%;border-collapse:collapse}
-  .ksk-cover-meta td{padding:4pt 8pt;border-bottom:1pt solid #f1f5f9;color:#334155!important;font-size:10pt!important}
-  .ksk-cover-meta td:first-child{font-weight:600;color:#1e293b!important;width:40%;white-space:nowrap}
-  .ksk-vertraulich{background:#fef2f2!important;border:1.5pt solid #dc2626!important;border-radius:3pt!important;padding:8pt 12pt!important;font-weight:700!important;color:#dc2626!important;font-size:9pt!important;letter-spacing:.05em!important;text-transform:uppercase!important;margin-top:20pt!important;display:inline-block!important}
-  /* ── Inhaltsverzeichnis ── */
-  .ksk-toc-print{page-break-after:always}
-  .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #2563eb;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
-  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#334155}
-  .ksk-toc-print .toc-entry-main{font-weight:600;color:#1e293b}
-  /* ── Tabellen ── */
-  .ksk-table{width:100%!important;border-collapse:collapse!important;margin:8pt 0 14pt 0!important;font-size:9.5pt!important;page-break-inside:auto}
-  .ksk-table th{background:#1e293b!important;color:#f1f5f9!important;padding:6pt 8pt!important;text-align:left!important;font-weight:600!important;font-size:9pt!important;border:1pt solid #334155!important}
-  .ksk-table td{padding:5pt 8pt!important;border:1pt solid #cbd5e1!important;color:#1e293b!important;vertical-align:top!important;line-height:1.4!important}
-  .ksk-table tr:nth-child(even) td{background:#f8fafc!important}
-  .ksk-table tr{page-break-inside:avoid}
-  /* ── Befund-Tabellen Risikostufen ── */
-  .ksk-table .risk-krit{color:#dc2626!important;font-weight:700!important}
-  .ksk-table .risk-mangel{color:#b45309!important;font-weight:600!important}
-  .ksk-table .risk-ok{color:#15803d!important;font-weight:600!important}
-  /* ── Textblöcke ── */
-  .ksk-text{font-size:10.5pt!important;color:#334155!important;line-height:1.7!important;margin-bottom:10pt!important}
-  .ksk-text strong{color:#1e293b!important}
-  .ksk-infobox{border-left:3pt solid #2563eb!important;background:#f0f7ff!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
-  .ksk-warnbox{border-left:3pt solid #dc2626!important;background:#fef2f2!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
-  .ksk-okbox{border-left:3pt solid #15803d!important;background:#f0fdf4!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
-  /* ── Norm-Badges für Print ── */
-  .ksk-norm-badge{background:#e0e7ff!important;color:#1e3a8a!important;border:1pt solid #93c5fd!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
-  /* ── Report Header ── */
-  .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:4pt solid #0d9488!important;border-radius:2pt!important;padding:14pt 18pt!important;margin-bottom:18pt!important}
-  .rpt-title{color:#1e293b!important;font-size:18pt!important;font-weight:800!important;line-height:1.2!important}
-  .rpt-meta{color:#334155!important;font-size:9.5pt!important;line-height:1.6!important}
-  /* ── Stats ── */
-  .stat{background:#fff!important;border:1.5pt solid #cbd5e1!important;border-top:2.5pt solid #cbd5e1!important;border-radius:2pt!important;padding:8pt 6pt!important}
-  .stat-val{font-size:16pt!important;font-weight:800!important;color:#1e293b!important}
-  .stat-lbl{color:#475569!important;font-size:6.5pt!important;font-weight:700!important;letter-spacing:.05em!important}
-  .stat.danger{border-top-color:#dc2626!important}.stat.danger .stat-val{color:#dc2626!important}
-  .stat.warn{border-top-color:#b45309!important}.stat.warn .stat-val{color:#b45309!important}
-  .stat.ok{border-top-color:#16a34a!important}.stat.ok .stat-val{color:#16a34a!important}
-  .stat.total{border-top-color:#0d9488!important}.stat.total .stat-val{color:#0d9488!important}
-  .stat.purple{border-top-color:#7c3aed!important}.stat.purple .stat-val{color:#7c3aed!important}
-  .stat.emerald{border-top-color:#059669!important}.stat.emerald .stat-val{color:#059669!important}
-  /* ── Findings ── */
-  .finding{border:1pt solid #cbd5e1!important;border-radius:2pt!important;background:#fff!important;padding:7pt 10pt!important;page-break-inside:avoid!important;margin-bottom:4pt!important}
-  .finding.kritisch{border-left:3pt solid #dc2626!important;background:#fef2f2!important}
-  .finding.mangel{border-left:3pt solid #b45309!important;background:#fffbeb!important}
-  .finding-icon{display:none!important}
-  .f-label{color:#1e293b!important;font-size:10pt!important;font-weight:700!important}
-  .f-section{color:#475569!important;font-size:8.5pt!important;margin-top:1pt!important}
-  .f-note{color:#334155!important;font-style:italic!important;border-left:2pt solid #cbd5e1!important;padding-left:5pt!important;margin-top:2pt!important;font-size:9pt!important}
-  .f-cost{min-width:70pt!important}
-  .f-cost-val{color:#0d9488!important;font-weight:700!important;font-size:10pt!important}
-  .f-cost-lbl{color:#64748b!important;font-size:7pt!important}
-  /* ── Cost Summary ── */
-  .cost-sum{background:#f0fdfa!important;border:1.5pt solid #99f6e4!important;border-radius:3pt!important;padding:12pt 14pt!important}
-  .cost-row{padding:3pt 0!important;border-bottom:1pt solid #e2e8f0!important}
-  .cost-row:last-child{border-bottom:none!important;padding-top:7pt!important}
-  .cost-row span:first-child{color:#334155!important;font-size:9.5pt!important}
-  .cost-row span:last-child{color:#0d9488!important;font-weight:700!important;font-size:10pt!important}
-  /* ── Risk Level ── */
-  .risk-level{border:1.5pt solid currentColor!important;border-radius:15pt!important;padding:3pt 12pt!important;font-weight:700!important;font-size:9pt!important}
-  .risk-level.gering{background:#f0fdf4!important;color:#15803d!important}
-  .risk-level.mittel{background:#fffbeb!important;color:#92400e!important}
-  .risk-level.hoch,.risk-level.kritisch{background:#fef2f2!important;color:#dc2626!important}
-  /* ── Norm Badges ── */
-  .nb{border:1pt solid #e2e8f0!important;border-radius:2pt!important;padding:1pt 4pt!important;font-size:7pt!important;font-weight:600!important}
-  .nb.sec{color:#0f766e!important;background:#ccfbf1!important;border-color:#5eead4!important}
-  .nb.qm{color:#9a3412!important;background:#fff7ed!important;border-color:#fdba74!important}
-  .nb.it{color:#065f46!important;background:#d1fae5!important;border-color:#6ee7b7!important}
-  /* ── Panel title ── */
-  .panel-title{color:#1e293b!important;font-size:14pt!important;font-weight:800!important;border-bottom:2pt solid #e2e8f0!important;padding-bottom:7pt!important;margin-bottom:12pt!important}
-  /* ── Konzept-spezifisch ── */
-  .konzept-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0!important;margin-bottom:0!important}
-  .konzept-section-title{color:#1e293b!important;font-size:12pt!important;font-weight:700!important;border-bottom:1.5pt solid #0d9488!important;padding-bottom:4pt!important;margin-bottom:8pt!important}
-  .konzept-measure{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:2pt!important;padding:7pt 10pt!important;margin-bottom:4pt!important;page-break-inside:avoid!important}
-  .konzept-measure .km-prio{border:1pt solid currentColor!important}
-  .konzept-measure .km-text{color:#1e293b!important}
-  .konzept-measure .km-time{color:#64748b!important}
-  /* ── Seitenzahl-Konfidentialitätsfooter ── */
-  .ksk-footer-stamp{display:none!important}
-  /* ── Compliance bar ── */
-  [style*="background:var(--border)"][style*="height:6px"]{background:#e2e8f0!important}
-  .print-page-break{page-break-before:always}
-  /* ── Dashboard print ── */
-  .chart-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12pt!important;margin-top:12pt!important}
-  .chart-box{background:#f8fafc!important;border:1.5pt solid #e2e8f0!important;border-radius:3pt!important;padding:12pt!important;page-break-inside:avoid!important}
-  .chart-box-title{color:#1e293b!important;font-size:9pt!important;font-weight:700!important;margin-bottom:6pt!important}
-  .chart-canvas{max-height:160pt!important}
-  /* ── Signaturen ── */
-  .ksk-sig-box{border-top:1pt solid #94a3b8!important;padding-top:4pt!important;margin-top:30pt!important;min-width:160pt!important;font-size:9pt!important;color:#64748b!important}
-  .ksk-sig-row{display:flex!important;gap:24pt!important;margin-top:20pt!important;flex-wrap:wrap!important}
-  /* ── Cover Meta Table (neues Deckblatt) ── */
-  .ksk-cover-meta-table{width:auto!important;min-width:320pt!important;border-collapse:collapse!important;margin:16pt auto!important;font-size:10pt!important;border:1pt solid #e2e8f0!important;background:#f8fafc!important}
-  .ksk-cover-meta-table td{padding:5pt 10pt!important;border-bottom:1pt solid #f1f5f9!important;color:#334155!important;font-size:10pt!important;text-align:left!important}
-  .ksk-cover-meta-table td:first-child{font-weight:600!important;color:#1e293b!important;width:42%!important;white-space:nowrap!important}
-  .ksk-cover-meta-table tr:last-child td{border-bottom:none!important}
-  /* ── Cover Elemente ── */
-  .ksk-cover-type{font-size:9pt!important;letter-spacing:.12em!important;color:#2563eb!important;text-transform:uppercase!important;margin-bottom:8pt!important}
-  .ksk-cover-objekt{font-size:16pt!important;font-weight:700!important;color:#1e293b!important;margin-bottom:20pt!important}
-  /* ── Domain Header (Bestandsaufnahme) ── */
-  .ksk-domain-header{display:flex!important;align-items:baseline!important;gap:8pt!important;margin:14pt 0 4pt!important;padding-bottom:3pt!important;border-bottom:1pt solid #e2e8f0!important}
-  .ksk-domain-icon{font-size:8pt!important;color:#2563eb!important;background:#eff6ff!important;border:1pt solid #bfdbfe!important;padding:1pt 5pt!important;border-radius:2pt!important}
-  .ksk-domain-title{font-size:10.5pt!important;font-weight:700!important;color:#1e293b!important}
-  .ksk-domain-pct{font-size:9pt!important;font-weight:700!important;margin-left:auto!important}
-  /* ── Maturity Grid ── */
-  .ksk-maturity-grid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8pt!important;margin:8pt 0!important}
-  .ksk-maturity-item{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:2pt!important;padding:6pt 8pt!important;page-break-inside:avoid!important}
-  .ksk-maturity-label{font-size:8.5pt!important;font-weight:600!important;color:#1e293b!important;margin-bottom:4pt!important}
-  .ksk-maturity-bar{height:4pt!important;background:#e2e8f0!important;border-radius:2pt!important;overflow:hidden!important;margin-bottom:3pt!important}
-  .ksk-maturity-fill{height:100%!important;border-radius:2pt!important}
-  .ksk-maturity-level{font-size:7.5pt!important;color:#475569!important}
-  /* ── Deckblatt: Kein Header/Footer auf Seite 1 ── */
-  @page:first{
-    margin-top:15mm;
-    @top-center{content:''!important}
-    @top-left{content:''!important}
-    @top-right{content:''!important}
-    @bottom-left{content:''!important}
-    @bottom-right{content:''!important}
-  }
-  /* ── Seitenumbrüche ── */
-  .ksk-cover,.ksk-toc-print,.ksk-section.page-break-before{page-break-before:always;break-before:page}
-  h2,h3,.ksk-section-title,.ksk-domain-header{page-break-after:avoid;break-after:avoid}
-  table{page-break-inside:auto}
-  tr{page-break-inside:avoid;break-inside:avoid}
-}
-
-/* ═══ LOGIN ═══ */
-.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
-#loginWebCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.login-card{position:relative;z-index:1}
-.login-overlay.hidden{display:none!important}
-.login-card{background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r2);padding:36px 40px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.75),0 0 0 1px rgba(20,184,166,.05);position:relative;overflow:hidden;animation:fadeUp .35s ease}
-.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--orange),var(--purple))}
-.login-brand{text-align:center;margin-bottom:28px}
-.login-logo-mark{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(20,184,166,.2),rgba(249,115,22,.15));border:1px solid rgba(20,184,166,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:1.2rem;color:var(--text2);margin:0 auto 12px}
-.login-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--text2);margin-bottom:3px}
-.login-sub{font-size:.78rem;color:var(--muted)}
-.login-form{display:flex;flex-direction:column;gap:14px}
-.login-field{display:flex;flex-direction:column;gap:5px}
-.login-field label{font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
-.login-input-wrap{position:relative;display:flex;align-items:center}
-.login-input-wrap input{width:100%;background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:10px;padding:10px 40px 10px 38px;color:var(--text);font-size:.88rem;font-family:var(--ff);outline:none;transition:.2s}
-.login-input-wrap input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
-.login-icon{position:absolute;left:11px;font-size:.9rem;pointer-events:none;opacity:.5}
-.login-eye{position:absolute;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;line-height:1;transition:.15s}
-.login-eye:hover{color:var(--text)}
-.login-btn{background:linear-gradient(135deg,var(--accent),#0d9488);color:#0f172a;border:none;border-radius:var(--rpill);padding:11px 20px;font-size:.88rem;font-weight:700;font-family:var(--ff);cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(20,184,166,.3);margin-top:4px}
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(20,184,166,.4)}
-.login-btn:active{transform:none}
-.login-btn:disabled{opacity:.5;pointer-events:none;transform:none}
-.login-error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:9px 12px;font-size:.78rem;color:#fca5a5;display:none}
-.login-error.show{display:block;animation:fadeUp .2s ease}
-.login-lockout{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:9px 12px;font-size:.78rem;color:#fde047;display:none;text-align:center}
-.login-lockout.show{display:block;animation:fadeUp .2s ease}
-.login-footer{text-align:center;margin-top:22px;font-size:.64rem;color:var(--soft);line-height:1.8;border-top:1px solid var(--border);padding-top:14px}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
-.shake{animation:shake .35s ease}
-/* ═══ USER BADGE ═══ */
-.user-badge{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 6px;background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.15);border-radius:var(--rpill);cursor:pointer;transition:.2s;flex-shrink:0}
-.user-badge:hover{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
-.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--orange));display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:#0f172a;flex-shrink:0;font-family:var(--fh)}
-.user-info{display:flex;flex-direction:column;line-height:1.3}
-.user-name{font-family:var(--fm);font-size:.54rem;letter-spacing:.05em;color:var(--text2);font-weight:600}
-.user-logout-lbl{font-size:.5rem;color:var(--danger);font-weight:600;font-family:var(--fm);letter-spacing:.04em;opacity:.8}
-
-/* ═══ TOAST ═══ */
-.toast-wrap{position:fixed;top:68px;right:16px;z-index:8000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.toast{background:var(--surface3);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--text2);box-shadow:0 8px 28px rgba(0,0,0,.55);display:flex;align-items:center;gap:8px;min-width:220px;max-width:320px;pointer-events:all;animation:toastIn .25s ease;transition:opacity .3s,transform .3s}
-.toast.out{opacity:0;transform:translateX(14px)}
-.toast.success{border-left:3px solid var(--ok)}.toast.error{border-left:3px solid var(--danger)}.toast.warn{border-left:3px solid var(--warn)}.toast.info{border-left:3px solid var(--accent)}
-.toast-icon{font-size:.95rem;flex-shrink:0}.toast-msg{flex:1;line-height:1.4}
-.toast-action{background:none;border:none;color:var(--accent);font-size:.72rem;font-weight:700;font-family:var(--fm);cursor:pointer;padding:2px 8px;border-radius:5px;transition:.15s;flex-shrink:0;border:1px solid rgba(20,184,166,.3)}.toast-action:hover{background:var(--accentDim)}
-@keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
-/* ═══ AUTOSAVE ═══ */
-.autosave-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);opacity:0;flex-shrink:0}
-.autosave-dot.pulse{animation:savePulse 1.4s ease forwards}
-@keyframes savePulse{0%{opacity:1;transform:scale(1)}40%{opacity:1;transform:scale(1.4)}100%{opacity:0;transform:scale(.8)}}
-/* ═══ SEARCH ═══ */
-.search-wrap{position:relative;flex:1;max-width:260px}
-.search-wrap input{width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:var(--rpill);padding:6px 28px 6px 32px;color:var(--text);font-size:.78rem;font-family:var(--ff);outline:none;transition:.2s}
-.search-wrap input:focus{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(20,184,166,.08)}
-.search-wrap input::placeholder{color:var(--soft)}
-.search-clear{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:0;line-height:1;display:none}.search-clear.show{display:block}
-.search-icon-lbl{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.78rem;pointer-events:none;opacity:.45}
-/* ═══ SHORTCUTS HINT ═══ */
-.kbd{display:inline-flex;align-items:center;padding:1px 5px;border-radius:4px;border:1px solid var(--border2);background:rgba(255,255,255,.04);font-family:var(--fm);font-size:.5rem;color:var(--muted);line-height:1.6;vertical-align:middle}
-
-/* ═══ ADMIN TAB ═══ */
-.tn.active.t-adm{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.2)}
-/* ═══ ADMIN PANEL ═══ */
-.adm-grid{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
-.adm-sidebar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:sticky;top:80px}
-.adm-nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:.82rem;color:var(--muted);font-weight:500;transition:.15s;border:1px solid transparent;margin-bottom:2px}
-.adm-nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
-.adm-nav-item.active{color:var(--danger);background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.15)}
-.adm-nav-icon{font-family:var(--fm);font-size:.44rem;font-weight:700;letter-spacing:.05em;width:32px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--soft);flex-shrink:0}
-.adm-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px 24px;box-shadow:var(--sh);animation:fadeUp .25s ease}
-.adm-lock-banner{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#fca5a5;display:flex;align-items:center;gap:8px}
-/* ═══ KVA TABLE ═══ */
-.kva-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:.8rem}
-.kva-table th{font-family:var(--fm);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
-.kva-table th:last-child,.kva-table td:last-child{text-align:right}
-.kva-table th:nth-child(3),.kva-table td:nth-child(3),.kva-table th:nth-child(4),.kva-table td:nth-child(4){text-align:center}
-.kva-row{transition:.15s}
-.kva-row:hover{background:rgba(255,255,255,.015)}
-.kva-row.excluded{opacity:.35}
-.kva-row td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
-.kva-pos-name{font-weight:600;color:var(--text2);font-size:.8rem}
-.kva-pos-desc{font-size:.68rem;color:var(--muted);margin-top:2px;line-height:1.4}
-.kva-cat{display:inline-flex;font-family:var(--fm);font-size:.42rem;padding:1px 6px;border-radius:var(--rpill);margin-top:3px}
-.kva-cat.fix{color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.15)}
-.kva-cat.begehung{color:var(--orange);background:var(--orangeDim);border:1px solid rgba(249,115,22,.15)}
-.kva-cat.konzept{color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.15)}
-.kva-cat.umsetzung{color:var(--blue);background:var(--blueDim);border:1px solid rgba(59,130,246,.15)}
-.kva-cat.empfehlung{color:var(--emerald);background:var(--emeraldDim);border:1px solid rgba(16,185,129,.15)}
-.kva-cat.custom{color:var(--warn);background:var(--warnDim);border:1px solid rgba(234,179,8,.15)}
-.kva-cat.optional{color:var(--muted);background:rgba(100,116,139,.08);border:1px solid rgba(100,116,139,.2)}
-.kva-h-input{width:52px;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:var(--fm);font-size:.78rem;text-align:center;outline:none;transition:.2s}
-.kva-h-input:focus{border-color:var(--accent2)}
-.kva-total-row td{border-top:2px solid var(--border2);padding-top:10px;font-weight:700;color:var(--text2)}
-.kva-summary{background:rgba(20,184,166,.04);border:1px solid rgba(20,184,166,.12);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
-.kva-summary-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.82rem}
-.kva-summary-row:last-child{border-top:1px solid rgba(20,184,166,.15);margin-top:6px;padding-top:10px;font-weight:700;font-size:.92rem}
-.kva-summary-row span:first-child{color:var(--muted)}.kva-summary-row span:last-child{color:var(--accent);font-family:var(--fm);font-weight:700}
-.kva-summary-row:last-child span{color:var(--text2);font-family:var(--fh)}
-.kva-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-/* ═══ KVA EDIT MODAL ═══ */
-.kva-sug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-top:8px}
-.kva-sug-chip{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.15s;text-align:left}
-.kva-sug-chip:hover{border-color:var(--accent2);background:var(--accentDim)}
-.kva-sug-chip .sug-name{font-size:.74rem;font-weight:600;color:var(--text2);margin-bottom:1px}
-.kva-sug-chip .sug-desc{font-size:.64rem;color:var(--muted);line-height:1.35}
-.kva-cat-select{background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.8rem;outline:none;cursor:pointer;width:100%}
-.kva-cat-select:focus{border-color:var(--accent2)}
-/* ═══ ADMIN LOGIN MODAL ═══ */
-.adm-login-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,.88);backdrop-filter:blur(12px);z-index:400;align-items:center;justify-content:center}
-.adm-login-overlay.open{display:flex}
-.adm-login-card{background:var(--surface3);border:1px solid rgba(239,68,68,.25);border-radius:var(--r2);padding:30px 36px;max-width:380px;width:95%;box-shadow:0 24px 60px rgba(0,0,0,.7);position:relative;animation:fadeUp .25s ease}
-.adm-login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--danger),#f97316)}
-/* ═══ LANG TOGGLE ═══ */
-.lang-btn{padding:4px 10px;border-radius:var(--rpill);border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:var(--fm);font-size:.6rem;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.06em;flex-shrink:0}
-.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
-/* ═══ UMFELD ═══ */
-.uf-card{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;transition:.15s}
-.uf-card:hover{border-color:var(--border2)}
-.uf-card.uf-hoch{border-left:4px solid var(--danger);background:var(--dangerDim)}
-.uf-card.uf-mittel{border-left:4px solid var(--warn);background:var(--warnDim)}
-.uf-card.uf-niedrig{border-left:4px solid var(--ok);background:var(--okDim)}
-.uf-card.uf-info{border-left:4px solid var(--cyan);background:var(--cyanDim)}
-.uf-icon{font-family:var(--fm);font-size:.46rem;font-weight:700;letter-spacing:.06em;flex-shrink:0;width:36px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted)}
-.uf-body{flex:1;min-width:0}
-.uf-title{font-weight:700;color:var(--text2);font-size:.84rem;margin-bottom:3px}
-.uf-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:5px}
-.uf-rec{font-size:.73rem;color:var(--text);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:5px 9px}
-.uf-badge{display:inline-flex;font-family:var(--fm);font-size:.46rem;padding:2px 6px;border-radius:999px;margin-left:5px;font-weight:700}
-/* ═══ REPORT TABS ═══ */
-.rpt-tabs{display:flex;gap:2px;margin-bottom:18px;background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:var(--rpill);padding:2px;width:fit-content}
-.rpt-tab{padding:6px 16px;border-radius:var(--rpill);border:none;background:transparent;color:var(--muted);font-family:var(--ff);font-size:.76rem;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
-.rpt-tab:hover{color:var(--text)}
-.rpt-tab.active{background:var(--accentDim);color:var(--accent);border:1px solid rgba(20,184,166,.2)}
-.rpt-tab.active.konzept-tab{background:var(--purpleDim);color:var(--purple);border-color:rgba(167,139,250,.2)}
-/* ═══ KONZEPT (legacy) ═══ */
-.konzept-section{background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px}
-.konzept-section-title{font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.konzept-measure{background:rgba(15,23,42,.5);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start}
-.konzept-measure .km-prio{font-family:var(--fm);font-size:.48rem;padding:2px 7px;border-radius:999px;flex-shrink:0;margin-top:2px;font-weight:700}
-.konzept-measure .km-text{flex:1;font-size:.78rem;color:var(--text2);line-height:1.5}
-.konzept-measure .km-time{font-family:var(--fm);font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
-/* ═══ PROFESSIONELLES SICHERHEITSKONZEPT ═══ */
-.ksk-doc{background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);max-width:880px;margin:0 auto;padding:0;overflow:hidden;color:#1e293b}
-.ksk-cover{background:linear-gradient(160deg,#1e293b 0%,#0f172a 60%,#1e3a5f 100%);padding:60px 52px 48px;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
-.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(37,99,235,.12) 0,transparent 70%)}
-.ksk-cover-logo{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 20px;font-family:var(--fh);font-weight:800;font-size:.9rem;color:#f1f5f9;letter-spacing:.01em;margin-bottom:36px;position:relative;z-index:1}
-.ksk-cover-logo span{color:#60a5fa}
-.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:14px;position:relative;z-index:1}
-.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15;position:relative;z-index:1}
-.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#93c5fd;margin-bottom:36px;position:relative;z-index:1}
-.ksk-cover-meta-table{width:100%;max-width:480px;border-collapse:collapse;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;position:relative;z-index:1;font-size:.8rem}
-.ksk-cover-meta-table td{padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;color:#94a3b8}
-.ksk-cover-meta-table td:first-child{font-weight:600;color:#cbd5e1;width:45%;white-space:nowrap}
-.ksk-cover-meta-table tr:last-child td{border-bottom:none}
-.ksk-vertraulich{display:inline-flex;align-items:center;gap:7px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:4px;padding:7px 18px;font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fca5a5;margin-top:28px;position:relative;z-index:1}
-.ksk-body{padding:0}
-.ksk-toc{background:var(--surface2);border-bottom:1px solid rgba(255,255,255,.06);padding:24px 40px}
-.ksk-toc-title{font-family:var(--fm);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.ksk-toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}
-.ksk-toc-entry{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.05);font-size:.76rem;color:var(--muted);cursor:pointer;transition:.15s}
-.ksk-toc-entry:hover{color:var(--accent)}
-.ksk-toc-num{font-family:var(--fm);font-size:.62rem;font-weight:700;color:var(--accent);min-width:22px}
-.ksk-section{padding:28px 40px;border-bottom:1px solid rgba(255,255,255,.04)}
-.ksk-section:last-child{border-bottom:none}
-.ksk-section-title{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:1.05rem;font-weight:800;color:#f1f5f9;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(37,99,235,.2)}
-.ksk-section-number{font-family:var(--fm);font-size:.7rem;font-weight:700;color:#2563eb;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.2);border-radius:999px;padding:2px 9px;flex-shrink:0}
-.ksk-text{font-size:.85rem;color:#94a3b8;line-height:1.75;margin-bottom:12px}
-.ksk-text strong{color:#e2e8f0}
-.ksk-text em{color:#93c5fd;font-style:normal;font-weight:500}
-.ksk-infobox{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-left:3px solid #2563eb;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#93c5fd;line-height:1.65}
-.ksk-infobox strong{color:#bfdbfe}
-.ksk-warnbox{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.18);border-left:3px solid #dc2626;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#fca5a5;line-height:1.65}
-.ksk-okbox{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.18);border-left:3px solid #059669;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:.82rem;color:#6ee7b7;line-height:1.65}
-.ksk-table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:.79rem;border-radius:8px;overflow:hidden}
-.ksk-table th{background:rgba(30,41,59,.8);color:#cbd5e1;padding:9px 12px;text-align:left;font-family:var(--fm);font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08)}
-.ksk-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#94a3b8;vertical-align:top;line-height:1.45}
-.ksk-table tr:nth-child(even) td{background:rgba(255,255,255,.018)}
-.ksk-table tr:hover td{background:rgba(37,99,235,.04)}
-.ksk-table .risk-krit{color:#fca5a5;font-weight:700}
-.ksk-table .risk-mangel{color:#fde047;font-weight:600}
-.ksk-table .risk-ok{color:#6ee7b7;font-weight:600}
-.ksk-table strong{color:#e2e8f0}
-.ksk-norm-badge{display:inline-flex;font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;padding:2px 7px;border-radius:999px;background:rgba(37,99,235,.12);color:#93c5fd;border:1px solid rgba(37,99,235,.2);margin-right:3px;margin-bottom:2px;font-weight:700;text-transform:uppercase;white-space:nowrap}
-.ksk-maturity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:10px 0}
-.ksk-maturity-item{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px}
-.ksk-maturity-label{font-size:.76rem;font-weight:600;color:#e2e8f0;margin-bottom:6px}
-.ksk-maturity-bar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:4px}
-.ksk-maturity-fill{height:100%;border-radius:3px;transition:.4s}
-.ksk-maturity-level{font-family:var(--fm);font-size:.54rem;color:var(--muted)}
-.ksk-sig-row{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
-.ksk-sig-box{flex:1;min-width:160px;border-top:1px solid rgba(255,255,255,.15);padding-top:8px;margin-top:32px;font-size:.72rem;color:var(--muted)}
-.ksk-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
-.ksk-domain-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ksk-domain-icon{font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:6px;background:rgba(37,99,235,.1);color:#93c5fd;border:1px solid rgba(37,99,235,.2);text-transform:uppercase}
-.ksk-domain-title{font-size:.92rem;font-weight:700;color:#e2e8f0}
-.ksk-domain-pct{font-family:var(--fm);font-size:.7rem;font-weight:700;margin-left:auto}
-@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover{padding:32px 20px}.ksk-sig-row{flex-direction:column}}
-</style>
-</head>
-<body>
-<!-- ═══ TOAST CONTAINER ═══ -->
-<div class="toast-wrap" id="toastWrap"></div>
-<!-- ═══ LOGIN OVERLAY ═══ -->
-<div class="login-overlay" id="loginOverlay">
-  <canvas id="loginWebCanvas"></canvas>
-  <div class="login-card" id="loginCard">
-    <div class="login-brand">
-      <div class="login-logo-mark" style="font-size:1rem;width:auto;padding:0 14px;letter-spacing:.02em">S3<span style="color:var(--accent)">:</span>A</div>
-      <div class="login-title">S3<span style="color:var(--accent)">:</span>Analytics</div>
-      <div class="login-sub">Audit & Compliance Platform — Bitte anmelden</div>
-    </div>
-    <div class="login-form">
-      <div class="login-field">
-        <label>Nutzername</label>
-        <div class="login-input-wrap">
-          <span class="login-icon">👤</span>
-          <input type="text" id="li_user" placeholder="Nutzername" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('li_pass').focus()">
-        </div>
-      </div>
-      <div class="login-field">
-        <label>Passwort</label>
-        <div class="login-input-wrap">
-          <span class="login-icon">🔒</span>
-          <input type="password" id="li_pass" placeholder="Passwort" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-          <button class="login-eye" id="eyeBtn" onclick="togglePw()" title="Passwort anzeigen/verstecken">👁</button>
-        </div>
-      </div>
-      <div class="login-field">
-        <label id="li_lang_label">Sprache / Language</label>
-        <div class="login-input-wrap">
-          <span class="login-icon">🌐</span>
-          <select id="li_lang" onchange="setLoginLang(this.value)" class="login-lang-select">
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-      </div>
-      <div class="login-error" id="loginError"></div>
-      <div class="login-lockout" id="loginLockout"></div>
-      <button class="login-btn" id="loginBtn" onclick="doLogin()">Anmelden →</button>
-    </div>
-    <div class="login-footer">
-      SecureStay Solutions UG (haftungsbeschränkt)<br>
-      Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de<br>
-      <span style="color:var(--border2)">v2.0 · Enterprise Edition</span>
-    </div>
-  </div>
-</div>
-<header class="hdr">
-<div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark" style="width:auto;padding:0 10px;font-size:.72rem;letter-spacing:.02em">S3<span>:</span>A</div><div class="logo-text"><span class="logo-name">S3<span style="color:var(--accent)">:</span>Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
-<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">Dashboard</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">Intern</button></div>
-<div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
-<button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">EN</button>
-<div class="hdr-badge" id="hdrBadge">–</div>
-<div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
-  <div class="user-avatar" id="userAvatar">A</div>
-  <div class="user-info">
-    <span class="user-name" id="userName">Admin</span>
-    <span class="user-logout-lbl">Abmelden</span>
-  </div>
-</div>
-</header>
-<div class="wrap">
-<div id="auditNav"><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div><div class="stepper" id="stepper"></div></div>
-<div id="mainContent"></div>
-</div>
-<!-- ═══ ADMIN INTERNAL LOGIN ═══ -->
-<div class="adm-login-overlay" id="admLoginOverlay">
-  <div class="adm-login-card" id="admLoginCard">
-    <div style="text-align:center;margin-bottom:22px">
-      <div style="width:46px;height:46px;border-radius:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 10px">🔐</div>
-      <div style="font-family:var(--fh);font-size:1.1rem;font-weight:800;color:var(--text2)">Interner Bereich</div>
-      <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions — Nur für interne Nutzung</div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="login-field"><label>Internes Login</label>
-        <div class="login-input-wrap"><span class="login-icon">👤</span>
-          <input type="text" id="adm_user" placeholder="Benutzername" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adm_pass').focus()">
-        </div>
-      </div>
-      <div class="login-field"><label>Passwort</label>
-        <div class="login-input-wrap"><span class="login-icon">🔒</span>
-          <input type="password" id="adm_pass" placeholder="Internes Passwort" autocomplete="off" onkeydown="if(event.key==='Enter')adminDoLogin()">
-          <button class="login-eye" id="admEyeBtn" onclick="const i=document.getElementById('adm_pass');const b=document.getElementById('admEyeBtn');if(i.type==='password'){i.type='text';b.textContent='🙈';}else{i.type='password';b.textContent='👁';}">👁</button>
-        </div>
-      </div>
-      <div class="login-error" id="admLoginError"></div>
-      <button class="login-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 6px 20px rgba(239,68,68,.3)" onclick="adminDoLogin()">Intern anmelden →</button>
-      <button class="btn-s" style="width:100%;margin-top:2px" onclick="document.getElementById('admLoginOverlay').classList.remove('open');go('audit')">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ KVA POSITION EDIT MODAL ═══ -->
-<div class="modal-overlay" id="kvaEditModal">
-  <div class="modal" style="max-width:640px">
-    <button class="modal-close" onclick="closeModal('kvaEditModal')">&times;</button>
-    <div class="modal-title">Position bearbeiten</div>
-    <div class="modal-sub">Name, Beschreibung und Kategorie anpassen</div>
-    <input type="hidden" id="kvaEditIdx">
-    <div class="mg" style="gap:10px;margin-bottom:14px">
-      <div class="fg fg-full"><label>Leistungsbezeichnung</label><input id="kvaEditName" placeholder="z.B. DSGVO-Beratung und Datenschutzkonzept"></div>
-      <div class="fg"><label>Kategorie</label>
-        <select id="kvaEditCat" class="kva-cat-select">
-          <option value="fix">Festpreis</option>
-          <option value="begehung">Begehung / Inspektion</option>
-          <option value="konzept">Konzepterstellung</option>
-          <option value="umsetzung">Umsetzungsbegleitung</option>
-          <option value="empfehlung">Handlungsempfehlung</option>
-          <option value="custom">Individuell</option>
-          <option value="optional">Optional</option>
-        </select>
-      </div>
-      <div class="fg"><label>Stunden</label><input type="number" id="kvaEditH" min="0" step="0.5" placeholder="z.B. 4"></div>
-      <div class="fg fg-full"><label>Beschreibung / Notiz</label><textarea id="kvaEditDesc" rows="3" style="width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical" placeholder="Detaillierte Beschreibung der Leistung…"></textarea></div>
-    </div>
-    <div style="margin-bottom:6px">
-      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">Schnellauswahl — Klick übernimmt Bezeichnung &amp; Beschreibung</div>
-      <div class="kva-sug-grid" id="kvaSugGrid"></div>
-    </div>
-    <div class="nav-row" style="margin-top:14px">
-      <button class="btn-s" onclick="closeModal('kvaEditModal')">Abbrechen</button>
-      <button class="btn-p" onclick="kvaSaveEdit()">Übernehmen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ EMAIL COMPOSE MODAL ═══ -->
-<div class="modal-overlay" id="emailModal">
-  <div class="modal" style="max-width:580px">
-    <button class="modal-close" onclick="closeModal('emailModal')">&times;</button>
-    <div class="modal-title" id="emailModalTitle">📧 E-Mail senden</div>
-    <div class="modal-sub" id="emailModalSub">Dokument direkt versenden von securestay@outlook.de</div>
-    <div class="mg" id="emailForm">
-      <div class="fg fg-full"><label>Empfänger</label><input type="email" id="em_to" placeholder="kunde@beispiel.de"></div>
-      <div class="fg fg-full"><label>Betreff</label><input id="em_sub"></div>
-      <div class="fg fg-full"><label>Nachricht</label><textarea id="em_body" rows="7" style="font-size:.78rem;line-height:1.6"></textarea></div>
-      <div class="fg fg-full" id="emailjsSetupHint" style="display:none">
-        <div style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:10px 12px;font-size:.74rem;color:var(--warn)">
-          EmailJS nicht konfiguriert. Gehe zu <strong>Admin → Einstellungen</strong> und trage Service-ID, Template-ID und Public-Key ein.
-        </div>
-      </div>
-    </div>
-    <div class="nav-row">
-      <button class="btn-s" onclick="closeModal('emailModal')">Abbrechen</button>
-      <button class="btn-p" id="emailSendBtn" onclick="sendEmail()">📤 Senden</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="docModal"><div class="modal"><button class="modal-close" onclick="closeModal('docModal')">&times;</button><div class="modal-title" id="docModalTitle">Dokument</div><div class="modal-sub">Metadaten für Audit-Datenbank.</div><div class="mg" id="docForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('docModal')">Abbrechen</button><button class="btn-p" onclick="saveDoc()">Speichern</button></div></div></div>
-<div class="modal-overlay" id="maModal"><div class="modal"><button class="modal-close" onclick="closeModal('maModal')">&times;</button><div class="modal-title" id="maModalTitle">Maßnahme</div><div class="modal-sub">Korrekturmaßnahme erfassen.</div><div class="mg" id="maForm"></div><div class="nav-row"><button class="btn-s" onclick="closeModal('maModal')">Abbrechen</button><button class="btn-p" onclick="saveMa()">Speichern</button></div></div></div>
-<div class="modal-overlay" id="eskModal"><div class="modal"><button class="modal-close" onclick="closeModal('eskModal')">&times;</button><div class="modal-title">⚠️ Eskalations-E-Mail</div><div class="modal-sub">Vorlage für kritische Mängel.</div><div class="esk-box"><textarea id="eskText" readonly></textarea></div><div class="nav-row"><button class="btn-s" onclick="closeModal('eskModal')">Schließen</button><button class="btn-p" onclick="navigator.clipboard.writeText(document.getElementById('eskText').value).then(()=>toast('In Zwischenablage kopiert','success'))">📋 Kopieren</button></div></div></div>
-<script>
 const NORMS={
 'ISO 31000':{m:'security',fn:'ISO 31000:2018 – Risikomanagement',reqs:[{n:'5.2',t:'Führung und Verpflichtung'},{n:'6.3',t:'Risikoidentifikation'},{n:'6.4',t:'Risikoanalyse'},{n:'6.5',t:'Risikobewertung'},{n:'6.6',t:'Risikobehandlung'},{n:'6.7',t:'Überwachung'}]},
 'ISO/IEC 27001':{m:'security',fn:'ISO/IEC 27001:2022 – Informationssicherheit',reqs:[{n:'A.5',t:'Informationssicherheitsrichtlinien'},{n:'A.7',t:'Personalsicherheit'},{n:'A.8',t:'Asset Management'},{n:'A.9',t:'Zugangssteuerung'},{n:'A.11',t:'Physische Sicherheit'},{n:'A.12',t:'Betriebssicherheit'},{n:'A.15',t:'Lieferantenbeziehungen'},{n:'A.16',t:'Vorfallmanagement'},{n:'A.17',t:'BCM'},{n:'A.18',t:'Compliance'}]},
@@ -985,8 +225,7 @@ function fmtCA(items,p){let a=0,b=0;items.forEach(f=>{const[x,y]=parseCost(f.c[p
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function modCls(m){return m==='qm'?'qm':m==='itgov'?'it':'sec';}
 function modLabel(m){return m==='qm'?'QM':m==='itgov'?'ITG':'SEC';}
-</script>
-<script>
+
 function go(mode){
   if(mode==='admin'){
     if(!sessionStorage.getItem('ssa_adm')){
@@ -1627,8 +866,8 @@ function loadSnap(i){const L=typeof _LANG!=='undefined'?_LANG:'de';const h=S.his
 // ═══ REPORT ═══
 function renderReport(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  const ac=activeChecks();let k=[],m=[],ok=0,cMin=0,cMax=0;
-  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='ok')ok++;else if(s==='kritisch'){k.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.kritisch);cMin+=a;cMax+=b;}else if(s==='mangel'){m.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.mangel);cMin+=a;cMax+=b;}}));
+  const ac=activeChecks();let k=[],m=[],okItems=[],ok=0,cMin=0,cMax=0;
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='ok'){ok++;okItems.push({...it,sec:ch.l});}else if(s==='kritisch'){k.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.kritisch);cMin+=a;cMax+=b;}else if(s==='mangel'){m.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.mangel);cMin+=a;cMax+=b;}}));
   const assessed=k.length+m.length+ok,comp=assessed?Math.round(ok/assessed*100):0;
   let rl,rc;if(k.length>=5){rl=L==='en'?'Critical':'Kritisch';rc='kritisch';}else if(k.length>=2||m.length>=6){rl=L==='en'?'High':'Hoch';rc='hoch';}else if(k.length>=1||m.length>=3){rl=L==='en'?'Medium':'Mittel';rc='mittel';}else{rl=L==='en'?'Low':'Gering';rc='gering';}
   const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
@@ -1673,11 +912,17 @@ function renderReport(){
   ${k.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--danger);margin-bottom:7px;padding:5px 10px;background:rgba(239,68,68,.06);border-radius:6px;display:inline-block">${L==='en'?`✕ Critical deficiencies (${k.length}) — Immediate action required`:`✕ Kritische Mängel (${k.length}) — Sofortiger Handlungsbedarf`}</div>${k.map(f=>fr(f,'kritisch')).join('')}</div>`:''}
   ${m.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:7px;padding:5px 10px;background:rgba(234,179,8,.06);border-radius:6px;display:inline-block">${L==='en'?`⚠ Deficiencies (${m.length}) — Medium-term action required`:`⚠ Verbesserungsbedarf (${m.length}) — Mittelfristiger Handlungsbedarf`}</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
   ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:24px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-size:1.1rem;font-weight:700">${L==='en'?'No deficiencies found':'Keine Mängel festgestellt'}</span><div style="font-size:.78rem;color:var(--muted);margin-top:4px">${L==='en'?'All assessed control points compliant':'Alle bewerteten Kontrollpunkte erfüllt'}</div></div>`:''}
+  ${okItems.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--ok);margin-bottom:7px;padding:5px 10px;background:var(--okDim);border-radius:6px;display:inline-block">✓ ${L==='en'?`Compliant (${okItems.length})`:`Konform (${okItems.length})`}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:3px">${okItems.map(f=>`<div style="font-size:.7rem;color:var(--muted);padding:3px 8px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.08);border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(f.l)}">✓ ${esc(f.l)}</div>`).join('')}</div></div>`:''}
   <div class="cost-sum">
     <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'💶 Investment Required (Estimate)':'💶 Investitionsbedarf (Schätzung)'}</div>
     <div class="cost-row"><span>${L==='en'?'⚡ Immediate measures (critical)':'⚡ Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
     <div class="cost-row"><span>${L==='en'?'📅 Medium-term (deficiencies)':'📅 Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
     <div class="cost-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:10px"><span style="color:var(--text2);font-weight:700">${L==='en'?'Total':'Gesamt'}</span><span style="color:var(--text2);font-weight:700;font-family:var(--fh);font-size:.92rem">€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div>
+  </div>
+  <div class="rpt-sig-row">
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">${esc(S.meta.pruefer||sessionStorage.getItem('ssa_u')||'–')}</div><div>${L==='en'?'Auditor · SecureStay: Analytics':'Auditor/in · SecureStay: Analytics'}</div><div style="color:var(--accent);font-size:.66rem;margin-top:2px">securestay@outlook.de</div></div>
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">___________________________</div><div>${L==='en'?'Client / Authorised Representative':'Auftraggeber / Bevollmächtigte/r'}</div></div>
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">_____________</div><div>${L==='en'?'Date':'Datum'}</div></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(20,184,166,.04),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
     <div style="font-family:var(--fh);font-weight:700;color:var(--text2);font-size:1rem">SecureStay: Analytics</div>
@@ -1688,377 +933,125 @@ function renderReport(){
 }
 
 // ═══ KONZEPT HELPERS ═══
-function _kskCover(L,ds,genDate,comp,risk){
-  const v=esc(S.meta.konzeptVersion||'1.0');const st=esc(S.meta.konzeptStatus||'Entwurf');
-  const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
-  return '<div class="ksk-cover">'
-    +'<div class="ksk-cover-logo"><span>S3</span>:A &nbsp;·&nbsp; SecureStay Analytics</div>'
-    +'<div class="ksk-cover-type">'+(L==='en'?'Confidential Security Document':'Vertrauliches Sicherheitsdokument')+'</div>'
-    +'<div class="ksk-cover-title">'+(L==='en'?'Security Concept':'Sicherheitskonzept')+'</div>'
-    +'<div class="ksk-cover-objekt">'+esc(S.meta.objekt||'–')+'</div>'
-    +'<table class="ksk-cover-meta-table">'
-    +'<tr><td>'+(L==='en'?'Client':'Auftraggeber')+'</td><td>'+esc(S.meta.auftraggeber||'–')+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Address':'Adresse')+'</td><td>'+esc(S.meta.adresse||'–')+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Audit Date':'Auditdatum')+'</td><td>'+ds+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Author':'Ersteller')+'</td><td>'+esc(S.meta.pruefer||'–')+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Version':'Version')+'</td><td>'+v+'</td></tr>'
-    +'<tr><td>Status</td><td>'+st+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Generated':'Erstellt')+'</td><td>'+genDate+'</td></tr>'
-    +'<tr><td>'+(L==='en'?'Risk Level':'Risikostufe')+'</td><td>'+risk.score+'/100 — '+(rl[risk.cls]||risk.level)+'</td></tr>'
-    +'<tr><td>Compliance</td><td>'+comp+'%</td></tr>'
-    +'</table>'
-    +'<div class="ksk-vertraulich">&#9888; '+(L==='en'?'CONFIDENTIAL – Authorised Personnel Only':'VERTRAULICH – Nur für autorisierten Personenkreis')+'</div>'
-    +'</div>';
-}
-function _kskSec1(L,ds,actN){
-  const nb=actN.map(k=>'<span class="ksk-norm-badge">'+esc(k)+'</span>').join(' ');
-  return '<p class="ksk-text">'+(L==='en'
-    ?'This security concept was prepared for object <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' at '+esc(S.meta.adresse):'')+'. Audit date: '+ds+(S.meta.pruefer?', author: '+esc(S.meta.pruefer):'')+', commissioned by <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
-    :'Das vorliegende Sicherheitskonzept wurde für das Objekt <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' in '+esc(S.meta.adresse):'')+' erstellt. Auditdatum: '+ds+(S.meta.pruefer?', Ersteller: '+esc(S.meta.pruefer):'')+', im Auftrag von <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
-  )+'</p>'
-  +'<p class="ksk-text"><strong>'+(L==='en'?'Active Standards: ':'Aktive Normen: ')+'</strong>'+(nb||'–')+'</p>'
-  +'<div class="ksk-infobox"><strong>'+(L==='en'?'Scope:':'Geltungsbereich:')+'</strong> '+(L==='en'?'All areas, access points, technical systems and organisational processes of the assessed object. Findings and recommendations apply as of the audit date.':'Alle Bereiche, Zugangspunkte, technische Systeme und organisatorische Prozesse des Bewertungsobjekts. Befunde und Empfehlungen gelten mit Stand des Auditdatums.')+'</div>';
-}
-function _kskSec2(L,actN){
-  if(!actN.length)return '<p class="ksk-text">'+(L==='en'?'No standards selected.':'Keine Normen ausgewählt.')+'</p>';
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Standard':'Norm')+'</th>'
-    +'<th>'+(L==='en'?'Full Title':'Vollständiger Name')+'</th>'
-    +'<th>'+(L==='en'?'Key Requirements':'Wesentliche Anforderungen')+'</th>'
-    +'</tr></thead><tbody>'
-    +actN.map(k=>{const n=NORMS[k];return '<tr>'
-      +'<td><span class="ksk-norm-badge">'+esc(k)+'</span></td>'
-      +'<td><strong>'+esc(n.fn)+'</strong></td>'
-      +'<td>'+(n.reqs||[]).map(r=>'<em>'+r.n+'</em> '+r.t).join(' · ')+'</td>'
-      +'</tr>';}).join('')
-    +'</tbody></table>'
-    +'<div class="ksk-infobox">'+(L==='en'?'All listed standards are mandatory for the audit scope and must be reflected in corrective measures.':'Alle aufgeführten Normen sind verpflichtend für den Prüfungsumfang und müssen in den Korrekturmaßnahmen berücksichtigt werden.')+'</div>';
-}
-function _kskSec3(L){
-  const mr=(l,v)=>v?'<tr><td><strong>'+l+'</strong></td><td>'+v+'</td></tr>':'';
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Attribute':'Merkmal')+'</th><th>'+(L==='en'?'Value':'Wert')+'</th>'
-    +'</tr></thead><tbody>'
-    +mr(L==='en'?'Object Name':'Objektbezeichnung',esc(S.meta.objekt))
-    +mr(L==='en'?'Address':'Adresse',esc(S.meta.adresse))
-    +mr(L==='en'?'Building Type':'Gebäudetyp',esc(S.meta.gebaeudetype))
-    +mr(L==='en'?'Year Built':'Baujahr',esc(S.meta.baujahr))
-    +mr(L==='en'?'Floor Area':'Fläche',S.meta.flaeche?esc(S.meta.flaeche)+' m²':'')
-    +mr(L==='en'?'Floors':'Stockwerke',esc(S.meta.stockwerke))
-    +mr(L==='en'?'Employees':'Mitarbeiter',esc(S.meta.mitarbeiter))
-    +mr(L==='en'?'Entrances':'Eingänge',esc(S.meta.eingaenge))
-    +mr(L==='en'?'Vehicle Entrances':'Einfahrten',esc(S.meta.einfahrten))
-    +mr(L==='en'?'Cameras (existing)':'Kameras (Bestand)',esc(S.meta.kameras))
-    +mr(L==='en'?'Parking Spaces':'Parkplätze',esc(S.meta.parkplaetze))
-    +mr(L==='en'?'Buildings on Site':'Gebäudeanzahl',esc(S.meta.anzahlGebaeude))
-    +mr(L==='en'?'Outdoor Area':'Außengelände',esc(S.meta.aussengelaende))
-    +mr(L==='en'?'Audit Occasion':'Prüfanlass',esc(S.meta.anlass))
-    +'</tbody></table>';
-}
-function _kskSec4(L,risk){
-  const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
-  const sb=S.meta.schutzbedarf||'';
-  const bsi={'gering':L==='en'?'Normal protection requirement. Standard security measures are sufficient.':'Normaler Schutzbedarf gem. BSI IT-Grundschutz. Standardsicherheitsmaßnahmen sind ausreichend.','erhöht':L==='en'?'Elevated protection requirement. Enhanced technical and organisational controls required.':'Erhöhter Schutzbedarf gem. BSI IT-Grundschutz. Erweiterte technische und organisatorische Maßnahmen erforderlich.','sehr hoch':L==='en'?'Very high protection requirement. Maximum measures mandatory. KRITIS characteristics present.':'Sehr hoher Schutzbedarf gem. BSI IT-Grundschutz. Maximale Maßnahmen verpflichtend. KRITIS-Merkmale vorhanden.'};
-  const rc=risk.cls==='danger'?'risk-krit':risk.cls==='orange'||risk.cls==='warn'?'risk-mangel':'risk-ok';
-  const bx=risk.score>=70?'ksk-warnbox':risk.score>=20?'ksk-infobox':'ksk-okbox';
-  return '<table class="ksk-table"><thead><tr><th>'+(L==='en'?'Parameter':'Parameter')+'</th><th>'+(L==='en'?'Assessment':'Einstufung')+'</th></tr></thead><tbody>'
-    +'<tr><td><strong>'+(L==='en'?'Declared Protection Level':'Deklarierter Schutzbedarf')+'</strong></td><td>'+esc(sb||'–')+'</td></tr>'
-    +'<tr><td><strong>'+(L==='en'?'Calculated Risk Score (0–100)':'Berechneter Risikowert (0–100)')+'</strong></td><td><span class="'+rc+'">'+risk.score+'/100 — '+(rl[risk.cls]||risk.level)+'</span></td></tr>'
-    +'<tr><td><strong>KRITIS-relevant</strong></td><td>'+(S.meta.kritischeInfrastruktur==='ja'?(L==='en'?'Yes':'Ja'):S.meta.kritischeInfrastruktur==='nein'?(L==='en'?'No':'Nein'):'–')+'</td></tr>'
-    +'<tr><td><strong>'+(L==='en'?'Hazardous Materials':'Gefährliche Stoffe')+'</strong></td><td>'+(S.meta.gefaehrlicheStoffe==='ja'?(L==='en'?'Yes':'Ja'):S.meta.gefaehrlicheStoffe==='nein'?(L==='en'?'No':'Nein'):'–')+'</td></tr>'
-    +'<tr><td><strong>'+(L==='en'?'Personal Data Processing':'Personenbezogene Daten')+'</strong></td><td>'+(S.meta.datenschutz==='ja'?(L==='en'?'Yes':'Ja'):S.meta.datenschutz==='nein'?(L==='en'?'No':'Nein'):'–')+'</td></tr>'
-    +'</tbody></table>'
-    +'<div class="'+bx+'">'+(bsi[sb.toLowerCase()]||bsi[risk.score>=70?'sehr hoch':risk.score>=20?'erhöht':'gering'])+'</div>';
-}
-function _kskSec5(L,risk){
-  const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
-  const rc=risk.cls==='danger'?'risk-krit':risk.cls==='orange'||risk.cls==='warn'?'risk-mangel':'risk-ok';
-  const m=S.meta;const vl=[];
-  if(m.einbrueche==='ja')vl.push(L==='en'?'Break-ins (confirmed)':'Einbrüche (bestätigt)');
-  else if(m.einbrueche==='unbekannt')vl.push(L==='en'?'Break-ins (status unknown)':'Einbrüche (Status unbekannt)');
-  if(m.diebstahl==='ja')vl.push(L==='en'?'Theft (confirmed)':'Diebstahl (bestätigt)');
-  if(m.sabotage==='ja')vl.push(L==='en'?'Sabotage (confirmed)':'Sabotage (bestätigt)');
-  if(m.brandschaden==='ja')vl.push(L==='en'?'Fire damage (confirmed)':'Brandschaden (bestätigt)');
-  if(m.itVorfaelle==='ja')vl.push(L==='en'?'IT security incidents (confirmed)':'IT-Sicherheitsvorfälle (bestätigt)');
-  if(m.personaldiebstahl==='ja')vl.push(L==='en'?'Internal theft (confirmed)':'Mitarbeiterdiebstahl (bestätigt)');
-  if(m.versicherungsschaden==='ja')vl.push(L==='en'?'Insurance claims filed':'Versicherungsschäden gemeldet');
-  const v12=parseInt(m.vorfaelle12m)||0;
-  return '<p class="ksk-text">'+(L==='en'
-    ?'Threat analysis based on incident history and risk profile. <strong>'+v12+' incident(s)</strong> recorded in the past 12 months.'
-    :'Gefährdungsanalyse auf Basis der Vorfallhistorie und des Risikoprofils. <strong>'+v12+' Vorfall/Vorfälle</strong> in den letzten 12 Monaten dokumentiert.'
-  )+'</p>'
-  +(vl.length?'<p class="ksk-text"><strong>'+(L==='en'?'Identified threats:':'Identifizierte Gefährdungen:')+'</strong></p><ul class="ksk-text" style="margin-left:20px;line-height:2">'+vl.map(v=>'<li>'+v+'</li>').join('')+'</ul>'
-    :'<div class="ksk-okbox">'+(L==='en'?'No confirmed incidents on record.':'Keine bestätigten Vorfälle erfasst.')+'</div>')
-  +(m.vorfaelleFreitext?'<div class="ksk-infobox"><strong>'+(L==='en'?'Notes:':'Hinweise:')+'</strong> '+esc(m.vorfaelleFreitext)+'</div>':'')
-  +'<p class="ksk-text">'+(L==='en'
-    ?'Risk level (score '+risk.score+'/100): <strong class="'+rc+'">'+(rl[risk.cls]||risk.level)+'</strong>. '+(risk.score>=70?'Immediate action urgently required.':risk.score>=45?'Corrective measures required.':'Preventive measures recommended.')
-    :'Risikostufe (Wert '+risk.score+'/100): <strong class="'+rc+'">'+(rl[risk.cls]||risk.level)+'</strong>. '+(risk.score>=70?'Sofortmaßnahmen dringend erforderlich.':risk.score>=45?'Korrekturmaßnahmen einzuleiten.':'Präventive Maßnahmen empfohlen.')
-  )+'</p>';
-}
-function _kskSec6(L){
-  if(!S.umfeld?.done)return '';
-  const u=S.umfeld;
-  return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">'
-    +'<span class="ksk-norm-badge">'+(L==='en'?'Area Risk':'Umfeld-Risiko')+': '+(u.overallRisk||'–')+'</span>'
-    +'<span class="ksk-text" style="margin:0">'+(u.poiCount||0)+' '+(L==='en'?'objects analysed':'Objekte analysiert')+' · '+(u.radius||0)+'m '+(L==='en'?'radius':'Radius')+'</span>'
-    +'</div>'
-    +((u.risks||[]).length
-      ?'<table class="ksk-table"><thead><tr>'
-        +'<th>'+(L==='en'?'Category':'Kategorie')+'</th>'
-        +'<th>'+(L==='en'?'Risk Level':'Risikostufe')+'</th>'
-        +'<th>'+(L==='en'?'Recommendation':'Empfehlung')+'</th>'
-        +'</tr></thead><tbody>'
-        +(u.risks||[]).map(r=>'<tr>'
-          +'<td>'+(r.icon||'')+' <strong>'+esc(r.category||'')+'</strong></td>'
-          +'<td class="'+(r.level==='hoch'?'risk-krit':r.level==='mittel'?'risk-mangel':'risk-ok')+'">'+esc(r.level||'')+'</td>'
-          +'<td>'+esc(r.recommend||'')+'</td></tr>').join('')
-        +'</tbody></table>'
-      :'<p class="ksk-text">'+(L==='en'?'No POI risks identified.':'Keine POI-Risiken identifiziert.')+'</p>');
-}
-function _kskSec7(L,ac){
-  if(!ac.length)return '<p class="ksk-text">'+(L==='en'?'No audit data available.':'Keine Auditdaten vorhanden.')+'</p>';
-  return ac.map(ch=>{
-    const items=ch.items;let dOk=0,dMn=0,dKr=0;
-    items.forEach(it=>{const s=S.findings[it.id]?.status;if(s==='ok')dOk++;else if(s==='mangel')dMn++;else if(s==='kritisch')dKr++;});
-    const dA=dOk+dMn+dKr;const dPct=dA?Math.round(dOk/dA*100):0;
-    const pCol=dPct>=80?'#22c55e':dPct>=50?'#eab308':'#ef4444';
-    return '<div class="ksk-domain-header" style="margin-top:14px">'
-      +'<span class="ksk-domain-icon">'+esc(ch.i||'')+'</span>'
-      +'<span class="ksk-domain-title">'+esc(L==='en'&&ch.l_en?ch.l_en:ch.l)+'</span>'
-      +'<span class="ksk-domain-pct" style="color:'+pCol+'">'+dPct+'%</span></div>'
-      +'<table class="ksk-table"><thead><tr>'
-      +'<th>'+(L==='en'?'Control Point':'Prüfpunkt')+'</th>'
-      +'<th>'+(L==='en'?'Standard':'Norm')+'</th>'
-      +'<th>Status</th><th>'+(L==='en'?'Finding':'Befund')+'</th>'
-      +'</tr></thead><tbody>'
-      +items.map(it=>{const f=S.findings[it.id];const s=f?.status||'na';
-        const sl=s==='ok'?'&#10003; OK':s==='mangel'?(L==='en'?'&#9888; Deficiency':'&#9888; Mangel'):s==='kritisch'?(L==='en'?'&#10007; Critical':'&#10007; Kritisch'):'–';
-        const sc=s==='ok'?'risk-ok':s==='mangel'?'risk-mangel':s==='kritisch'?'risk-krit':'';
-        return '<tr><td><strong>'+esc(it.l)+'</strong></td>'
-          +'<td><span class="ksk-norm-badge">'+esc(it.n||'')+'</span></td>'
-          +'<td class="'+sc+'">'+sl+'</td><td>'+esc(f?.note||'')+'</td></tr>';
-      }).join('')+'</tbody></table>';
+function _kskMeasureTable(items,prio,idOffset){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  if(!items.length)return`<div class="ksk-okbox">✓ ${L==='en'?`No ${prio==='kritisch'?'critical':'medium-term'} measures required.`:`Keine ${prio==='kritisch'?'kritischen':'mittelfristigen'} Maßnahmen erforderlich.`}</div>`;
+  let idx=idOffset||0;
+  const rows=items.map(f=>{
+    idx++;
+    const tf=prio==='kritisch'?(L==='en'?'≤ 4 weeks':'≤ 4 Wochen'):(L==='en'?'3–6 months':'3–6 Monate');
+    const costStr=f.c?(f.c[prio]?`€ ${f.c[prio]}`:(f.c.mangel?`€ ${f.c.mangel}`:(L==='en'?'on request':'auf Anfrage'))):(L==='en'?'on request':'auf Anfrage');
+    const prioCell=prio==='kritisch'?`<span class="risk-krit">${L==='en'?'URGENT':'SOFORT'}</span>`:`<span class="risk-mangel">${L==='en'?'MEDIUM':'MITTEL'}</span>`;
+    return`<tr><td style="font-family:var(--fm);font-size:.65rem;white-space:nowrap">M-${String(idx).padStart(3,'0')}</td><td><strong>${esc(f.l)}</strong>${f.note?`<br><em style="font-size:.72rem">"${esc(f.note)}"</em>`:''}</td><td style="font-size:.72rem">${esc(f.sec)}</td><td>${prioCell}</td><td style="font-size:.72rem;white-space:nowrap">${tf}</td><td style="font-size:.72rem">${costStr}</td><td style="font-size:.65rem">${f.n||'–'}</td></tr>`;
   }).join('');
+  return`<table class="ksk-table"><thead><tr><th>ID</th><th>${L==='en'?'Finding / Measure':'Befund / Maßnahme'}</th><th>${L==='en'?'Domain':'Prüfbereich'}</th><th>${L==='en'?'Priority':'Priorität'}</th><th>${L==='en'?'Timeline':'Frist'}</th><th>Invest.</th><th>${L==='en'?'Norm Ref.':'Norm-Ref.'}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
-function _kskSec8(L,kritisch){
-  if(!kritisch.length)return '<div class="ksk-okbox">'+(L==='en'?'No critical deficiencies identified.':'Keine kritischen Befunde festgestellt.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
-    +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
-    +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
-    +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
-    +'<th>'+(L==='en'?'Recommendation':'Empfehlung')+'</th>'
-    +'<th>'+(L==='en'?'Deadline':'Frist')+'</th>'
-    +'<th>'+(L==='en'?'Cost Est.':'Kosten ca.')+'</th>'
-    +'</tr></thead><tbody>'
-    +kritisch.map((f,i)=>{const[cA,cB]=parseCost(f.c?.kritisch);return '<tr>'
-      +'<td>'+(i+1)+'</td>'
-      +'<td><strong>'+esc(f.sec||'')+'</strong><br><span class="ksk-norm-badge">'+esc(f.n||'')+'</span></td>'
-      +'<td><strong>'+esc(f.l)+'</strong>'+(f.note?'<br><em>'+esc(f.note)+'</em>':'')+'</td>'
-      +'<td class="risk-krit">'+(L==='en'?'CRITICAL':'KRITISCH')+'</td>'
-      +'<td>'+esc(f.d||'')+'</td>'
-      +'<td class="risk-krit">'+(L==='en'?'≤ 4 wks':'≤ 4 Wo.')+'</td>'
-      +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
-    +'</tbody></table>'
-    +'<div class="ksk-warnbox"><strong>'+(L==='en'?'Note:':'Hinweis:')+'</strong> '+(L==='en'?'Critical deficiencies must be remediated within 4 weeks. Non-remediation may result in legal liability and adverse insurance implications.':'Kritische Befunde sind innerhalb von 4 Wochen zu beheben. Nichtbehebung kann zu rechtlicher Haftung und versicherungsrechtlichen Konsequenzen führen.')+'</div>';
+function _kskUmfeldHTML(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  if(!S.umfeld?.done)return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No environmental analysis conducted. For a complete security concept, a site-specific environmental analysis in accordance with DIN 14675 / VdS 2311 is recommended.':'Keine Umfeldanalyse durchgeführt. Für ein vollständiges Sicherheitskonzept wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen.'}</p>`;
+  const highRisks=(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel');
+  const rows=highRisks.map(r=>`<tr><td><strong>${r.category}</strong></td><td style="text-align:center">${r.count}</td><td><span class="${r.level==='hoch'?'risk-krit':'risk-mangel'}">${r.level.toUpperCase()}</span></td><td style="font-size:.72rem">${r.recommend}</td></tr>`).join('');
+  return`<p class="ksk-text">${L==='en'?`The environmental analysis recorded <strong>${S.umfeld.poiCount||'–'} security-relevant objects</strong> within a radius of <strong>${S.umfeld.radius||250} m</strong>. Overall environmental risk: <strong>${S.umfeld.overallRisk||'–'}</strong>.`:`Im Rahmen der Umfeldanalyse wurden <strong>${S.umfeld.poiCount||'–'} sicherheitsrelevante Objekte</strong> in einem Radius von <strong>${S.umfeld.radius||250} m</strong> erfasst. Gesamtbewertung Umfeld-Risiko: <strong>${S.umfeld.overallRisk||'–'}</strong>.`}</p>${highRisks.length?`<table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Count':'Anzahl'}</th><th>${L==='en'?'Risk Level':'Risikostufe'}</th><th>${L==='en'?'Recommendation':'Handlungsempfehlung'}</th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="ksk-okbox">✓ ${L==='en'?'No elevated environmental risks identified.':'Keine erhöhten Umfeldrisiken identifiziert.'}</div>`}`;
 }
-function _kskSec9(L,mangel){
-  if(!mangel.length)return '<div class="ksk-okbox">'+(L==='en'?'No medium-term deficiencies.':'Keine mittelfristigen Mängel.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
-    +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
-    +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
-    +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
-    +'<th>'+(L==='en'?'Recommendation':'Empfehlung')+'</th>'
-    +'<th>'+(L==='en'?'Deadline':'Frist')+'</th>'
-    +'<th>'+(L==='en'?'Cost Est.':'Kosten ca.')+'</th>'
-    +'</tr></thead><tbody>'
-    +mangel.map((f,i)=>{const[cA,cB]=parseCost(f.c?.mangel);return '<tr>'
-      +'<td>'+(i+1)+'</td>'
-      +'<td><strong>'+esc(f.sec||'')+'</strong><br><span class="ksk-norm-badge">'+esc(f.n||'')+'</span></td>'
-      +'<td><strong>'+esc(f.l)+'</strong>'+(f.note?'<br><em>'+esc(f.note)+'</em>':'')+'</td>'
-      +'<td class="risk-mangel">'+(L==='en'?'DEFICIENCY':'MANGEL')+'</td>'
-      +'<td>'+esc(f.d||'')+'</td>'
-      +'<td>'+(L==='en'?'3–6 months':'3–6 Monate')+'</td>'
-      +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
-    +'</tbody></table>';
+function _kskNormHTML(norms){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const descMap={'ISO/IEC 27001':'ISO/IEC 27001:2022 – Informationssicherheits-Managementsystem (ISMS). Internationale Norm für Aufbau, Betrieb und kontinuierliche Verbesserung eines ISMS.','ISO 9001':'ISO 9001:2015 – Qualitätsmanagementsystem. Anforderungen an ein wirksames QMS mit risikobasiertem Ansatz.','COBIT 2019':'COBIT 2019 – Framework für IT-Governance, IT-Management und Kontrollziele zur Steuerung von IT-Risiken.','DSGVO / GDPR':'Datenschutz-Grundverordnung (EU) 2016/679. Europäische Verordnung zum Schutz personenbezogener Daten und Rechenschaftspflicht.','BSI IT-Grundschutz':'BSI IT-Grundschutz – Bundesamt für Sicherheit in der Informationstechnik. Deutsches Rahmenwerk für systematische IT-Sicherheitsmaßnahmen.'};
+  if(!norms||!norms.length)return`<p class="ksk-text">${L==='en'?'The audit is based on recognised best-practice guidelines in security and risk management (incl. ISO 31000, VdS 3473, DIN EN ISO 45001). Norm mapping to ISO/IEC 27001 or BSI IT-Grundschutz is available on request.':'Die Prüfung basiert auf anerkannten Best-Practice-Leitfäden des Sicherheits- und Risikomanagements (u.a. ISO 31000, VdS 3473, DIN EN ISO 45001). Eine Normzuordnung nach ISO/IEC 27001 oder BSI IT-Grundschutz ist auf Wunsch möglich.'}</p>`;
+  const rows=norms.map(n=>`<tr><td><strong>${n}</strong></td><td style="font-size:.76rem">${descMap[n]||n}</td><td style="font-size:.72rem">${L==='en'?'Basis of audit methodology':'Grundlage der Prüfmethodik'}</td></tr>`).join('');
+  return`<p class="ksk-text">${L==='en'?'This security concept was prepared in consideration of the following standards and regulatory requirements:':'Das Sicherheitskonzept wurde unter Berücksichtigung folgender Normen, Standards und regulatorischer Anforderungen erstellt:'}</p><table class="ksk-table"><thead><tr><th>Norm / Standard</th><th>${L==='en'?'Description':'Beschreibung'}</th><th>${L==='en'?'Relevance':'Relevanz'}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
-function _kskSec10(L,kritisch,mangel){
-  let p1A=0,p1B=0,p2A=0,p2B=0;
-  kritisch.forEach(f=>{const[a,b]=parseCost(f.c?.kritisch);p1A+=a;p1B+=b;});
-  mangel.forEach(f=>{const[a,b]=parseCost(f.c?.mangel);p2A+=a;p2B+=b;});
-  const tot=p1A+p2A,totB=p1B+p2B;
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Priority':'Priorität')+'</th><th>'+(L==='en'?'Category':'Kategorie')+'</th>'
-    +'<th>'+(L==='en'?'Timeframe':'Zeitrahmen')+'</th><th>'+(L==='en'?'Items':'Pos.')+'</th>'
-    +'<th>'+(L==='en'?'Cost Estimate':'Kostenschätzung')+'</th>'
-    +'</tr></thead><tbody>'
-    +'<tr><td><strong class="risk-krit">Prio 1 – '+(L==='en'?'Immediate':'Sofort')+'</strong></td>'
-    +'<td>'+(L==='en'?'Critical deficiencies':'Kritische Befunde')+'</td>'
-    +'<td>'+(L==='en'?'≤ 4 weeks':'≤ 4 Wochen')+'</td><td>'+kritisch.length+'</td>'
-    +'<td>'+(p1A?'€ '+p1A.toLocaleString('de-DE')+' – '+p1B.toLocaleString('de-DE'):'–')+'</td></tr>'
-    +'<tr><td><strong class="risk-mangel">Prio 2 – '+(L==='en'?'Short-term':'Kurzfristig')+'</strong></td>'
-    +'<td>'+(L==='en'?'Deficiencies':'Mängel')+'</td>'
-    +'<td>'+(L==='en'?'3–6 months':'3–6 Monate')+'</td><td>'+mangel.length+'</td>'
-    +'<td>'+(p2A?'€ '+p2A.toLocaleString('de-DE')+' – '+p2B.toLocaleString('de-DE'):'–')+'</td></tr>'
-    +'<tr><td><strong class="risk-ok">Prio 3 – '+(L==='en'?'Medium-term':'Mittelfristig')+'</strong></td>'
-    +'<td>'+(L==='en'?'Optimisation measures':'Optimierungsmaßnahmen')+'</td>'
-    +'<td>'+(L==='en'?'6–12 months':'6–12 Monate')+'</td><td>–</td><td>–</td></tr>'
-    +'<tr><td colspan="3"><strong>'+(L==='en'?'Total Investment':'Gesamtinvestition')+'</strong></td>'
-    +'<td>'+(kritisch.length+mangel.length)+'</td>'
-    +'<td><strong>'+(tot?'€ '+tot.toLocaleString('de-DE')+' – '+totB.toLocaleString('de-DE'):'–')+'</strong></td></tr>'
-    +'</tbody></table>'
-    +'<div class="ksk-infobox">'+(L==='en'?'The implementation of these measures reduces residual risk and is a prerequisite for optimal insurance premium design.':'Die Umsetzung reduziert das Restrisiko und ist Voraussetzung für optimale Versicherungsprämiengestaltung.')+'</div>';
-}
-function _kskSec11(L){
-  const rows=[
-    [L==='en'?'Emergency Contacts':'Notfallkontakte',L==='en'?'24/7 reachable contacts for security, fire, police and management. List displayed at all access points.':'Rund um die Uhr erreichbare Kontakte für Sicherheit, Feuerwehr, Polizei und Geschäftsführung. Liste an allen Zugangspunkten aushängen.','ISO 22301 §8.4'],
-    [L==='en'?'Evacuation Plan':'Evakuierungsplan',L==='en'?'Current plan, rehearsed annually. All employees trained. Assembly points marked.':'Aktueller Plan, mindestens jährlich geübt. Alle Mitarbeiter geschult. Sammelplätze gekennzeichnet.','ASR A2.3 · DIN 14096'],
-    ['BIA',L==='en'?'BIA defines RTO and RPO for all critical processes. Annual review required.':'BIA definiert RTO und RPO für alle kritischen Prozesse. Jährliche Überprüfung erforderlich.','ISO 22301 §8.2'],
-    [L==='en'?'Crisis Communication':'Krisenkommunikation',L==='en'?'Defined channels for crisis situations. Media contacts centrally managed.':'Definierte Kommunikationswege. Medienkontakte zentral gesteuert.','ISO 22301 · NIS2 §31'],
-    [L==='en'?'Recovery Plans':'Wiederherstellungspläne',L==='en'?'Documented recovery plans for all critical systems. Tested annually.':'Dokumentierte Pläne für alle kritischen Systeme. Mindestens jährlich testen.','ISO 22301 §8.3'],
-  ];
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Component':'Komponente')+'</th>'
-    +'<th>'+(L==='en'?'Requirement':'Anforderung')+'</th>'
-    +'<th>'+(L==='en'?'Ref.':'Referenz')+'</th>'
-    +'</tr></thead><tbody>'
-    +rows.map(([c,r,ref])=>'<tr><td><strong>'+c+'</strong></td><td>'+r+'</td><td>'+ref+'</td></tr>').join('')
-    +'</tbody></table>'
-    +(S.meta.notizen?'<div class="ksk-infobox"><strong>'+(L==='en'?'Audit Notes:':'Hinweise:')+'</strong> '+esc(S.meta.notizen)+'</div>':'');
-}
-function _kskSec12(L){
-  if(S.meta.datenschutz!=='ja')return '';
-  const rows=[
-    [L==='en'?'Information Obligation':'Informationspflicht',L==='en'?'GDPR notices at all camera areas before entering surveillance zones.':'Hinweisschilder in allen Kamerabereichen vor Betreten des Überwachungsbereichs.','DSGVO Art. 13'],
-    [L==='en'?'Purpose Limitation':'Zweckbindung',L==='en'?'Video data exclusively for security purposes.':'Videodaten ausschließlich für Sicherheitszwecke.','DSGVO Art. 5(1)(b)'],
-    [L==='en'?'Storage Limitation':'Speicherbegrenzung',L==='en'?'Recordings deleted after max. 72 hours unless needed for investigation.':'Aufnahmen spätestens nach 72h löschen.','DSGVO Art. 5(1)(e)'],
-    [L==='en'?'Data Protection Officer':'Datenschutzbeauftragter',L==='en'?'DPO required if >20 employees process personal data.':'DSB erforderlich bei >20 Mitarbeitern mit Datenverarbeitung.','DSGVO Art. 37'],
-    [L==='en'?'Processing Records':'Verarbeitungsverzeichnis',L==='en'?'Records of processing activities maintained and updated regularly.':'Verarbeitungsverzeichnis führen und aktualisieren.','DSGVO Art. 30'],
-  ];
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Requirement':'Anforderung')+'</th>'
-    +'<th>'+(L==='en'?'Measure':'Maßnahme')+'</th>'
-    +'<th>'+(L==='en'?'Ref.':'Referenz')+'</th>'
-    +'</tr></thead><tbody>'
-    +rows.map(([r,m,ref])=>'<tr><td><strong>'+r+'</strong></td><td>'+m+'</td><td>'+ref+'</td></tr>').join('')
-    +'</tbody></table>';
-}
-function _kskSec13(L){
-  const rows=[
-    [L==='en'?'Management':'Geschäftsführung',esc(S.meta.auftraggeber||'[GF]'),L==='en'?'Overall responsibility, budget, concept approval':'Gesamtverantwortung, Budget, Konzeptfreigabe',L==='en'?'Annual':'Jährlich'],
-    [L==='en'?'Security Officer':'Sicherheitsbeauftragter',esc(S.meta.pruefer||'[SiBe]'),L==='en'?'Implementation, reporting, coordination':'Umsetzung, Berichterstattung, Koordination',L==='en'?'Ongoing':'Laufend'],
-    [L==='en'?'IT Security':'IT-Sicherheit','IT-Abteilung',L==='en'?'Technical IT security, monitoring, incident response':'Technische IT-Sicherheit, Monitoring, Incident Response',L==='en'?'Ongoing':'Laufend'],
-    [L==='en'?'HR / Training':'Personal / Schulung','HR-Abteilung',L==='en'?'Security awareness, onboarding':'Security Awareness, Onboarding',L==='en'?'Annual':'Jährlich'],
-    [L==='en'?'Data Protection Officer':'Datenschutzbeauftragter',S.meta.datenschutz==='ja'?(L==='en'?'Appointed DPO':'Bestellter DSB'):(L==='en'?'Not required':'Nicht erforderlich'),L==='en'?'GDPR compliance, assessments':'DSGVO-Konformität, Datenschutz-Folgeabschätzungen',L==='en'?'As required':'Anlassbezogen'],
-  ];
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Function':'Funktion')+'</th><th>'+(L==='en'?'Responsible':'Verantwortlich')+'</th>'
-    +'<th>'+(L==='en'?'Tasks':'Aufgaben')+'</th><th>'+(L==='en'?'Frequency':'Frequenz')+'</th>'
-    +'</tr></thead><tbody>'
-    +rows.map(([fn,r,t,fr])=>'<tr><td><strong>'+fn+'</strong></td><td>'+r+'</td><td>'+t+'</td><td>'+fr+'</td></tr>').join('')
-    +'</tbody></table>';
-}
-function _kskSec14(L,ac){
-  const ml=[[0,L==='en'?'Not existing':'Nicht existent'],[1,L==='en'?'Initial':'Initial'],[2,L==='en'?'Repeatable':'Wiederholbar'],[3,L==='en'?'Defined':'Definiert'],[4,L==='en'?'Managed':'Gesteuert'],[5,L==='en'?'Optimizing':'Optimierend']];
-  const bd=[L==='en'?'No processes defined':'Keine Prozesse definiert',L==='en'?'Ad-hoc, reactive':'Ad-hoc, reaktiv',L==='en'?'Basic processes established':'Basisprozesse etabliert',L==='en'?'Documented, standardised':'Dokumentiert, standardisiert',L==='en'?'Measured and controlled':'Gemessen und kontrolliert',L==='en'?'Continuous improvement':'Kontinuierliche Verbesserung'];
-  const avg=ac.length?Math.round(ac.reduce((s,c)=>s+(S.maturity[c.id]||0),0)/ac.length*10)/10:0;
-  return '<p class="ksk-text">'+(L==='en'?'Maturity per CMMI scale (0–5). Average: <strong>'+avg+'/5</strong>. Industry benchmark: <strong>3.0–3.5</strong>.':'Reifegrad nach CMMI-Skala (0–5). Durchschnitt: <strong>'+avg+'/5</strong>. Branchenbenchmark: <strong>3,0–3,5</strong>.')+'</p>'
-  +'<div class="ksk-maturity-grid">'
-  +ac.map(ch=>{const mat=S.maturity[ch.id]||0;const pct=mat/5*100;
-    const col=mat>=4?'#22c55e':mat>=3?'#14b8a6':mat>=2?'#eab308':'#ef4444';
-    return '<div class="ksk-maturity-item">'
-      +'<div class="ksk-maturity-label">'+esc(L==='en'&&ch.l_en?ch.l_en:ch.l)+'</div>'
-      +'<div class="ksk-maturity-bar"><div class="ksk-maturity-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
-      +'<div class="ksk-maturity-level">'+(ml[mat]||ml[0])[1]+' ('+mat+'/5)</div></div>';
-  }).join('')+'</div>'
-  +'<table class="ksk-table" style="margin-top:14px"><thead><tr>'
-  +'<th>'+(L==='en'?'Level':'Stufe')+'</th><th>'+(L==='en'?'Name':'Bezeichnung')+'</th>'
-  +'<th>'+(L==='en'?'Description':'Beschreibung')+'</th><th>Benchmark</th>'
-  +'</tr></thead><tbody>'
-  +ml.map(([l,n])=>'<tr><td><strong>'+l+'</strong></td><td>'+n+'</td><td>'+bd[l]+'</td>'
-    +'<td>'+(l<3?'<span class="risk-krit">&#8595; Below</span>':l===3?'<span class="risk-ok">&#10003; Benchmark</span>':'<span class="risk-ok">&#8593; Above</span>')+'</td></tr>').join('')
-  +'</tbody></table>';
-}
-function _kskSec15(L,ds){
-  const v=esc(S.meta.konzeptVersion||'1.0');const st=esc(S.meta.konzeptStatus||'Entwurf');
-  const nxt=S.meta.datum?new Date(new Date(S.meta.datum).getTime()+365*24*3600*1000).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
-  return '<table class="ksk-table"><thead><tr>'
-    +'<th>'+(L==='en'?'Version':'Version')+'</th><th>'+(L==='en'?'Date':'Datum')+'</th>'
-    +'<th>'+(L==='en'?'Author':'Ersteller')+'</th><th>'+(L==='en'?'Changes':'Änderungen')+'</th>'
-    +'<th>Status</th></tr></thead><tbody>'
-    +'<tr><td>'+v+'</td><td>'+ds+'</td><td>'+esc(S.meta.pruefer||'–')+'</td>'
-    +'<td>'+(L==='en'?'Initial version – complete security concept':'Erstversion – vollständiges Sicherheitskonzept')+'</td>'
-    +'<td>'+st+'</td></tr></tbody></table>'
-    +'<div class="ksk-infobox"><strong>'+(L==='en'?'Next Review:':'Nächste Prüfung:')+'</strong> '+nxt+'<br>'
-    +(L==='en'?'Valid for 12 months from audit date. Must be reviewed annually or upon significant changes.':'Gültig für 12 Monate ab Auditdatum. Jährlich oder bei wesentlichen Änderungen zu überprüfen.')+'</div>'
-    +'<p class="ksk-text">'+(L==='en'?'This security concept was prepared according to recognised standards and reflects the situation as of the audit date. Implementation is the sole responsibility of the operator.':'Dieses Sicherheitskonzept wurde nach anerkannten Normen erstellt und gibt den Stand zum Auditdatum wieder. Die Umsetzung liegt in der alleinigen Verantwortung des Betreibers.')+'</p>'
-    +'<div class="ksk-sig-row">'
-    +'<div class="ksk-sig-box">'+esc(S.meta.pruefer||'___________________')+'<br>'+(L==='en'?'Auditor / Author':'Auditor / Ersteller')+'<br>'+ds+'</div>'
-    +'<div class="ksk-sig-box">'+esc(S.meta.auftraggeber||'___________________')+'<br>'+(L==='en'?'Client / Operator':'Auftraggeber / Betreiber')+'</div>'
-    +'<div class="ksk-sig-box">___________________<br>'+(L==='en'?'Management Approval':'Freigabe Geschäftsführung')+'</div>'
-    +'</div>';
-}
+
 // ═══ KONZEPT ═══
 function renderKonzept(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const ac=activeChecks();
   let kritisch=[],mangel=[],ok=[];
-  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;
-    if(s==='kritisch')kritisch.push({...it,note:f?.note||'',sec:L==='en'&&ch.l_en?ch.l_en:ch.l});
-    else if(s==='mangel')mangel.push({...it,note:f?.note||'',sec:L==='en'&&ch.l_en?ch.l_en:ch.l});
-    else if(s==='ok')ok.push({...it});
-  }));
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='kritisch')kritisch.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='mangel')mangel.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='ok')ok.push({...it,sec:ch.l});}));
   const assessed=kritisch.length+mangel.length+ok.length;
   const comp=assessed?Math.round(ok.length/assessed*100):0;
   const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
   const genDate=new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'});
-  const risk=calcObjectRisk();const actN=(S.norms||[]).filter(k=>NORMS[k]);
-  // Build sections dynamically
-  const sects=[];let sn=0;
-  const push=(title,body)=>{sn++;sects.push({n:sn,title,body});};
-  push(L==='en'?'Introduction & Scope':'Einleitung und Geltungsbereich',_kskSec1(L,ds,actN));
-  push(L==='en'?'Legal & Normative Framework':'Rechtliche und normative Grundlagen',_kskSec2(L,actN));
-  push(L==='en'?'Object Description':'Objektbeschreibung',_kskSec3(L));
-  push(L==='en'?'Protection Requirements':'Schutzbedarfsfeststellung',_kskSec4(L,risk));
-  push(L==='en'?'Threat Analysis':'Gefährdungsanalyse',_kskSec5(L,risk));
-  if(S.umfeld?.done)push(L==='en'?'Site Environment Analysis':'Umfeldanalyse',_kskSec6(L));
-  push(L==='en'?'Security Measures Inventory':'Bestandsaufnahme der Sicherheitsmaßnahmen',_kskSec7(L,ac));
-  push(L==='en'?'Critical Findings':'Kritische Befunde',_kskSec8(L,kritisch));
-  push(L==='en'?'Medium-Term Measures':'Mittelfristige Maßnahmen',_kskSec9(L,mangel));
-  push(L==='en'?'Investment Planning':'Investitionsplanung',_kskSec10(L,kritisch,mangel));
-  push(L==='en'?'Emergency & Crisis Management':'Notfall- und Krisenmanagement',_kskSec11(L));
-  if(S.meta.datenschutz==='ja')push(L==='en'?'GDPR Compliance':'DSGVO-Konformität',_kskSec12(L));
-  push(L==='en'?'Responsibilities':'Verantwortlichkeiten',_kskSec13(L));
-  push(L==='en'?'Maturity Assessment':'Reifegrad-Bewertung',_kskSec14(L,ac));
-  push(L==='en'?'Revision History':'Revisionshistorie',_kskSec15(L,ds));
-  // TOC (screen only – hidden in print, ksk-toc-print is used for PDF)
-  const toc='<div class="ksk-toc konzept-no-print">'
-    +'<div class="ksk-toc-title">'+(L==='en'?'TABLE OF CONTENTS':'INHALTSVERZEICHNIS')+'</div>'
-    +'<div class="ksk-toc-grid">'+sects.map(s=>'<div class="ksk-toc-entry"><span class="ksk-toc-num">'+s.n+'</span><span>'+esc(s.title)+'</span></div>').join('')+'</div></div>';
-  // Print TOC (rendered in PDF via @media print)
-  const tocPrint='<div class="ksk-toc-print">'
-    +'<h2>'+(L==='en'?'Table of Contents':'Inhaltsverzeichnis')+'</h2>'
-    +sects.map(s=>'<div class="toc-entry'+(s.n<=5?' toc-entry-main':'')+'"><span>'+s.n+'. '+esc(s.title)+'</span></div>').join('')
-    +'</div>';
-  // Section HTML — chapters 1,6,8,11,14 get page-break-before
-  const breakBefore=new Set([1,6,8,11,14]);
-  const sectHTML=sects.map(s=>'<div class="ksk-section'+(breakBefore.has(s.n)?' page-break-before':'')+'"><div class="ksk-section-title"><span class="ksk-section-number">'+s.n+'</span>'+esc(s.title)+'</div>'+s.body+'</div>').join('');
-  document.getElementById('mainContent').innerHTML=
-    '<div class="ksk-controls">'
-    +'<div class="rpt-tabs">'
-    +'<button class="rpt-tab" onclick="S.reportView=\'begehung\';render()">'+(L==='en'?'Inspection Report':'Begehungsprotokoll')+'</button>'
-    +'<button class="rpt-tab active konzept-tab" onclick="S.reportView=\'konzept\';render()">'+(L==='en'?'Security Concept':'Sicherheitskonzept')+'</button>'
-    +'</div>'
-    +'<div style="display:flex;gap:6px">'
-    +'<button class="print-btn" onclick="exportData()">Backup</button>'
-    +'<button class="print-btn" style="border-color:rgba(167,139,250,.3);color:var(--purple)" onclick="window.print()">PDF</button>'
-    +'</div></div>'
-    +'<div class="ksk-doc">'+_kskCover(L,ds,genDate,comp,risk)+toc+tocPrint+'<div class="ksk-body">'+sectHTML+'</div>'
-    +'<div style="padding:18px 40px;text-align:center;border-top:1px solid rgba(255,255,255,.06)">'
-    +'<div style="font-family:var(--fh);font-weight:700;color:var(--text2);font-size:.9rem">SecureStay Analytics</div>'
-    +'<div style="font-size:.72rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt) · Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>'
-    +'</div></div>'
-    +'<div class="nav-row"><button class="btn-s" onclick="S.reportView=\'begehung\';render()">&#8592; '+(L==='en'?'Back to Report':'Zurück zum Bericht')+'</button>'
-    +'<button class="btn-p" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)" onclick="window.print()">PDF</button></div>';
+  // Group kritisch by domain
+  const domainMap={security:L==='en'?'Physical Security':'Physische Sicherheit',qm:L==='en'?'Quality Management':'Qualitätsmanagement',itgov:L==='en'?'IT Governance':'IT-Governance'};
+  // Computed values
+  const riskLevel=kritisch.length>=5?'HOCH':kritisch.length>=2?'ERHÖHT':kritisch.length>=1?'MITTEL':'GERING';
+  const riskColor=kritisch.length>=5?'#dc2626':kritisch.length>=2?'#ea580c':kritisch.length>=1?'#ca8a04':'#16a34a';
+  const riskText=kritisch.length>=2?'Es wurden kritische Mängel festgestellt, die priorisiert und unverzüglich zu beheben sind. Ohne Mängelbeseitigung ist der Versicherungsschutz möglicherweise eingeschränkt.':kritisch.length===1?'Es wurde ein kritischer Mangel identifiziert, der vorrangig zu beheben ist.':mangel.length>0?'Es wurden keine kritischen Mängel festgestellt. Der vorhandene Verbesserungsbedarf sollte mittelfristig adressiert werden.':'Das Objekt erfüllt alle geprüften Sicherheitsanforderungen. Kein sofortiger Handlungsbedarf.';
+  const objekt=esc(S.meta.objekt||'');
+  const auftraggeber=esc(S.meta.auftraggeber||'');
+  const pruefer=esc(S.meta.pruefer||sessionStorage.getItem('ssa_u')||'–');
+  const adresse=esc(S.meta.adresse||'');
+  const version=esc(S.meta.konzeptVersion||'1.0');
+  const status=esc(S.meta.konzeptStatus||'Entwurf');
+  const genDateTime=new Date().toLocaleString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const selectedMods=(S.modules||[]).map(id=>{const t=(typeof TEMPLATES!=='undefined'?TEMPLATES:[]).find(t=>t.id===id);return t?t.name:'';}).filter(Boolean);
+  const modsText=selectedMods.length?selectedMods.join(', '):'allgemeine Sicherheitsbegehung';
+  const normBadges=(S.norms||[]).map(n=>`<span class="ksk-norm-badge">${n}</span>`).join(' ');
+  // Schutzziele (auto-generated)
+  const sz=[{id:'SZ-01',z:'Physische Sicherheit',d:'Schutz von Personen, Sachwerten und Gebäude vor unbefugtem Zutritt, Diebstahl, Vandalismus und sonstigen physischen Bedrohungen.',p:'HOCH'},{id:'SZ-02',z:'Betriebskontinuität (BCM)',d:'Sicherstellung des ununterbrochenen Geschäftsbetriebs sowie schnelle Wiederherstellung nach Störungen oder sicherheitsrelevanten Ereignissen.',p:'HOCH'},{id:'SZ-03',z:'Compliance & Rechtssicherheit',d:'Einhaltung aller relevanten gesetzlichen, regulatorischen und normativen Anforderungen im Bereich Sicherheit und Datenschutz.',p:'HOCH'},{id:'SZ-04',z:'Informationssicherheit (CIA)',d:'Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit aller schützenswerten Informationen und IT-Systeme (ISO/IEC 27001).',p:'MITTEL'},{id:'SZ-05',z:'Schadensminimierung',d:'Reduktion von Eintrittswahrscheinlichkeit und Schadensauswirkung identifizierter Risiken durch präventive und reaktive Maßnahmen (ISO 31000).',p:'MITTEL'}];
+  // Investment summary helper
+  const fmtCostRange=(arr,prio)=>{let mn=0,mx=0;arr.forEach(f=>{if(!f.c)return;const r=f.c[prio]||'';const m=r.match(/(\d[\d.]*)\s*[–-]\s*(\d[\d.]*)/);if(m){mn+=parseInt(m[1].replace(/\./g,''));mx+=parseInt(m[2].replace(/\./g,''));}});return mn||mx?`€ ${mn.toLocaleString('de-DE')} – ${mx.toLocaleString('de-DE')}`:'auf Anfrage';};
+  document.getElementById('mainContent').innerHTML=`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div class="rpt-tabs">
+      <button class="rpt-tab" onclick="S.reportView='begehung';render()">${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
+      <button class="rpt-tab active konzept-tab" onclick="S.reportView='konzept';render()">${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="print-btn" onclick="exportData()">Backup</button>
+      <button class="print-btn" style="border-color:rgba(167,139,250,.3);color:var(--purple)" onclick="window.print()">PDF</button>
+    </div>
+  </div>
+  <div class="rpt-hdr" style="background:linear-gradient(135deg,rgba(167,139,250,.07),rgba(59,130,246,.04),rgba(15,23,42,.9));border-color:rgba(167,139,250,.2)">
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:6px">SecureStay: Analytics · ${L==='en'?'Security Concept':'Sicherheitskonzept'}</div>
+    <div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div>
+    <div class="rpt-meta" style="margin-top:6px">
+      ${S.meta.auftraggeber?`<strong>${esc(S.meta.auftraggeber)}</strong> · `:''}${ds}${S.meta.pruefer?` · ${L==='en'?'Author':'Autor'}: ${esc(S.meta.pruefer)}`:''}
+      ${S.meta.adresse?`<br>${esc(S.meta.adresse)}`:''}
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <span style="font-family:var(--fm);font-size:.58rem;color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.2);border-radius:999px;padding:2px 10px">${L==='en'?'Generated':'Erstellt'}: ${genDate}</span>
+      <span style="font-family:var(--fm);font-size:.58rem;color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.2);border-radius:999px;padding:2px 10px">${comp}% ${L==='en'?'Compliance':'Compliance'}</span>
+    </div>
+  </div>
+  <div class="konzept-section">
+    <div class="konzept-section-title">${L==='en'?'Executive Summary':'Zusammenfassung'}</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
+      ${L==='en'
+        ?`This security concept was prepared on the basis of an on-site inspection at <strong style="color:var(--text2)">${esc(S.meta.objekt)||'the object'}</strong> on ${ds}. A total of <strong style="color:var(--text2)">${assessed}</strong> control points were assessed. <strong style="color:var(--danger)">${kritisch.length}</strong> critical deficiencies and <strong style="color:var(--warn)">${mangel.length}</strong> deficiencies requiring improvement were identified. The overall compliance level is <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`
+        :`Das vorliegende Sicherheitskonzept wurde auf Basis einer Begehung des Objekts <strong style="color:var(--text2)">${esc(S.meta.objekt)||'–'}</strong> am ${ds} erstellt. Es wurden insgesamt <strong style="color:var(--text2)">${assessed}</strong> Prüfpunkte bewertet. Dabei wurden <strong style="color:var(--danger)">${kritisch.length}</strong> kritische Mängel und <strong style="color:var(--warn)">${mangel.length}</strong> Verbesserungsbedarfe festgestellt. Der Gesamterfüllungsgrad beträgt <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`}
+    </div>
+  </div>
+  ${umfeldSect}
+  ${kritisch.length||mangel.length?`
+  <div class="konzept-section">
+    <div class="konzept-section-title">${L==='en'?'Immediate Measures (Critical)':'Sofortmaßnahmen (Kritisch)'}</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'Must be remediated immediately (within 4 weeks):':'Unverzüglich umzusetzen (innerhalb von 4 Wochen):'}</p>
+    ${secK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">${domainMap.security}</div>${mkm(secK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+    ${qmK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">${domainMap.qm}</div>${mkm(qmK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+    ${itK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">${domainMap.itgov}</div>${mkm(itK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
+  </div>
+  <div class="konzept-section">
+    <div class="konzept-section-title">${L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)'}</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'To be addressed within 3–6 months:':'Umzusetzen innerhalb von 3–6 Monaten:'}</p>
+    ${secM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">${domainMap.security}</div>${mkm(secM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+    ${qmM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">${domainMap.qm}</div>${mkm(qmM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+    ${itM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">${domainMap.itgov}</div>${mkm(itM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
+  </div>
+  `:''}
+  <div class="konzept-section">
+    <div class="konzept-section-title">${L==='en'?'Investment Summary':'Investitionszusammenfassung'}</div>
+    <div class="cost-sum">
+      <div class="cost-row"><span>${L==='en'?'Immediate (critical)':'Sofort (kritisch)'}</span><span>€ ${fmtCA(kritisch,'kritisch')}</span></div>
+      <div class="cost-row"><span>${L==='en'?'Medium-term (deficiencies)':'Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(mangel,'mangel')}</span></div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(167,139,250,.04),rgba(59,130,246,.02));border:1px solid rgba(167,139,250,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
+    <div style="font-family:var(--fh);font-weight:700;color:var(--text2)">SecureStay: Analytics</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
+    <div style="font-size:.64rem;color:var(--soft)">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
+  </div>
+  <div class="nav-row"><button class="btn-s" onclick="S.reportView='begehung';render()">← ${L==='en'?'Back to Report':'Zurück zum Bericht'}</button><button class="btn-p" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)" onclick="window.print()">PDF</button></div>`;
 }
 
 // ═══ MODALS ═══
@@ -2771,6 +1764,7 @@ function togglePw() {
 
 // ═══ LANGUAGE SYSTEM ═══
 let _LANG = localStorage.getItem('ssa_lang')||'de';
+function setLoginLang(lang){_LANG=lang;localStorage.setItem('ssa_lang',lang);updateLangUI();}
 function toggleLang(){_LANG=_LANG==='de'?'en':'de';localStorage.setItem('ssa_lang',_LANG);updateLangUI();render();}
 function updateLangUI(){
   const btn=document.getElementById('langToggleBtn');
@@ -2782,11 +1776,14 @@ function updateLangUI(){
   const liSub=document.querySelector('.login-sub');
   if(liSub)liSub.textContent=_LANG==='en'?'Audit & Compliance Platform — Please sign in':'Audit & Compliance Platform — Bitte anmelden';
   const liUser=document.getElementById('li_user');
-  if(liUser)liUser.placeholder=_LANG==='en'?'Username':'Nutzername';
+  if(liUser){liUser.placeholder=_LANG==='en'?'Username':'Nutzername';const ul=liUser.closest('.login-field')?.querySelector('label');if(ul)ul.textContent=_LANG==='en'?'Username':'Nutzername';}
   const liPass=document.getElementById('li_pass');
-  if(liPass)liPass.placeholder=_LANG==='en'?'Password':'Passwort';
+  if(liPass){liPass.placeholder=_LANG==='en'?'Password':'Passwort';const pl=liPass.closest('.login-field')?.querySelector('label');if(pl)pl.textContent=_LANG==='en'?'Password':'Passwort';}
   const liBtn=document.getElementById('loginBtn');
   if(liBtn)liBtn.textContent=_LANG==='en'?'Sign in →':'Anmelden →';
+  // Language dropdown sync
+  const liLang=document.getElementById('li_lang');
+  if(liLang)liLang.value=_LANG;
   // User badge logout label
   const logoutLbl=document.querySelector('.user-logout-lbl');
   if(logoutLbl)logoutLbl.textContent=_LANG==='en'?'Sign out':'Abmelden';
@@ -2795,9 +1792,9 @@ function updateLangUI(){
   if(userBadge)userBadge.title=_LANG==='en'?'Sign out':'Abmelden';
 }
 
-if (checkAuth()){updateLangUI();render();}
-</script>
-<script>
+updateLangUI();
+if (checkAuth()){render();}
+
 /* ═══ LOGIN BACKGROUND — Digital Web ═══ */
 (function(){
   const canvas=document.getElementById('loginWebCanvas');
@@ -2878,6 +1875,3 @@ if (checkAuth()){updateLangUI();render();}
   window.addEventListener('resize',()=>{ resize(); init(); });
   resize(); init(); raf=requestAnimationFrame(draw);
 })();
-</script>
-</body>
-</html>
