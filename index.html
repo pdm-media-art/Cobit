@@ -269,12 +269,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Konzept Document Wrapper ── */
   .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
   .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
-  .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #2563eb!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
-  .ksk-section-number{color:#2563eb!important;margin-right:8pt}
+  .ksk-section-title{color:#0f172a!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #14b8a6!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
+  .ksk-section-number{color:#14b8a6!important;margin-right:8pt}
   /* ── Deckblatt ── */
-  .ksk-cover{text-align:center!important;padding:40pt 0!important;page-break-after:always!important;border:none!important}
-  .ksk-cover-logo{font-size:14pt!important;font-weight:800!important;color:#1e293b!important;border:2pt solid #2563eb!important;padding:8pt 20pt!important;border-radius:4pt!important;display:inline-block!important;margin-bottom:30pt!important}
-  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#1e293b!important;letter-spacing:-0.02em!important;margin-bottom:8pt!important}
+  .ksk-cover{text-align:center!important;padding:0!important;page-break-after:always!important;page-break-before:avoid!important;break-before:avoid!important;border:none!important;background:#fff!important}
+  .ksk-cover-hband{background:#020617!important;color:#f8fafc!important;padding:16pt 26pt!important;display:flex!important;align-items:center!important;gap:14pt!important;text-align:left!important;margin-bottom:40pt!important}
+  .ksk-cover-lmark{font-size:15pt!important;font-weight:900!important;color:#f8fafc!important;background:rgba(20,184,166,.18)!important;border:2pt solid #14b8a6!important;padding:5pt 12pt!important;border-radius:3pt!important;letter-spacing:-.01em!important;flex-shrink:0!important}
+  .ksk-cover-lacc{color:#14b8a6!important}
+  .ksk-cover-lname{font-size:11pt!important;font-weight:700!important;color:#f8fafc!important;letter-spacing:-.01em!important}
+  .ksk-cover-lsub{font-size:7pt!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#14b8a6!important;margin-top:2pt!important}
+  .ksk-cover-body{padding:0 28pt 24pt!important;text-align:center!important}
+  .ksk-cover-tline{height:3pt!important;background:#14b8a6!important;width:72pt!important;margin:10pt auto 18pt!important;border-radius:2pt!important;display:block!important}
+  .ksk-cover-title{font-size:28pt!important;font-weight:800!important;color:#0f172a!important;letter-spacing:-0.02em!important;margin-bottom:6pt!important}
   .ksk-cover-subtitle{font-size:13pt!important;color:#475569!important;margin-bottom:30pt!important}
   .ksk-cover-meta{background:#f8fafc!important;border:1pt solid #e2e8f0!important;border-radius:4pt!important;padding:16pt!important;text-align:left!important;margin:20pt 0!important;font-size:10pt}
   .ksk-cover-meta table{width:100%;border-collapse:collapse}
@@ -284,8 +290,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Inhaltsverzeichnis ── */
   .ksk-toc-print{page-break-after:always}
   .ksk-toc-print h2{font-size:14pt;color:#1e293b;border-bottom:1.5pt solid #2563eb;padding-bottom:6pt;margin-bottom:12pt;font-weight:700}
-  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#334155}
-  .ksk-toc-print .toc-entry-main{font-weight:600;color:#1e293b}
+  .ksk-toc-print .toc-entry{display:flex;justify-content:space-between;padding:3pt 0;border-bottom:1pt dotted #e2e8f0;font-size:10pt;color:#1e293b}
+  .ksk-toc-print .toc-entry-main{font-weight:600;color:#0f172a}
   /* ── Tabellen ── */
   .ksk-table{width:100%!important;border-collapse:collapse!important;margin:8pt 0 14pt 0!important;font-size:9.5pt!important;page-break-inside:auto}
   .ksk-table th{background:#1e293b!important;color:#f1f5f9!important;padding:6pt 8pt!important;text-align:left!important;font-weight:600!important;font-size:9pt!important;border:1pt solid #334155!important}
@@ -297,13 +303,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .ksk-table .risk-mangel{color:#b45309!important;font-weight:600!important}
   .ksk-table .risk-ok{color:#15803d!important;font-weight:600!important}
   /* ── Textblöcke ── */
-  .ksk-text{font-size:10.5pt!important;color:#334155!important;line-height:1.7!important;margin-bottom:10pt!important}
-  .ksk-text strong{color:#1e293b!important}
+  .ksk-text{font-size:10.5pt!important;color:#111827!important;line-height:1.7!important;margin-bottom:10pt!important}
+  .ksk-text strong{color:#0f172a!important}
   .ksk-infobox{border-left:3pt solid #2563eb!important;background:#f0f7ff!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-warnbox{border-left:3pt solid #dc2626!important;background:#fef2f2!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   .ksk-okbox{border-left:3pt solid #15803d!important;background:#f0fdf4!important;padding:8pt 12pt!important;margin:8pt 0!important;border-radius:0 3pt 3pt 0!important;page-break-inside:avoid!important}
   /* ── Norm-Badges für Print ── */
-  .ksk-norm-badge{background:#e0e7ff!important;color:#1e3a8a!important;border:1pt solid #93c5fd!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
+  .ksk-norm-badge{background:#ccfbf1!important;color:#0f766e!important;border:1pt solid #5eead4!important;border-radius:2pt!important;padding:1pt 5pt!important;font-size:7.5pt!important;font-weight:600!important}
   /* ── Report Header ── */
   .rpt-hdr{background:#f8fafc!important;border:none!important;border-left:4pt solid #0d9488!important;border-radius:2pt!important;padding:14pt 18pt!important;margin-bottom:18pt!important}
   .rpt-title{color:#1e293b!important;font-size:18pt!important;font-weight:800!important;line-height:1.2!important}
@@ -367,14 +373,25 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Signaturen ── */
   .ksk-sig-box{border-top:1pt solid #94a3b8!important;padding-top:4pt!important;margin-top:30pt!important;min-width:160pt!important;font-size:9pt!important;color:#64748b!important}
   .ksk-sig-row{display:flex!important;gap:24pt!important;margin-top:20pt!important;flex-wrap:wrap!important}
+  /* ── Executive Summary ── */
+  .ksk-exec-sum{background:#f0fdf9!important;border:1.5pt solid #14b8a6!important;border-radius:2pt!important;padding:10pt 14pt!important;margin-bottom:14pt!important;page-break-inside:avoid!important}
+  .ksk-exec-sum-title{font-size:9pt!important;font-weight:700!important;color:#0f766e!important;text-transform:uppercase!important;letter-spacing:.05em!important;margin-bottom:7pt!important}
+  .ksk-exec-table{margin:0!important}
+  /* ── Empfehlungsblöcke ── */
+  .ksk-rec-block{background:#f0fdf9!important;border:1pt solid #99f6e4!important;border-radius:2pt!important;padding:10pt 14pt!important;margin-top:12pt!important;page-break-inside:avoid!important}
+  .ksk-rec-title{font-size:10pt!important;font-weight:700!important;color:#0f766e!important;margin-bottom:8pt!important;padding-bottom:4pt!important;border-bottom:1pt solid #99f6e4!important}
+  .ksk-rec-domain{margin-bottom:10pt!important}
+  .ksk-rec-domain-name{font-size:9.5pt!important;font-weight:700!important;color:#0f172a!important;margin-bottom:4pt!important}
+  .ksk-rec-list{margin-left:14pt!important;display:block!important}
+  .ksk-rec-list li{font-size:9.5pt!important;color:#1e293b!important;line-height:1.55!important;margin-bottom:3pt!important}
   /* ── Cover Meta Table (neues Deckblatt) ── */
   .ksk-cover-meta-table{width:auto!important;min-width:320pt!important;border-collapse:collapse!important;margin:16pt auto!important;font-size:10pt!important;border:1pt solid #e2e8f0!important;background:#f8fafc!important}
   .ksk-cover-meta-table td{padding:5pt 10pt!important;border-bottom:1pt solid #f1f5f9!important;color:#334155!important;font-size:10pt!important;text-align:left!important}
   .ksk-cover-meta-table td:first-child{font-weight:600!important;color:#1e293b!important;width:42%!important;white-space:nowrap!important}
   .ksk-cover-meta-table tr:last-child td{border-bottom:none!important}
   /* ── Cover Elemente ── */
-  .ksk-cover-type{font-size:9pt!important;letter-spacing:.12em!important;color:#2563eb!important;text-transform:uppercase!important;margin-bottom:8pt!important}
-  .ksk-cover-objekt{font-size:16pt!important;font-weight:700!important;color:#1e293b!important;margin-bottom:20pt!important}
+  .ksk-cover-type{font-size:9pt!important;letter-spacing:.12em!important;color:#14b8a6!important;text-transform:uppercase!important;margin-bottom:8pt!important}
+  .ksk-cover-objekt{font-size:16pt!important;font-weight:700!important;color:#0f172a!important;margin-bottom:20pt!important}
   /* ── Domain Header (Bestandsaufnahme) ── */
   .ksk-domain-header{display:flex!important;align-items:baseline!important;gap:8pt!important;margin:14pt 0 4pt!important;padding-bottom:3pt!important;border-bottom:1pt solid #e2e8f0!important}
   .ksk-domain-icon{font-size:8pt!important;color:#2563eb!important;background:#eff6ff!important;border:1pt solid #bfdbfe!important;padding:1pt 5pt!important;border-radius:2pt!important}
@@ -397,7 +414,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     @bottom-right{content:''!important}
   }
   /* ── Seitenumbrüche ── */
-  .ksk-cover,.ksk-toc-print,.ksk-section.page-break-before{page-break-before:always;break-before:page}
+  .ksk-toc-print,.ksk-section.page-break-before{page-break-before:always;break-before:page}
   h2,h3,.ksk-section-title,.ksk-domain-header{page-break-after:avoid;break-after:avoid}
   table{page-break-inside:auto}
   tr{page-break-inside:avoid;break-inside:avoid}
@@ -547,13 +564,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .konzept-measure .km-time{font-family:var(--fm);font-size:.54rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 /* ═══ PROFESSIONELLES SICHERHEITSKONZEPT ═══ */
 .ksk-doc{background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);max-width:880px;margin:0 auto;padding:0;overflow:hidden;color:#1e293b}
-.ksk-cover{background:linear-gradient(160deg,#1e293b 0%,#0f172a 60%,#1e3a5f 100%);padding:60px 52px 48px;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
-.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(37,99,235,.12) 0,transparent 70%)}
-.ksk-cover-logo{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 20px;font-family:var(--fh);font-weight:800;font-size:.9rem;color:#f1f5f9;letter-spacing:.01em;margin-bottom:36px;position:relative;z-index:1}
-.ksk-cover-logo span{color:#60a5fa}
-.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:14px;position:relative;z-index:1}
-.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15;position:relative;z-index:1}
-.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#93c5fd;margin-bottom:36px;position:relative;z-index:1}
+.ksk-cover{background:linear-gradient(160deg,#0a1628 0%,#020617 60%,#0f1f3d 100%);padding:0;text-align:center;position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0}
+.ksk-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(20,184,166,.07) 0,transparent 70%);pointer-events:none}
+.ksk-cover-hband{background:rgba(2,6,23,.92);border-bottom:1px solid rgba(20,184,166,.2);padding:14px 28px;display:flex;align-items:center;gap:12px;text-align:left;flex-shrink:0;position:relative;z-index:1}
+.ksk-cover-lmark{display:inline-flex;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.35);border-radius:6px;padding:6px 14px;font-family:var(--fh);font-weight:900;font-size:.9rem;color:#f1f5f9;flex-shrink:0}
+.ksk-cover-lacc{color:#14b8a6}
+.ksk-cover-linfo{display:flex;flex-direction:column;gap:0}
+.ksk-cover-lname{font-family:var(--fh);font-weight:700;font-size:.8rem;color:#f1f5f9;letter-spacing:-.01em}
+.ksk-cover-lsub{font-family:var(--fm);font-size:.44rem;letter-spacing:.12em;text-transform:uppercase;color:#14b8a6;margin-top:2px;opacity:.9}
+.ksk-cover-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 52px 40px;position:relative;z-index:1}
+.ksk-cover-tline{width:60px;height:3px;background:linear-gradient(90deg,#14b8a6,#2dd4bf);border-radius:2px;margin:10px auto 22px}
+.ksk-cover-type{font-family:var(--fm);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#14b8a6;margin-bottom:14px}
+.ksk-cover-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:#f1f5f9;letter-spacing:-.03em;margin-bottom:6px;line-height:1.15}
+.ksk-cover-objekt{font-family:var(--fh);font-size:1.15rem;font-weight:600;color:#2dd4bf;margin-bottom:36px}
 .ksk-cover-meta-table{width:100%;max-width:480px;border-collapse:collapse;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;position:relative;z-index:1;font-size:.8rem}
 .ksk-cover-meta-table td{padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;color:#94a3b8}
 .ksk-cover-meta-table td:first-child{font-weight:600;color:#cbd5e1;width:45%;white-space:nowrap}
@@ -594,13 +617,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ksk-maturity-fill{height:100%;border-radius:3px;transition:.4s}
 .ksk-maturity-level{font-family:var(--fm);font-size:.54rem;color:var(--muted)}
 .ksk-sig-row{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.ksk-exec-sum{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:18px}
+.ksk-exec-sum-title{font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--accent);letter-spacing:.03em;text-transform:uppercase;margin-bottom:10px}
+.ksk-exec-table{margin:0!important}
+.ksk-rec-block{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.15);border-radius:var(--r);padding:16px 20px;margin-top:16px}
+.ksk-rec-title{font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--text2);letter-spacing:.02em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(20,184,166,.2)}
+.ksk-rec-domain{margin-bottom:14px}
+.ksk-rec-domain-name{font-family:var(--fh);font-size:.75rem;font-weight:700;color:var(--accent);margin-bottom:6px}
+.ksk-rec-list{margin-left:18px;display:flex;flex-direction:column;gap:6px}
+.ksk-rec-list li{font-size:.78rem;color:var(--muted);line-height:1.55}
 .ksk-sig-box{flex:1;min-width:160px;border-top:1px solid rgba(255,255,255,.15);padding-top:8px;margin-top:32px;font-size:.72rem;color:var(--muted)}
 .ksk-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .ksk-domain-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .ksk-domain-icon{font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:6px;background:rgba(37,99,235,.1);color:#93c5fd;border:1px solid rgba(37,99,235,.2);text-transform:uppercase}
 .ksk-domain-title{font-size:.92rem;font-weight:700;color:#e2e8f0}
 .ksk-domain-pct{font-family:var(--fm);font-size:.7rem;font-weight:700;margin-left:auto}
-@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover{padding:32px 20px}.ksk-sig-row{flex-direction:column}}
+@media(max-width:768px){.adm-grid{grid-template-columns:1fr}.ksk-toc-grid{grid-template-columns:1fr}.ksk-cover-title{font-size:1.6rem}.ksk-section{padding:18px 20px}.ksk-cover-body{padding:20px}.ksk-sig-row{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -1674,9 +1706,9 @@ function renderReport(){
   ${m.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:7px;padding:5px 10px;background:rgba(234,179,8,.06);border-radius:6px;display:inline-block">${L==='en'?`⚠ Deficiencies (${m.length}) — Medium-term action required`:`⚠ Verbesserungsbedarf (${m.length}) — Mittelfristiger Handlungsbedarf`}</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
   ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:24px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-size:1.1rem;font-weight:700">${L==='en'?'No deficiencies found':'Keine Mängel festgestellt'}</span><div style="font-size:.78rem;color:var(--muted);margin-top:4px">${L==='en'?'All assessed control points compliant':'Alle bewerteten Kontrollpunkte erfüllt'}</div></div>`:''}
   <div class="cost-sum">
-    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'💶 Investment Required (Estimate)':'💶 Investitionsbedarf (Schätzung)'}</div>
-    <div class="cost-row"><span>${L==='en'?'⚡ Immediate measures (critical)':'⚡ Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
-    <div class="cost-row"><span>${L==='en'?'📅 Medium-term (deficiencies)':'📅 Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
+    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'Investment Required (Estimate)':'Investitionsbedarf (Schätzung)'}</div>
+    <div class="cost-row"><span>${L==='en'?'Immediate measures (critical)':'Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
+    <div class="cost-row"><span>${L==='en'?'Medium-term (deficiencies)':'Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
     <div class="cost-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:10px"><span style="color:var(--text2);font-weight:700">${L==='en'?'Total':'Gesamt'}</span><span style="color:var(--text2);font-weight:700;font-family:var(--fh);font-size:.92rem">€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(20,184,166,.04),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
@@ -1684,7 +1716,7 @@ function renderReport(){
     <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
     <div style="font-size:.64rem;color:var(--soft);margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
   </div>
-  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
+  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">PDF</button></div></div>`;
 }
 
 // ═══ KONZEPT HELPERS ═══
@@ -1692,9 +1724,15 @@ function _kskCover(L,ds,genDate,comp,risk){
   const v=esc(S.meta.konzeptVersion||'1.0');const st=esc(S.meta.konzeptStatus||'Entwurf');
   const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
   return '<div class="ksk-cover">'
-    +'<div class="ksk-cover-logo"><span>S3</span>:A &nbsp;·&nbsp; SecureStay Analytics</div>'
+    +'<div class="ksk-cover-hband">'
+    +'<div class="ksk-cover-lmark">S3<span class="ksk-cover-lacc">:A</span></div>'
+    +'<div class="ksk-cover-linfo"><div class="ksk-cover-lname">SecureStay Analytics</div>'
+    +'<div class="ksk-cover-lsub">Security &amp; Compliance Platform</div></div>'
+    +'</div>'
+    +'<div class="ksk-cover-body">'
     +'<div class="ksk-cover-type">'+(L==='en'?'Confidential Security Document':'Vertrauliches Sicherheitsdokument')+'</div>'
     +'<div class="ksk-cover-title">'+(L==='en'?'Security Concept':'Sicherheitskonzept')+'</div>'
+    +'<div class="ksk-cover-tline"></div>'
     +'<div class="ksk-cover-objekt">'+esc(S.meta.objekt||'–')+'</div>'
     +'<table class="ksk-cover-meta-table">'
     +'<tr><td>'+(L==='en'?'Client':'Auftraggeber')+'</td><td>'+esc(S.meta.auftraggeber||'–')+'</td></tr>'
@@ -1708,15 +1746,31 @@ function _kskCover(L,ds,genDate,comp,risk){
     +'<tr><td>Compliance</td><td>'+comp+'%</td></tr>'
     +'</table>'
     +'<div class="ksk-vertraulich">&#9888; '+(L==='en'?'CONFIDENTIAL – Authorised Personnel Only':'VERTRAULICH – Nur für autorisierten Personenkreis')+'</div>'
-    +'</div>';
+    +'</div></div>';
 }
-function _kskSec1(L,ds,actN){
+function _kskSec1(L,ds,actN,kritisch,mangel,comp,risk){
   const nb=actN.map(k=>'<span class="ksk-norm-badge">'+esc(k)+'</span>').join(' ');
-  return '<p class="ksk-text">'+(L==='en'
+  const rl={'ok':L==='en'?'Low':'Gering','warn':L==='en'?'Medium':'Mittel','orange':L==='en'?'High':'Hoch','danger':L==='en'?'Critical':'Kritisch'};
+  const rc=risk.cls==='danger'?'risk-krit':risk.cls==='orange'||risk.cls==='warn'?'risk-mangel':'risk-ok';
+  const execSum='<div class="ksk-exec-sum">'
+    +'<div class="ksk-exec-sum-title">'+(L==='en'?'Executive Summary':'Zusammenfassung der Prüfungsergebnisse')+'</div>'
+    +'<table class="ksk-table ksk-exec-table"><tbody>'
+    +'<tr><td><strong>'+(L==='en'?'Critical Deficiencies':'Kritische Befunde')+'</strong></td>'
+    +'<td class="risk-krit"><strong>'+kritisch.length+'</strong> '+(L==='en'?'— Immediate action required (≤ 4 weeks)':'— Sofortiger Handlungsbedarf (≤ 4 Wochen)')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Deficiencies (medium-term)':'Mängel (mittelfristig)')+'</strong></td>'
+    +'<td class="risk-mangel"><strong>'+mangel.length+'</strong> '+(L==='en'?'— Remediation within 3–6 months':'— Behebung innerhalb 3–6 Monate')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Compliance Score':'Compliance-Quote')+'</strong></td>'
+    +'<td><strong>'+comp+'%</strong> '+(L==='en'?'of assessed control points compliant':'der bewerteten Kontrollpunkte erfüllt')+'</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Overall Risk Level':'Gesamtrisiko')+'</strong></td>'
+    +'<td><strong class="'+rc+'">'+(rl[risk.cls]||risk.level)+'</strong> ('+risk.score+'/100)</td></tr>'
+    +'<tr><td><strong>'+(L==='en'?'Active Standards':'Aktive Normen')+'</strong></td>'
+    +'<td>'+(nb||'–')+'</td></tr>'
+    +'</tbody></table></div>';
+  return execSum
+  +'<p class="ksk-text">'+(L==='en'
     ?'This security concept was prepared for object <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' at '+esc(S.meta.adresse):'')+'. Audit date: '+ds+(S.meta.pruefer?', author: '+esc(S.meta.pruefer):'')+', commissioned by <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
     :'Das vorliegende Sicherheitskonzept wurde für das Objekt <strong>'+esc(S.meta.objekt||'–')+'</strong>'+(S.meta.adresse?' in '+esc(S.meta.adresse):'')+' erstellt. Auditdatum: '+ds+(S.meta.pruefer?', Ersteller: '+esc(S.meta.pruefer):'')+', im Auftrag von <strong>'+esc(S.meta.auftraggeber||'–')+'</strong>.'
   )+'</p>'
-  +'<p class="ksk-text"><strong>'+(L==='en'?'Active Standards: ':'Aktive Normen: ')+'</strong>'+(nb||'–')+'</p>'
   +'<div class="ksk-infobox"><strong>'+(L==='en'?'Scope:':'Geltungsbereich:')+'</strong> '+(L==='en'?'All areas, access points, technical systems and organisational processes of the assessed object. Findings and recommendations apply as of the audit date.':'Alle Bereiche, Zugangspunkte, technische Systeme und organisatorische Prozesse des Bewertungsobjekts. Befunde und Empfehlungen gelten mit Stand des Auditdatums.')+'</div>';
 }
 function _kskSec2(L,actN){
@@ -1842,7 +1896,13 @@ function _kskSec7(L,ac){
 }
 function _kskSec8(L,kritisch){
   if(!kritisch.length)return '<div class="ksk-okbox">'+(L==='en'?'No critical deficiencies identified.':'Keine kritischen Befunde festgestellt.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
+  const byDom={};kritisch.forEach(f=>{const k=f.sec||'Sonstige';if(!byDom[k])byDom[k]=[];byDom[k].push(f);});
+  const doms=Object.keys(byDom);
+  const intro='<p class="ksk-text">'+(L==='en'
+    ?'The audit identified <strong>'+kritisch.length+' critical deficiency/ies</strong> across <strong>'+doms.length+' domain(s)</strong> requiring immediate remediation. The table below provides a complete overview including applicable standards, recommendations, deadlines and cost estimates. Non-remediation may result in legal liability pursuant to NIS2 §38 / ISO 31000 and adverse insurance consequences.'
+    :'Die Prüfung hat <strong>'+kritisch.length+' kritischen Befund/Befunde</strong> in <strong>'+doms.length+' Prüfbereich(en)</strong> ergeben, die unverzüglich zu beheben sind. Die nachfolgende Tabelle enthält eine vollständige Übersicht der Feststellungen, maßgeblichen Normen, Empfehlungen, Fristen und Kostenschätzungen. Nichtbehebung kann zu rechtlicher Haftung gemäß NIS2 §38 / ISO 31000 sowie zu versicherungsrechtlichen Konsequenzen führen.'
+  )+'</p>';
+  const tbl='<table class="ksk-table"><thead><tr><th>Nr.</th>'
     +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
     +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
     +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
@@ -1858,12 +1918,23 @@ function _kskSec8(L,kritisch){
       +'<td>'+esc(f.d||'')+'</td>'
       +'<td class="risk-krit">'+(L==='en'?'≤ 4 wks':'≤ 4 Wo.')+'</td>'
       +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
-    +'</tbody></table>'
-    +'<div class="ksk-warnbox"><strong>'+(L==='en'?'Note:':'Hinweis:')+'</strong> '+(L==='en'?'Critical deficiencies must be remediated within 4 weeks. Non-remediation may result in legal liability and adverse insurance implications.':'Kritische Befunde sind innerhalb von 4 Wochen zu beheben. Nichtbehebung kann zu rechtlicher Haftung und versicherungsrechtlichen Konsequenzen führen.')+'</div>';
+    +'</tbody></table>';
+  const warn='<div class="ksk-warnbox"><strong>'+(L==='en'?'Note:':'Hinweis:')+'</strong> '+(L==='en'?'Critical deficiencies must be remediated within 4 weeks. Non-remediation may result in legal liability and adverse insurance implications.':'Kritische Befunde sind innerhalb von 4 Wochen zu beheben. Nichtbehebung kann zu rechtlicher Haftung und versicherungsrechtlichen Konsequenzen führen.')+'</div>';
+  const recs='<div class="ksk-rec-block"><div class="ksk-rec-title">'+(L==='en'?'Detailed Recommendations by Domain':'Detaillierte Handlungsempfehlungen nach Prüfbereich')+'</div>'
+    +Object.entries(byDom).map(([dom,items])=>'<div class="ksk-rec-domain"><div class="ksk-rec-domain-name">'+esc(dom)+'</div><ul class="ksk-rec-list">'
+      +items.map(f=>'<li><strong>'+esc(f.l)+'</strong>'+(f.n?' <span class="ksk-norm-badge">'+esc(f.n)+'</span>':'')+': '+(L==='en'?'Immediate implementation required — ':'Sofortige Umsetzung erforderlich — ')+esc(f.d||'–')+(f.note?'<br><em>'+(L==='en'?'Auditor note: ':'Prüferhinweis: ')+esc(f.note)+'</em>':'')+'</li>').join('')
+      +'</ul></div>').join('')+'</div>';
+  return intro+tbl+warn+recs;
 }
 function _kskSec9(L,mangel){
   if(!mangel.length)return '<div class="ksk-okbox">'+(L==='en'?'No medium-term deficiencies.':'Keine mittelfristigen Mängel.')+'</div>';
-  return '<table class="ksk-table"><thead><tr><th>Nr.</th>'
+  const byDom={};mangel.forEach(f=>{const k=f.sec||'Sonstige';if(!byDom[k])byDom[k]=[];byDom[k].push(f);});
+  const doms=Object.keys(byDom);
+  const intro='<p class="ksk-text">'+(L==='en'
+    ?'The audit identified <strong>'+mangel.length+' deficiency/ies</strong> across <strong>'+doms.length+' domain(s)</strong> requiring remediation within 3–6 months. These represent partial fulfilment of applicable standards and are to be resolved within a structured improvement programme with defined milestones and responsible parties.'
+    :'Die Prüfung hat <strong>'+mangel.length+' Mangel/Mängel</strong> in <strong>'+doms.length+' Prüfbereich(en)</strong> ergeben, die innerhalb von 3–6 Monaten zu beheben sind. Diese stellen eine unvollständige Erfüllung der einschlägigen Normen dar und sind im Rahmen eines strukturierten Verbesserungsprogramms mit definierten Meilensteinen und Verantwortlichkeiten zu schließen.'
+  )+'</p>';
+  const tbl='<table class="ksk-table"><thead><tr><th>Nr.</th>'
     +'<th>'+(L==='en'?'Area / Standard':'Bereich / Norm')+'</th>'
     +'<th>'+(L==='en'?'Finding':'Feststellung')+'</th>'
     +'<th>'+(L==='en'?'Risk':'Risiko')+'</th>'
@@ -1880,6 +1951,11 @@ function _kskSec9(L,mangel){
       +'<td>'+(L==='en'?'3–6 months':'3–6 Monate')+'</td>'
       +'<td>'+(cA?'€ '+cA.toLocaleString('de-DE')+' – '+cB.toLocaleString('de-DE'):'–')+'</td></tr>';}).join('')
     +'</tbody></table>';
+  const recs='<div class="ksk-rec-block"><div class="ksk-rec-title">'+(L==='en'?'Improvement Recommendations by Domain':'Verbesserungsempfehlungen nach Prüfbereich')+'</div>'
+    +Object.entries(byDom).map(([dom,items])=>'<div class="ksk-rec-domain"><div class="ksk-rec-domain-name">'+esc(dom)+'</div><ul class="ksk-rec-list">'
+      +items.map(f=>'<li><strong>'+esc(f.l)+'</strong>'+(f.n?' <span class="ksk-norm-badge">'+esc(f.n)+'</span>':'')+': '+esc(f.d||'–')+(f.note?'<br><em>'+(L==='en'?'Auditor note: ':'Prüferhinweis: ')+esc(f.note)+'</em>':'')+'</li>').join('')
+      +'</ul></div>').join('')+'</div>';
+  return intro+tbl+recs;
 }
 function _kskSec10(L,kritisch,mangel){
   let p1A=0,p1B=0,p2A=0,p2B=0;
@@ -2015,7 +2091,7 @@ function renderKonzept(){
   // Build sections dynamically
   const sects=[];let sn=0;
   const push=(title,body)=>{sn++;sects.push({n:sn,title,body});};
-  push(L==='en'?'Introduction & Scope':'Einleitung und Geltungsbereich',_kskSec1(L,ds,actN));
+  push(L==='en'?'Introduction & Scope':'Einleitung und Geltungsbereich',_kskSec1(L,ds,actN,kritisch,mangel,comp,risk));
   push(L==='en'?'Legal & Normative Framework':'Rechtliche und normative Grundlagen',_kskSec2(L,actN));
   push(L==='en'?'Object Description':'Objektbeschreibung',_kskSec3(L));
   push(L==='en'?'Protection Requirements':'Schutzbedarfsfeststellung',_kskSec4(L,risk));
