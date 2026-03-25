@@ -866,8 +866,8 @@ function loadSnap(i){const L=typeof _LANG!=='undefined'?_LANG:'de';const h=S.his
 // ═══ REPORT ═══
 function renderReport(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  const ac=activeChecks();let k=[],m=[],ok=0,cMin=0,cMax=0;
-  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='ok')ok++;else if(s==='kritisch'){k.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.kritisch);cMin+=a;cMax+=b;}else if(s==='mangel'){m.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.mangel);cMin+=a;cMax+=b;}}));
+  const ac=activeChecks();let k=[],m=[],okItems=[],ok=0,cMin=0,cMax=0;
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='ok'){ok++;okItems.push({...it,sec:ch.l});}else if(s==='kritisch'){k.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.kritisch);cMin+=a;cMax+=b;}else if(s==='mangel'){m.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});const[a,b]=parseCost(it.c.mangel);cMin+=a;cMax+=b;}}));
   const assessed=k.length+m.length+ok,comp=assessed?Math.round(ok/assessed*100):0;
   let rl,rc;if(k.length>=5){rl=L==='en'?'Critical':'Kritisch';rc='kritisch';}else if(k.length>=2||m.length>=6){rl=L==='en'?'High':'Hoch';rc='hoch';}else if(k.length>=1||m.length>=3){rl=L==='en'?'Medium':'Mittel';rc='mittel';}else{rl=L==='en'?'Low':'Gering';rc='gering';}
   const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
@@ -912,11 +912,17 @@ function renderReport(){
   ${k.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--danger);margin-bottom:7px;padding:5px 10px;background:rgba(239,68,68,.06);border-radius:6px;display:inline-block">${L==='en'?`✕ Critical deficiencies (${k.length}) — Immediate action required`:`✕ Kritische Mängel (${k.length}) — Sofortiger Handlungsbedarf`}</div>${k.map(f=>fr(f,'kritisch')).join('')}</div>`:''}
   ${m.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--warn);margin-bottom:7px;padding:5px 10px;background:rgba(234,179,8,.06);border-radius:6px;display:inline-block">${L==='en'?`⚠ Deficiencies (${m.length}) — Medium-term action required`:`⚠ Verbesserungsbedarf (${m.length}) — Mittelfristiger Handlungsbedarf`}</div>${m.map(f=>fr(f,'mangel')).join('')}</div>`:''}
   ${!k.length&&!m.length?`<div style="background:var(--okDim);border:1px solid rgba(34,197,94,.18);border-radius:12px;padding:24px;text-align:center;margin-bottom:14px"><span style="color:#4ade80;font-size:1.1rem;font-weight:700">${L==='en'?'No deficiencies found':'Keine Mängel festgestellt'}</span><div style="font-size:.78rem;color:var(--muted);margin-top:4px">${L==='en'?'All assessed control points compliant':'Alle bewerteten Kontrollpunkte erfüllt'}</div></div>`:''}
+  ${okItems.length?`<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:var(--ok);margin-bottom:7px;padding:5px 10px;background:var(--okDim);border-radius:6px;display:inline-block">✓ ${L==='en'?`Compliant (${okItems.length})`:`Konform (${okItems.length})`}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:3px">${okItems.map(f=>`<div style="font-size:.7rem;color:var(--muted);padding:3px 8px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.08);border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(f.l)}">✓ ${esc(f.l)}</div>`).join('')}</div></div>`:''}
   <div class="cost-sum">
     <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${L==='en'?'💶 Investment Required (Estimate)':'💶 Investitionsbedarf (Schätzung)'}</div>
     <div class="cost-row"><span>${L==='en'?'⚡ Immediate measures (critical)':'⚡ Sofortmaßnahmen (kritisch)'}</span><span>€ ${fmtCA(k,'kritisch')}</span></div>
     <div class="cost-row"><span>${L==='en'?'📅 Medium-term (deficiencies)':'📅 Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(m,'mangel')}</span></div>
     <div class="cost-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:10px"><span style="color:var(--text2);font-weight:700">${L==='en'?'Total':'Gesamt'}</span><span style="color:var(--text2);font-weight:700;font-family:var(--fh);font-size:.92rem">€ ${cMin.toLocaleString('de-DE')} – ${cMax.toLocaleString('de-DE')}</span></div>
+  </div>
+  <div class="rpt-sig-row">
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">${esc(S.meta.pruefer||sessionStorage.getItem('ssa_u')||'–')}</div><div>${L==='en'?'Auditor · SecureStay: Analytics':'Auditor/in · SecureStay: Analytics'}</div><div style="color:var(--accent);font-size:.66rem;margin-top:2px">securestay@outlook.de</div></div>
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">___________________________</div><div>${L==='en'?'Client / Authorised Representative':'Auftraggeber / Bevollmächtigte/r'}</div></div>
+    <div class="rpt-sig-box"><div style="color:var(--text2);font-size:.8rem;font-weight:700;margin-bottom:3px">_____________</div><div>${L==='en'?'Date':'Datum'}</div></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(20,184,166,.04),rgba(16,185,129,.02));border:1px solid rgba(20,184,166,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
     <div style="font-family:var(--fh);font-weight:700;color:var(--text2);font-size:1rem">SecureStay: Analytics</div>
@@ -928,28 +934,31 @@ function renderReport(){
 
 // ═══ KONZEPT HELPERS ═══
 function _kskMeasureTable(items,prio,idOffset){
-  if(!items.length)return`<div class="ksk-okbox">✓ Keine ${prio==='kritisch'?'kritischen':'mittelfristigen'} Maßnahmen erforderlich.</div>`;
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  if(!items.length)return`<div class="ksk-okbox">✓ ${L==='en'?`No ${prio==='kritisch'?'critical':'medium-term'} measures required.`:`Keine ${prio==='kritisch'?'kritischen':'mittelfristigen'} Maßnahmen erforderlich.`}</div>`;
   let idx=idOffset||0;
   const rows=items.map(f=>{
     idx++;
-    const tf=prio==='kritisch'?'≤ 4 Wochen':'3–6 Monate';
-    const costStr=f.c?(f.c[prio]?`€ ${f.c[prio]}`:(f.c.mangel?`€ ${f.c.mangel}`:'auf Anfrage')):'auf Anfrage';
-    const prioCell=prio==='kritisch'?'<span class="risk-krit">SOFORT</span>':'<span class="risk-mangel">MITTEL</span>';
+    const tf=prio==='kritisch'?(L==='en'?'≤ 4 weeks':'≤ 4 Wochen'):(L==='en'?'3–6 months':'3–6 Monate');
+    const costStr=f.c?(f.c[prio]?`€ ${f.c[prio]}`:(f.c.mangel?`€ ${f.c.mangel}`:(L==='en'?'on request':'auf Anfrage'))):(L==='en'?'on request':'auf Anfrage');
+    const prioCell=prio==='kritisch'?`<span class="risk-krit">${L==='en'?'URGENT':'SOFORT'}</span>`:`<span class="risk-mangel">${L==='en'?'MEDIUM':'MITTEL'}</span>`;
     return`<tr><td style="font-family:var(--fm);font-size:.65rem;white-space:nowrap">M-${String(idx).padStart(3,'0')}</td><td><strong>${esc(f.l)}</strong>${f.note?`<br><em style="font-size:.72rem">"${esc(f.note)}"</em>`:''}</td><td style="font-size:.72rem">${esc(f.sec)}</td><td>${prioCell}</td><td style="font-size:.72rem;white-space:nowrap">${tf}</td><td style="font-size:.72rem">${costStr}</td><td style="font-size:.65rem">${f.n||'–'}</td></tr>`;
   }).join('');
-  return`<table class="ksk-table"><thead><tr><th>ID</th><th>Befund / Maßnahme</th><th>Prüfbereich</th><th>Priorität</th><th>Frist</th><th>Invest.</th><th>Norm-Ref.</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return`<table class="ksk-table"><thead><tr><th>ID</th><th>${L==='en'?'Finding / Measure':'Befund / Maßnahme'}</th><th>${L==='en'?'Domain':'Prüfbereich'}</th><th>${L==='en'?'Priority':'Priorität'}</th><th>${L==='en'?'Timeline':'Frist'}</th><th>Invest.</th><th>${L==='en'?'Norm Ref.':'Norm-Ref.'}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 function _kskUmfeldHTML(){
-  if(!S.umfeld?.done)return`<p class="ksk-text" style="font-style:italic">Keine Umfeldanalyse durchgeführt. Für ein vollständiges Sicherheitskonzept wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen.</p>`;
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  if(!S.umfeld?.done)return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No environmental analysis conducted. For a complete security concept, a site-specific environmental analysis in accordance with DIN 14675 / VdS 2311 is recommended.':'Keine Umfeldanalyse durchgeführt. Für ein vollständiges Sicherheitskonzept wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen.'}</p>`;
   const highRisks=(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel');
   const rows=highRisks.map(r=>`<tr><td><strong>${r.category}</strong></td><td style="text-align:center">${r.count}</td><td><span class="${r.level==='hoch'?'risk-krit':'risk-mangel'}">${r.level.toUpperCase()}</span></td><td style="font-size:.72rem">${r.recommend}</td></tr>`).join('');
-  return`<p class="ksk-text">Im Rahmen der Umfeldanalyse wurden <strong>${S.umfeld.poiCount||'–'} sicherheitsrelevante Objekte</strong> in einem Radius von <strong>${S.umfeld.radius||250} m</strong> erfasst. Gesamtbewertung Umfeld-Risiko: <strong>${S.umfeld.overallRisk||'–'}</strong>.</p>${highRisks.length?`<table class="ksk-table"><thead><tr><th>Kategorie</th><th>Anzahl</th><th>Risikostufe</th><th>Handlungsempfehlung</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="ksk-okbox">✓ Keine erhöhten Umfeldrisiken identifiziert.</div>'}`;
+  return`<p class="ksk-text">${L==='en'?`The environmental analysis recorded <strong>${S.umfeld.poiCount||'–'} security-relevant objects</strong> within a radius of <strong>${S.umfeld.radius||250} m</strong>. Overall environmental risk: <strong>${S.umfeld.overallRisk||'–'}</strong>.`:`Im Rahmen der Umfeldanalyse wurden <strong>${S.umfeld.poiCount||'–'} sicherheitsrelevante Objekte</strong> in einem Radius von <strong>${S.umfeld.radius||250} m</strong> erfasst. Gesamtbewertung Umfeld-Risiko: <strong>${S.umfeld.overallRisk||'–'}</strong>.`}</p>${highRisks.length?`<table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Count':'Anzahl'}</th><th>${L==='en'?'Risk Level':'Risikostufe'}</th><th>${L==='en'?'Recommendation':'Handlungsempfehlung'}</th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="ksk-okbox">✓ ${L==='en'?'No elevated environmental risks identified.':'Keine erhöhten Umfeldrisiken identifiziert.'}</div>`}`;
 }
 function _kskNormHTML(norms){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
   const descMap={'ISO/IEC 27001':'ISO/IEC 27001:2022 – Informationssicherheits-Managementsystem (ISMS). Internationale Norm für Aufbau, Betrieb und kontinuierliche Verbesserung eines ISMS.','ISO 9001':'ISO 9001:2015 – Qualitätsmanagementsystem. Anforderungen an ein wirksames QMS mit risikobasiertem Ansatz.','COBIT 2019':'COBIT 2019 – Framework für IT-Governance, IT-Management und Kontrollziele zur Steuerung von IT-Risiken.','DSGVO / GDPR':'Datenschutz-Grundverordnung (EU) 2016/679. Europäische Verordnung zum Schutz personenbezogener Daten und Rechenschaftspflicht.','BSI IT-Grundschutz':'BSI IT-Grundschutz – Bundesamt für Sicherheit in der Informationstechnik. Deutsches Rahmenwerk für systematische IT-Sicherheitsmaßnahmen.'};
-  if(!norms||!norms.length)return`<p class="ksk-text">Die Prüfung basiert auf anerkannten Best-Practice-Leitfäden des Sicherheits- und Risikomanagements (u.a. ISO 31000, VdS 3473, DIN EN ISO 45001). Eine Normzuordnung nach ISO/IEC 27001 oder BSI IT-Grundschutz ist auf Wunsch möglich.</p>`;
-  const rows=norms.map(n=>`<tr><td><strong>${n}</strong></td><td style="font-size:.76rem">${descMap[n]||n}</td><td style="font-size:.72rem">Grundlage der Prüfmethodik</td></tr>`).join('');
-  return`<p class="ksk-text">Das Sicherheitskonzept wurde unter Berücksichtigung folgender Normen, Standards und regulatorischer Anforderungen erstellt:</p><table class="ksk-table"><thead><tr><th>Norm / Standard</th><th>Beschreibung</th><th>Relevanz</th></tr></thead><tbody>${rows}</tbody></table>`;
+  if(!norms||!norms.length)return`<p class="ksk-text">${L==='en'?'The audit is based on recognised best-practice guidelines in security and risk management (incl. ISO 31000, VdS 3473, DIN EN ISO 45001). Norm mapping to ISO/IEC 27001 or BSI IT-Grundschutz is available on request.':'Die Prüfung basiert auf anerkannten Best-Practice-Leitfäden des Sicherheits- und Risikomanagements (u.a. ISO 31000, VdS 3473, DIN EN ISO 45001). Eine Normzuordnung nach ISO/IEC 27001 oder BSI IT-Grundschutz ist auf Wunsch möglich.'}</p>`;
+  const rows=norms.map(n=>`<tr><td><strong>${n}</strong></td><td style="font-size:.76rem">${descMap[n]||n}</td><td style="font-size:.72rem">${L==='en'?'Basis of audit methodology':'Grundlage der Prüfmethodik'}</td></tr>`).join('');
+  return`<p class="ksk-text">${L==='en'?'This security concept was prepared in consideration of the following standards and regulatory requirements:':'Das Sicherheitskonzept wurde unter Berücksichtigung folgender Normen, Standards und regulatorischer Anforderungen erstellt:'}</p><table class="ksk-table"><thead><tr><th>Norm / Standard</th><th>${L==='en'?'Description':'Beschreibung'}</th><th>${L==='en'?'Relevance':'Relevanz'}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 // ═══ KONZEPT ═══
