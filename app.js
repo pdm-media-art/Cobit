@@ -966,92 +966,136 @@ function renderKonzept(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const ac=activeChecks();
   let kritisch=[],mangel=[],ok=[];
-  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='kritisch')kritisch.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='mangel')mangel.push({...it,note:f?.note||'',sec:ch.l,icon:ch.i});else if(s==='ok')ok.push({...it,sec:ch.l});}));
+  ac.forEach(ch=>ch.items.forEach(it=>{const f=S.findings[it.id],s=f?.status;if(s==='kritisch')kritisch.push({...it,note:f?.note||'',sec:L==='en'?ch.l_en||ch.l:ch.l,icon:ch.i});else if(s==='mangel')mangel.push({...it,note:f?.note||'',sec:L==='en'?ch.l_en||ch.l:ch.l,icon:ch.i});else if(s==='ok')ok.push(it);}));
   const assessed=kritisch.length+mangel.length+ok.length;
   const comp=assessed?Math.round(ok.length/assessed*100):0;
   const ds=S.meta.datum?new Date(S.meta.datum).toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'}):'–';
-  const genDate=new Date().toLocaleDateString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'long',year:'numeric'});
-  // Group kritisch by domain
-  const domainMap={security:L==='en'?'Physical Security':'Physische Sicherheit',qm:L==='en'?'Quality Management':'Qualitätsmanagement',itgov:L==='en'?'IT Governance':'IT-Governance'};
-  // Computed values
-  const riskLevel=kritisch.length>=5?'HOCH':kritisch.length>=2?'ERHÖHT':kritisch.length>=1?'MITTEL':'GERING';
-  const riskColor=kritisch.length>=5?'#dc2626':kritisch.length>=2?'#ea580c':kritisch.length>=1?'#ca8a04':'#16a34a';
-  const riskText=kritisch.length>=2?'Es wurden kritische Mängel festgestellt, die priorisiert und unverzüglich zu beheben sind. Ohne Mängelbeseitigung ist der Versicherungsschutz möglicherweise eingeschränkt.':kritisch.length===1?'Es wurde ein kritischer Mangel identifiziert, der vorrangig zu beheben ist.':mangel.length>0?'Es wurden keine kritischen Mängel festgestellt. Der vorhandene Verbesserungsbedarf sollte mittelfristig adressiert werden.':'Das Objekt erfüllt alle geprüften Sicherheitsanforderungen. Kein sofortiger Handlungsbedarf.';
+  const genDateTime=new Date().toLocaleString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   const objekt=esc(S.meta.objekt||'');
   const auftraggeber=esc(S.meta.auftraggeber||'');
   const pruefer=esc(S.meta.pruefer||sessionStorage.getItem('ssa_u')||'–');
-  const adresse=esc(S.meta.adresse||'');
   const version=esc(S.meta.konzeptVersion||'1.0');
-  const status=esc(S.meta.konzeptStatus||'Entwurf');
-  const genDateTime=new Date().toLocaleString(L==='en'?'en-GB':'de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  const selectedMods=(S.modules||[]).map(id=>{const t=(typeof TEMPLATES!=='undefined'?TEMPLATES:[]).find(t=>t.id===id);return t?t.name:'';}).filter(Boolean);
-  const modsText=selectedMods.length?selectedMods.join(', '):'allgemeine Sicherheitsbegehung';
+  const status=esc(S.meta.konzeptStatus||L==='en'?'Draft':'Entwurf');
+  const riskLevel=kritisch.length>=5?(L==='en'?'HIGH':'HOCH'):kritisch.length>=2?(L==='en'?'ELEVATED':'ERHÖHT'):kritisch.length>=1?(L==='en'?'MEDIUM':'MITTEL'):(L==='en'?'LOW':'GERING');
+  const riskColor=kritisch.length>=5?'#dc2626':kritisch.length>=2?'#ea580c':kritisch.length>=1?'#ca8a04':'#16a34a';
+  const riskText=L==='en'?(kritisch.length>=2?'Critical deficiencies were identified that must be addressed immediately. Without remediation, insurance coverage may be restricted.':kritisch.length===1?'One critical deficiency was identified that must be addressed as a priority.':mangel.length>0?'No critical deficiencies found. Improvement requirements should be addressed in the medium term.':'The object meets all assessed security requirements. No immediate action required.'):(kritisch.length>=2?'Es wurden kritische Mängel festgestellt, die priorisiert und unverzüglich zu beheben sind. Ohne Mängelbeseitigung ist der Versicherungsschutz möglicherweise eingeschränkt.':kritisch.length===1?'Es wurde ein kritischer Mangel identifiziert, der vorrangig zu beheben ist.':mangel.length>0?'Es wurden keine kritischen Mängel festgestellt. Der Verbesserungsbedarf sollte mittelfristig adressiert werden.':'Das Objekt erfüllt alle geprüften Sicherheitsanforderungen. Kein sofortiger Handlungsbedarf.');
+  const secK=kritisch.filter(f=>f.m==='security'),qmK=kritisch.filter(f=>f.m==='qm'),itK=kritisch.filter(f=>f.m==='itgov');
+  const secM=mangel.filter(f=>f.m==='security'),qmM=mangel.filter(f=>f.m==='qm'),itM=mangel.filter(f=>f.m==='itgov');
+  const domainSec=(items,prio)=>{if(!items.length)return`<div class="ksk-okbox">✓ ${L==='en'?'No findings in this category.':'Keine Befunde in dieser Kategorie.'}</div>`;const sec=items.filter(f=>f.m==='security'),qm=items.filter(f=>f.m==='qm'),it=items.filter(f=>f.m==='itgov');let h='';if(sec.length)h+=`<div class="ksk-domain-header"><span class="ksk-domain-icon">${L==='en'?'PHYSICAL':'PHYSISCH'}</span><span class="ksk-domain-title">${L==='en'?'Physical Security':'Physische Sicherheit'}</span></div>${_kskMeasureTable(sec,prio,0)}`;if(qm.length)h+=`<div class="ksk-domain-header" style="margin-top:12px"><span class="ksk-domain-icon" style="color:#fb923c;border-color:rgba(251,146,60,.25);background:rgba(251,146,60,.08)">QM</span><span class="ksk-domain-title">${L==='en'?'Quality Management':'Qualitätsmanagement'}</span></div>${_kskMeasureTable(qm,prio,sec.length)}`;if(it.length)h+=`<div class="ksk-domain-header" style="margin-top:12px"><span class="ksk-domain-icon" style="color:#34d399;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.08)">IT-GOV</span><span class="ksk-domain-title">IT-Governance</span></div>${_kskMeasureTable(it,prio,sec.length+qm.length)}`;return h;};
+  const sz=[{id:'SZ-01',z:L==='en'?'Physical Security':'Physische Sicherheit',d:L==='en'?'Protection of persons, assets and the building against unauthorised access, theft, vandalism and other physical threats.':'Schutz von Personen, Sachwerten und Gebäude vor unbefugtem Zutritt, Diebstahl, Vandalismus und sonstigen physischen Bedrohungen.',p:'HOCH'},{id:'SZ-02',z:L==='en'?'Business Continuity (BCM)':'Betriebskontinuität (BCM)',d:L==='en'?'Ensuring uninterrupted operations and swift recovery after incidents or security-related events.':'Sicherstellung des ununterbrochenen Geschäftsbetriebs sowie schnelle Wiederherstellung nach Störungen.',p:'HOCH'},{id:'SZ-03',z:L==='en'?'Compliance & Legal Certainty':'Compliance & Rechtssicherheit',d:L==='en'?'Adherence to all applicable legal, regulatory and normative requirements in security and data protection.':'Einhaltung aller relevanten gesetzlichen, regulatorischen und normativen Anforderungen im Bereich Sicherheit und Datenschutz.',p:'HOCH'},{id:'SZ-04',z:L==='en'?'Information Security (CIA)':'Informationssicherheit (CIA)',d:L==='en'?'Ensuring confidentiality, integrity and availability of all protected information and IT systems (ISO/IEC 27001).':'Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit aller schützenswerten Informationen und IT-Systeme.',p:'MITTEL'},{id:'SZ-05',z:L==='en'?'Loss Minimisation':'Schadensminimierung',d:L==='en'?'Reduction of probability and impact of identified risks through preventive and reactive measures (ISO 31000).':'Reduktion von Eintrittswahrscheinlichkeit und Schadensauswirkung durch präventive und reaktive Maßnahmen (ISO 31000).',p:'MITTEL'}];
+  const matRows=ac.map(ch=>{const mat=S.maturity[ch.id]||0;const col=mat>=4?'#22c55e':mat>=3?'#eab308':mat>=2?'#f97316':'#ef4444';const lbl=mat===0?(L==='en'?'n/a':'k.A.'):mat===1?'Initial':mat===2?(L==='en'?'Repeatable':'Wiederholbar'):mat===3?(L==='en'?'Defined':'Definiert'):mat===4?(L==='en'?'Managed':'Gesteuert'):(L==='en'?'Optimising':'Optimierend');return`<tr><td>${ch.i} ${L==='en'?ch.l_en||ch.l:ch.l}</td><td><div style="background:rgba(255,255,255,.06);border-radius:3px;height:7px;overflow:hidden;min-width:80px"><div style="width:${mat/5*100}%;height:100%;background:${col};border-radius:3px"></div></div></td><td style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:${col}">${mat}/5</td><td style="font-size:.72rem;color:var(--muted)">${lbl}</td></tr>`;}).join('');
+  const objRows=[['Objekt / Object',S.meta.objekt],[L==='en'?'Client':'Auftraggeber',S.meta.auftraggeber],[L==='en'?'Address':'Adresse',S.meta.adresse],[L==='en'?'Inspection Date':'Begehungsdatum',ds],[L==='en'?'Auditor':'Prüfer/in',pruefer],[L==='en'?'Occasion':'Anlass',S.meta.anlass],[L==='en'?'Doc. Version':'Dokumentversion',version],['Status',status],[L==='en'?'Generated':'Erstellt am',genDateTime]].filter(([,v])=>v).map(([k,v])=>`<tr><td>${k}</td><td><strong style="color:#e2e8f0">${esc(String(v))}</strong></td></tr>`).join('');
+  const metricRows=[[L==='en'?'Entrances':'Eingänge',S.meta.eingaenge],[L==='en'?'Gates':'Einfahrten',S.meta.einfahrten],[L==='en'?'Floors':'Stockwerke',S.meta.stockwerke],[L==='en'?'Staff':'Mitarbeiter',S.meta.mitarbeiter],[L==='en'?'Area (m²)':'Fläche (m²)',S.meta.flaeche],[L==='en'?'Parking':'Parkplätze',S.meta.parkplaetze],[L==='en'?'Cameras':'Kameras',S.meta.kameras]].filter(([,v])=>v).map(([k,v])=>`<tr><td>${k}</td><td><strong style="color:#e2e8f0">${esc(String(v))}</strong></td></tr>`).join('');
+  let totalMin=0,totalMax=0;kritisch.forEach(f=>{const[a,b]=parseCost(f.c?.kritisch||'');totalMin+=a;totalMax+=b;});mangel.forEach(f=>{const[a,b]=parseCost(f.c?.mangel||'');totalMin+=a;totalMax+=b;});
+  const totalCostStr=totalMin||totalMax?`${totalMin.toLocaleString('de-DE')} – ${totalMax.toLocaleString('de-DE')}`:'0';
   const normBadges=(S.norms||[]).map(n=>`<span class="ksk-norm-badge">${n}</span>`).join(' ');
-  // Schutzziele (auto-generated)
-  const sz=[{id:'SZ-01',z:'Physische Sicherheit',d:'Schutz von Personen, Sachwerten und Gebäude vor unbefugtem Zutritt, Diebstahl, Vandalismus und sonstigen physischen Bedrohungen.',p:'HOCH'},{id:'SZ-02',z:'Betriebskontinuität (BCM)',d:'Sicherstellung des ununterbrochenen Geschäftsbetriebs sowie schnelle Wiederherstellung nach Störungen oder sicherheitsrelevanten Ereignissen.',p:'HOCH'},{id:'SZ-03',z:'Compliance & Rechtssicherheit',d:'Einhaltung aller relevanten gesetzlichen, regulatorischen und normativen Anforderungen im Bereich Sicherheit und Datenschutz.',p:'HOCH'},{id:'SZ-04',z:'Informationssicherheit (CIA)',d:'Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit aller schützenswerten Informationen und IT-Systeme (ISO/IEC 27001).',p:'MITTEL'},{id:'SZ-05',z:'Schadensminimierung',d:'Reduktion von Eintrittswahrscheinlichkeit und Schadensauswirkung identifizierter Risiken durch präventive und reaktive Maßnahmen (ISO 31000).',p:'MITTEL'}];
-  // Investment summary helper
-  const fmtCostRange=(arr,prio)=>{let mn=0,mx=0;arr.forEach(f=>{if(!f.c)return;const r=f.c[prio]||'';const m=r.match(/(\d[\d.]*)\s*[–-]\s*(\d[\d.]*)/);if(m){mn+=parseInt(m[1].replace(/\./g,''));mx+=parseInt(m[2].replace(/\./g,''));}});return mn||mx?`€ ${mn.toLocaleString('de-DE')} – ${mx.toLocaleString('de-DE')}`:'auf Anfrage';};
+  const tocL=L==='en'?['Executive Summary','Object Data','Environmental Analysis','Protection Objectives','Regulatory Framework','Risk Overview','Immediate Measures','Medium-Term Measures','Maturity Assessment','Investment Plan','Release & Signature']:['Zusammenfassung','Objektdaten','Umfeldanalyse','Schutzziele','Normgrundlagen','Risikoübersicht','Sofortmaßnahmen','Mittelfristige Maßnahmen','Reifegradübersicht','Investitionsplan','Freigabe & Unterschrift'];
+  const tocHTML=tocL.map((t,i)=>`<div class="ksk-toc-entry" onclick="document.getElementById('ksk-s${i+1}')?.scrollIntoView({behavior:'smooth'})"><span class="ksk-toc-num">${i+1}.</span><span>${t}</span></div>`).join('');
+  const S2=(num,title,content)=>`<div class="ksk-section" id="ksk-s${num}"><div class="ksk-section-title"><span class="ksk-section-number">${num}</span>${title}</div>${content}</div>`;
   document.getElementById('mainContent').innerHTML=`
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+  <div class="ksk-controls">
     <div class="rpt-tabs">
       <button class="rpt-tab" onclick="S.reportView='begehung';render()">${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
-      <button class="rpt-tab active konzept-tab" onclick="S.reportView='konzept';render()">${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+      <button class="rpt-tab active konzept-tab">${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
     </div>
     <div style="display:flex;gap:6px">
       <button class="print-btn" onclick="exportData()">Backup</button>
-      <button class="print-btn" style="border-color:rgba(167,139,250,.3);color:var(--purple)" onclick="window.print()">PDF</button>
+      <button class="print-btn" style="border-color:rgba(167,139,250,.3);color:var(--purple)" onclick="window.print()">🖨 PDF</button>
     </div>
   </div>
-  <div class="rpt-hdr" style="background:linear-gradient(135deg,rgba(167,139,250,.07),rgba(59,130,246,.04),rgba(15,23,42,.9));border-color:rgba(167,139,250,.2)">
-    <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:6px">SecureStay: Analytics · ${L==='en'?'Security Concept':'Sicherheitskonzept'}</div>
-    <div class="rpt-title">${esc(S.meta.objekt)||'Objekt'}</div>
-    <div class="rpt-meta" style="margin-top:6px">
-      ${S.meta.auftraggeber?`<strong>${esc(S.meta.auftraggeber)}</strong> · `:''}${ds}${S.meta.pruefer?` · ${L==='en'?'Author':'Autor'}: ${esc(S.meta.pruefer)}`:''}
-      ${S.meta.adresse?`<br>${esc(S.meta.adresse)}`:''}
+  <div class="ksk-doc">
+    <div class="ksk-cover">
+      <div class="ksk-cover-logo">SecureStay<span>: Analytics</span></div>
+      <div class="ksk-cover-type">${L==='en'?'Security Concept · Confidential':'Sicherheitskonzept · Vertraulich'}</div>
+      <div class="ksk-cover-title">${objekt||'–'}</div>
+      ${auftraggeber?`<div class="ksk-cover-objekt">${auftraggeber}</div>`:''}
+      <table class="ksk-cover-meta-table">
+        <tr><td>${L==='en'?'Inspection Date':'Begehungsdatum'}</td><td>${ds}</td></tr>
+        <tr><td>${L==='en'?'Prepared by':'Erstellt von'}</td><td>${pruefer}</td></tr>
+        <tr><td>Version</td><td>${version}</td></tr>
+        <tr><td>Status</td><td>${status}</td></tr>
+        <tr><td>Compliance</td><td><strong style="color:${comp>=80?'#4ade80':comp>=50?'#fde047':'#f87171'}">${comp}%</strong></td></tr>
+        <tr><td>${L==='en'?'Risk Level':'Risikostufe'}</td><td><strong style="color:${riskColor}">${riskLevel}</strong></td></tr>
+      </table>
+      ${S.norms?.length?`<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;position:relative;z-index:1">${normBadges}</div>`:''}
+      <div class="ksk-vertraulich">🔒 ${L==='en'?'CONFIDENTIAL – For authorised recipients only':'VERTRAULICH – Nur für autorisierte Empfänger'}</div>
     </div>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-      <span style="font-family:var(--fm);font-size:.58rem;color:var(--purple);background:var(--purpleDim);border:1px solid rgba(167,139,250,.2);border-radius:999px;padding:2px 10px">${L==='en'?'Generated':'Erstellt'}: ${genDate}</span>
-      <span style="font-family:var(--fm);font-size:.58rem;color:var(--accent);background:var(--accentDim);border:1px solid rgba(20,184,166,.2);border-radius:999px;padding:2px 10px">${comp}% ${L==='en'?'Compliance':'Compliance'}</span>
+    <div class="ksk-toc">
+      <div class="ksk-toc-title">${L==='en'?'Table of Contents':'Inhaltsverzeichnis'}</div>
+      <div class="ksk-toc-grid">${tocHTML}</div>
+    </div>
+    <div class="ksk-body">
+      ${S2(1,L==='en'?'Executive Summary':'Zusammenfassung',`
+        <p class="ksk-text">${L==='en'?`This security concept was prepared on the basis of an on-site inspection of <em>${objekt||'–'}</em> on <strong>${ds}</strong>. A total of <strong>${assessed}</strong> control points were assessed.`:`Das vorliegende Sicherheitskonzept wurde auf Basis einer Begehung des Objekts <em>${objekt||'–'}</em> am <strong>${ds}</strong> erstellt. Es wurden insgesamt <strong>${assessed}</strong> Prüfpunkte bewertet.`}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:14px 0">
+          <div class="ksk-maturity-item" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;font-family:var(--fh);color:#f87171">${kritisch.length}</div><div style="font-size:.7rem;color:var(--muted)">${L==='en'?'Critical':'Kritisch'}</div></div>
+          <div class="ksk-maturity-item" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;font-family:var(--fh);color:#fde047">${mangel.length}</div><div style="font-size:.7rem;color:var(--muted)">${L==='en'?'Deficiencies':'Mängel'}</div></div>
+          <div class="ksk-maturity-item" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;font-family:var(--fh);color:#4ade80">${ok.length}</div><div style="font-size:.7rem;color:var(--muted)">OK</div></div>
+          <div class="ksk-maturity-item" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;font-family:var(--fh);color:${comp>=80?'#4ade80':comp>=50?'#fde047':'#f87171'}">${comp}%</div><div style="font-size:.7rem;color:var(--muted)">Compliance</div></div>
+          <div class="ksk-maturity-item" style="text-align:center"><div style="font-size:1rem;font-weight:800;font-family:var(--fh);color:${riskColor}">${riskLevel}</div><div style="font-size:.7rem;color:var(--muted)">${L==='en'?'Risk':'Risiko'}</div></div>
+        </div>
+        <div class="ksk-${kritisch.length>=1?'warnbox':'okbox'}"><strong>${L==='en'?'Assessment:':'Bewertung:'}</strong> ${riskText}</div>
+      `)}
+      ${S2(2,L==='en'?'Object Data & Inspection Scope':'Objektdaten & Prüfumfang',`
+        <table class="ksk-table">${objRows}</table>
+        ${metricRows?`<p class="ksk-text" style="margin-top:10px"><strong>${L==='en'?'Building metrics:':'Objektkennzahlen:'}</strong></p><table class="ksk-table">${metricRows}</table>`:''}
+      `)}
+      ${S2(3,L==='en'?'Environmental Analysis':'Umfeldanalyse',_kskUmfeldHTML())}
+      ${S2(4,L==='en'?'Protection Objectives':'Schutzziele',`
+        <p class="ksk-text">${L==='en'?'The following protection objectives form the basis of this security concept:':'Die folgenden Schutzziele bilden die Grundlage dieses Sicherheitskonzepts:'}</p>
+        <table class="ksk-table"><thead><tr><th>ID</th><th>${L==='en'?'Objective':'Schutzziel'}</th><th>${L==='en'?'Description':'Beschreibung'}</th><th>${L==='en'?'Priority':'Priorität'}</th></tr></thead><tbody>${sz.map(s=>`<tr><td style="font-family:var(--fm);font-size:.65rem;font-weight:700">${s.id}</td><td><strong style="color:#e2e8f0">${s.z}</strong></td><td style="font-size:.76rem">${s.d}</td><td><span class="${s.p==='HOCH'?'risk-krit':'risk-mangel'}">${s.p}</span></td></tr>`).join('')}</tbody></table>
+      `)}
+      ${S2(5,L==='en'?'Regulatory Framework & Standards':'Normgrundlagen & Regelwerk',_kskNormHTML(S.norms||[]))}
+      ${S2(6,L==='en'?'Risk Overview':'Risikoübersicht',`
+        <p class="ksk-text">${L==='en'?'Overall risk classification based on the number and severity of identified deficiencies:':'Gesamtrisikoeinstufung auf Basis der Anzahl und Schwere der festgestellten Mängel:'}</p>
+        <div style="display:flex;align-items:center;gap:14px;margin:12px 0;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;flex-wrap:wrap">
+          <div style="font-size:1.6rem;font-weight:800;font-family:var(--fh);color:${riskColor}">${riskLevel}</div>
+          <div style="flex:1;min-width:120px"><div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="width:${comp}%;height:100%;background:${comp>=80?'#22c55e':comp>=50?'#eab308':'#ef4444'};border-radius:4px"></div></div><div style="font-size:.66rem;color:var(--muted);margin-top:4px">${comp}% ${L==='en'?'compliance rate':'Konformitätsquote'}</div></div>
+        </div>
+        <table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Count':'Anzahl'}</th><th>${L==='en'?'Share':'Anteil'}</th></tr></thead><tbody>
+          <tr><td><span class="risk-krit">${L==='en'?'Critical':'Kritisch'}</span></td><td>${kritisch.length}</td><td>${assessed?Math.round(kritisch.length/assessed*100):0}%</td></tr>
+          <tr><td><span class="risk-mangel">${L==='en'?'Deficiencies':'Mängel'}</span></td><td>${mangel.length}</td><td>${assessed?Math.round(mangel.length/assessed*100):0}%</td></tr>
+          <tr><td><span class="risk-ok">${L==='en'?'Compliant':'Konform'}</span></td><td>${ok.length}</td><td>${assessed?Math.round(ok.length/assessed*100):0}%</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.08)"><td><strong style="color:#e2e8f0">${L==='en'?'Total assessed':'Gesamt bewertet'}</strong></td><td><strong style="color:#e2e8f0">${assessed}</strong></td><td><strong style="color:#e2e8f0">100%</strong></td></tr>
+        </tbody></table>
+      `)}
+      ${S2(7,L==='en'?'Immediate Measures (Critical Deficiencies)':'Sofortmaßnahmen (Kritische Mängel)',`
+        <p class="ksk-text">${L==='en'?'The following critical deficiencies require immediate remediation within <strong>4 weeks</strong>. Non-compliance may affect insurance coverage and lead to regulatory consequences.':'Die folgenden kritischen Mängel sind unverzüglich — innerhalb von <strong>4 Wochen</strong> — zu beheben. Ohne Mängelbeseitigung kann der Versicherungsschutz eingeschränkt sein und regulatorische Konsequenzen drohen.'}</p>
+        ${domainSec(kritisch,'kritisch')}
+      `)}
+      ${S2(8,L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)',`
+        <p class="ksk-text">${L==='en'?'The following deficiencies should be addressed within <strong>3–6 months</strong> as part of a structured improvement programme.':'Die folgenden Mängel sind im Rahmen eines strukturierten Verbesserungsprogramms innerhalb von <strong>3–6 Monaten</strong> umzusetzen.'}</p>
+        ${domainSec(mangel,'mangel')}
+      `)}
+      ${S2(9,L==='en'?'Maturity Assessment':'Reifegradübersicht',`
+        <p class="ksk-text">${L==='en'?'Maturity levels per audit domain (0 = not assessed · 1 = Initial · 2 = Repeatable · 3 = Defined · 4 = Managed · 5 = Optimising):':'Reifegradstufen je Prüfbereich (0 = nicht bewertet · 1 = Initial · 2 = Wiederholbar · 3 = Definiert · 4 = Gesteuert · 5 = Optimierend):'}</p>
+        <table class="ksk-table"><thead><tr><th>${L==='en'?'Domain':'Bereich'}</th><th>${L==='en'?'Maturity':'Reifegrad'}</th><th>${L==='en'?'Score':'Wert'}</th><th>${L==='en'?'Level':'Stufe'}</th></tr></thead><tbody>${matRows||`<tr><td colspan="4" style="text-align:center;color:var(--muted)">${L==='en'?'No maturity data entered.':'Keine Reifegrad-Daten erfasst.'}</td></tr>`}</tbody></table>
+      `)}
+      ${S2(10,L==='en'?'Investment Plan':'Investitionsplan',`
+        <p class="ksk-text">${L==='en'?'Estimated investment requirements for remediation of identified deficiencies (indicative market values, excl. VAT):':'Geschätzter Investitionsbedarf zur Behebung der festgestellten Mängel (Richtwerte, zzgl. MwSt.):'}</p>
+        <table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Findings':'Befunde'}</th><th>${L==='en'?'Estimate':'Schätzung'}</th><th>${L==='en'?'Timeline':'Zeitrahmen'}</th></tr></thead><tbody>
+          <tr><td><strong class="risk-krit">${L==='en'?'Critical (immediate)':'Kritisch (sofort)'}</strong></td><td>${kritisch.length}</td><td><strong style="color:#e2e8f0">€ ${fmtCA(kritisch,'kritisch')}</strong></td><td style="font-size:.76rem">${L==='en'?'≤ 4 weeks':'≤ 4 Wochen'}</td></tr>
+          <tr><td><strong class="risk-mangel">${L==='en'?'Deficiencies (medium-term)':'Mängel (mittelfristig)'}</strong></td><td>${mangel.length}</td><td><strong style="color:#e2e8f0">€ ${fmtCA(mangel,'mangel')}</strong></td><td style="font-size:.76rem">${L==='en'?'3–6 months':'3–6 Monate'}</td></tr>
+        </tbody><tfoot><tr><td colspan="2" style="padding-top:10px;border-top:1px solid rgba(255,255,255,.1)"><strong style="color:#f1f5f9">${L==='en'?'Total estimate':'Gesamt Schätzung'}</strong></td><td colspan="2" style="padding-top:10px;border-top:1px solid rgba(255,255,255,.1)"><strong style="color:#60a5fa;font-family:var(--fh);font-size:.9rem">€ ${totalCostStr}</strong></td></tr></tfoot></table>
+        <div class="ksk-infobox">${L==='en'?'<strong>Note:</strong> All cost estimates are indicative market values based on standard security equipment and installation. Final costs depend on specific product selection, tender results and local conditions. All amounts excl. VAT.':'<strong>Hinweis:</strong> Alle Kostenangaben sind Richtwerte auf Basis marktüblicher Sicherheitstechnik. Endkosten hängen von Produktauswahl, Ausschreibungsergebnissen und örtlichen Gegebenheiten ab. Alle Beträge netto zzgl. MwSt.'}</div>
+      `)}
+      ${S2(11,L==='en'?'Release & Signature':'Freigabe & Unterschrift',`
+        <p class="ksk-text">${L==='en'?'This security concept was prepared by SecureStay: Analytics and requires review and approval by the authorised representatives of the client.':'Das vorliegende Sicherheitskonzept wurde durch SecureStay: Analytics erstellt und bedarf der Prüfung und Freigabe durch die bevollmächtigten Vertreter des Auftraggebers.'}</p>
+        <div class="ksk-sig-row">
+          <div class="ksk-sig-box"><div style="color:#e2e8f0;font-size:.82rem;font-weight:700;margin-bottom:3px">${pruefer}</div><div>${L==='en'?'Auditor · SecureStay: Analytics':'Auditor/in · SecureStay: Analytics'}</div><div style="color:#60a5fa;font-size:.68rem;margin-top:2px">Kirchstr. 8b · 55270 Essenheim</div></div>
+          <div class="ksk-sig-box"><div style="color:#e2e8f0;font-size:.82rem;font-weight:700;margin-bottom:3px">${auftraggeber||'___________________________'}</div><div>${L==='en'?'Client / Authorised Representative':'Auftraggeber / Bevollmächtigte/r'}</div></div>
+          <div class="ksk-sig-box"><div style="color:#e2e8f0;font-size:.82rem;font-weight:700;margin-bottom:3px">_____________</div><div>${L==='en'?'Date of Approval':'Freigabedatum'}</div></div>
+        </div>
+        <div class="ksk-infobox" style="margin-top:18px;font-size:.74rem">${L==='en'?`Generated: ${genDateTime} · Version: ${version} · Status: ${status}`:`Erstellt: ${genDateTime} · Version: ${version} · Status: ${status}`}</div>
+      `)}
+      <div style="background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(16,185,129,.03));border-top:1px solid rgba(37,99,235,.15);padding:24px 40px;text-align:center">
+        <div style="font-family:var(--fh);font-weight:800;color:#f1f5f9;font-size:1rem">SecureStay: Analytics</div>
+        <div style="font-size:.76rem;color:#94a3b8;margin-top:3px">SecureStay Solutions UG (haftungsbeschränkt)</div>
+        <div style="font-size:.64rem;color:#64748b;margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
+      </div>
     </div>
   </div>
-  <div class="konzept-section">
-    <div class="konzept-section-title">${L==='en'?'Executive Summary':'Zusammenfassung'}</div>
-    <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
-      ${L==='en'
-        ?`This security concept was prepared on the basis of an on-site inspection at <strong style="color:var(--text2)">${esc(S.meta.objekt)||'the object'}</strong> on ${ds}. A total of <strong style="color:var(--text2)">${assessed}</strong> control points were assessed. <strong style="color:var(--danger)">${kritisch.length}</strong> critical deficiencies and <strong style="color:var(--warn)">${mangel.length}</strong> deficiencies requiring improvement were identified. The overall compliance level is <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`
-        :`Das vorliegende Sicherheitskonzept wurde auf Basis einer Begehung des Objekts <strong style="color:var(--text2)">${esc(S.meta.objekt)||'–'}</strong> am ${ds} erstellt. Es wurden insgesamt <strong style="color:var(--text2)">${assessed}</strong> Prüfpunkte bewertet. Dabei wurden <strong style="color:var(--danger)">${kritisch.length}</strong> kritische Mängel und <strong style="color:var(--warn)">${mangel.length}</strong> Verbesserungsbedarfe festgestellt. Der Gesamterfüllungsgrad beträgt <strong style="color:${comp>=80?'var(--ok)':comp>=50?'var(--warn)':'var(--danger)'}">${comp}%</strong>.`}
-    </div>
-  </div>
-  ${umfeldSect}
-  ${kritisch.length||mangel.length?`
-  <div class="konzept-section">
-    <div class="konzept-section-title">${L==='en'?'Immediate Measures (Critical)':'Sofortmaßnahmen (Kritisch)'}</div>
-    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'Must be remediated immediately (within 4 weeks):':'Unverzüglich umzusetzen (innerhalb von 4 Wochen):'}</p>
-    ${secK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">${domainMap.security}</div>${mkm(secK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
-    ${qmK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">${domainMap.qm}</div>${mkm(qmK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
-    ${itK.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">${domainMap.itgov}</div>${mkm(itK,'kritisch',L==='en'?'≤ 4 weeks':'≤ 4 Wochen')}</div>`:''}
-  </div>
-  <div class="konzept-section">
-    <div class="konzept-section-title">${L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)'}</div>
-    <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">${L==='en'?'To be addressed within 3–6 months:':'Umzusetzen innerhalb von 3–6 Monaten:'}</p>
-    ${secM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--accent);margin-bottom:6px;letter-spacing:.06em">${domainMap.security}</div>${mkm(secM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
-    ${qmM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--orange);margin-bottom:6px;letter-spacing:.06em">${domainMap.qm}</div>${mkm(qmM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
-    ${itM.length?`<div style="margin-bottom:8px"><div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;letter-spacing:.06em">${domainMap.itgov}</div>${mkm(itM,'mangel',L==='en'?'3–6 months':'3–6 Monate')}</div>`:''}
-  </div>
-  `:''}
-  <div class="konzept-section">
-    <div class="konzept-section-title">${L==='en'?'Investment Summary':'Investitionszusammenfassung'}</div>
-    <div class="cost-sum">
-      <div class="cost-row"><span>${L==='en'?'Immediate (critical)':'Sofort (kritisch)'}</span><span>€ ${fmtCA(kritisch,'kritisch')}</span></div>
-      <div class="cost-row"><span>${L==='en'?'Medium-term (deficiencies)':'Mittelfristig (Mängel)'}</span><span>€ ${fmtCA(mangel,'mangel')}</span></div>
-    </div>
-  </div>
-  <div style="background:linear-gradient(135deg,rgba(167,139,250,.04),rgba(59,130,246,.02));border:1px solid rgba(167,139,250,.12);border-radius:12px;padding:18px;text-align:center;margin-top:6px">
-    <div style="font-family:var(--fh);font-weight:700;color:var(--text2)">SecureStay: Analytics</div>
-    <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
-    <div style="font-size:.64rem;color:var(--soft)">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
-  </div>
-  <div class="nav-row"><button class="btn-s" onclick="S.reportView='begehung';render()">← ${L==='en'?'Back to Report':'Zurück zum Bericht'}</button><button class="btn-p" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)" onclick="window.print()">PDF</button></div>`;
+  <div class="nav-row"><button class="btn-s" onclick="S.reportView='begehung';render()">← ${L==='en'?'Back to Report':'Zurück zum Bericht'}</button><button class="btn-p" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)" onclick="window.print()">🖨 PDF</button></div>`;
 }
 
 // ═══ MODALS ═══
