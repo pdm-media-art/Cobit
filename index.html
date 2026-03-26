@@ -420,6 +420,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   tr{page-break-inside:avoid;break-inside:avoid}
 }
 
+/* ── Risk Matrix ── */
+.rm-wrap{display:flex;gap:4px;height:100%;align-items:stretch}
+.rm-ylbl{font-size:.48rem;color:var(--muted);writing-mode:vertical-lr;transform:rotate(180deg);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;display:flex;align-items:center;padding:2px 0}
+.rm-inner{display:flex;flex-direction:column;flex:1;gap:3px;min-height:0}
+.rm-grid{display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);flex:1;gap:2px}
+.rm-cell{border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:default;position:relative;transition:.15s;flex-wrap:wrap;gap:1px;min-height:0}
+.rm-cell.rm-has:hover{filter:brightness(1.4);z-index:2;transform:scale(1.12);border-radius:3px;cursor:pointer}
+.rm-g{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.08)}
+.rm-y{background:rgba(234,179,8,.18);border:1px solid rgba(234,179,8,.1)}
+.rm-o{background:rgba(249,115,22,.24);border:1px solid rgba(249,115,22,.14)}
+.rm-r{background:rgba(239,68,68,.28);border:1px solid rgba(239,68,68,.16)}
+.rm-dot{font-size:.36rem;font-weight:800;color:#f8fafc;background:rgba(0,0,0,.55);border-radius:2px;padding:1px 2px;line-height:1.2;pointer-events:none;letter-spacing:0}
+.rm-xlbl{font-size:.48rem;color:var(--muted);text-align:center;letter-spacing:.08em;text-transform:uppercase;padding:2px 0 0}
+.rm-legend{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:4px}
+.rm-leg-item{display:flex;align-items:center;gap:4px;font-size:.52rem;color:var(--muted)}
+.rm-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 /* ═══ LOGIN ═══ */
 .login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
 #loginWebCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
@@ -1490,6 +1506,32 @@ function renderMA(){
 }
 
 // ═══ DASHBOARD ═══
+function buildRiskMatrix(L,ds){
+  const pos=ds.map((d,i)=>{
+    const x=Math.max(1,Math.min(10,10-Math.round(d.pct/10)));
+    const y=d.kr>0?Math.max(1,Math.min(10,7+Math.min(3,d.kr))):d.mn>0?Math.max(1,Math.min(6,4+Math.floor(d.mn/2))):Math.max(1,3-Math.floor(d.mat/2));
+    const ab=d.l.replace(/[^A-Za-zÄÖÜäöüß]/g,'').substring(0,2).toUpperCase();
+    return{...d,x,y,ab,i};
+  });
+  const leg=[[L==='en'?'Low':'Gering','rm-g','rgba(34,197,94,.4)'],[L==='en'?'Medium':'Mittel','rm-y','rgba(234,179,8,.5)'],[L==='en'?'High':'Hoch','rm-o','rgba(249,115,22,.55)'],[L==='en'?'Critical':'Kritisch','rm-r','rgba(239,68,68,.6)']];
+  let g='<div class="rm-legend">'+leg.map(([l,,c])=>`<div class="rm-leg-item"><div class="rm-leg-dot" style="background:${c}"></div>${l}</div>`).join('')+'</div>';
+  g+='<div class="rm-wrap">';
+  g+='<div class="rm-ylbl">'+(L==='en'?'Impact ↑':'Auswirkung ↑')+'</div>';
+  g+='<div class="rm-inner"><div class="rm-grid">';
+  for(let y=10;y>=1;y--){
+    for(let x=1;x<=10;x++){
+      const sc=x*y;
+      const cl=sc<=20?'rm-g':sc<=49?'rm-y':sc<=70?'rm-o':'rm-r';
+      const its=pos.filter(d=>d.x===x&&d.y===y);
+      const tt=its.length?its.map(d=>d.l+' (L:'+x+' I:'+y+')').join(' | '):'L:'+x+' / I:'+y+' → Score:'+sc;
+      g+=`<div class="rm-cell ${cl}${its.length?' rm-has':''}" title="${tt}">${its.map(d=>`<span class="rm-dot">${d.ab}</span>`).join('')}</div>`;
+    }
+  }
+  g+='</div>';
+  g+='<div class="rm-xlbl">'+(L==='en'?'Likelihood →':'Wahrscheinlichkeit →')+'</div>';
+  g+='</div></div>';
+  return g;
+}
 function renderDash(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   // destroy any existing Chart.js instances to prevent "canvas already has chart" errors
@@ -1537,6 +1579,10 @@ function renderDash(){
     <div class="chart-grid" style="grid-template-columns:1fr 1fr">
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Measures':'Maßnahmen'}</div><div style="height:140px;position:relative"><canvas id="c5"></canvas></div></div>
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Documents':'Dokumente'}</div><div style="height:140px;position:relative"><canvas id="c6"></canvas></div></div>
+    </div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr">
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Security Radar (Compliance + Maturity)':'Sicherheits-Radar (Compliance + Reifegrad)'}</div><div style="height:240px;position:relative"><canvas id="c_radar"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Risk Matrix 10×10':'Risikomatrix 10×10'}</div><div id="c_matrix" style="height:240px;overflow:hidden;padding-top:4px"></div></div>
     </div>`}
   </div>`;
   if(!S.module)return;
@@ -1638,6 +1684,39 @@ function renderDash(){
       } else {
         el6.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No documents':'Keine Dokumente'}</div>`;
       }
+    }
+    // C_RADAR — dual radar: Compliance % (teal) + Reifegrad×20 (purple)
+    const elRadar=document.getElementById('c_radar');
+    if(elRadar&&domStats.length>=3){
+      window._dashCharts.push(new Chart(elRadar,{type:'radar',
+        data:{labels:domStats.map(d=>d.l),
+          datasets:[
+            {label:L==='en'?'Compliance %':'Compliance %',data:domStats.map(d=>d.pct),
+              borderColor:'#14b8a6',backgroundColor:'rgba(20,184,166,.15)',borderWidth:2,
+              pointRadius:3,pointBackgroundColor:'#14b8a6',pointHoverRadius:5},
+            {label:L==='en'?'Maturity ×20':'Reifegrad ×20',data:domStats.map(d=>d.mat*20),
+              borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.12)',borderWidth:2,
+              pointRadius:3,pointBackgroundColor:'#a78bfa',pointHoverRadius:5}
+          ]},
+        options:{...df,scales:{r:{min:0,max:100,ticks:{stepSize:20,color:tc,backdropColor:'transparent',font:{size:7}},
+          grid:{color:gc},pointLabels:{color:tc,font:{size:7}}}}}}));
+    } else if(elRadar&&domStats.length>0){
+      window._dashCharts.push(new Chart(elRadar,{type:'bar',
+        data:{labels:domStats.map(d=>d.l),
+          datasets:[
+            {label:'Compliance %',data:domStats.map(d=>d.pct),backgroundColor:'rgba(20,184,166,.7)',borderRadius:3,borderWidth:0},
+            {label:L==='en'?'Maturity ×20':'Reifegrad ×20',data:domStats.map(d=>d.mat*20),backgroundColor:'rgba(167,139,250,.7)',borderRadius:3,borderWidth:0}
+          ]},
+        options:{...df,scales:{x:{ticks:{color:tc,font:{size:8}},grid:{display:false}},y:{min:0,max:100,ticks:{color:tc,font:{size:8}},grid:{color:gc}}}}}));
+    } else if(elRadar){
+      elRadar.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No data yet':'Noch keine Daten'}</div>`;
+    }
+    // C_MATRIX — 10×10 interactive risk matrix
+    const elMatrix=document.getElementById('c_matrix');
+    if(elMatrix&&domStats.length>0){
+      elMatrix.innerHTML=buildRiskMatrix(L,domStats);
+    } else if(elMatrix){
+      elMatrix.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No domain data':'Keine Bereichsdaten'}</div>`;
     }
   },100);
 }
