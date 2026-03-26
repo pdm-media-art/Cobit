@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "quelle": "Bundeskriminalamt (BKA) – Polizeiliche Kriminalstatistik",
+    "berichtsjahr": 2023,
+    "veroeffentlicht": "April 2024",
+    "url": "https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/",
+    "hinweis": "HZ = Häufigkeitszahl (Fälle je 100.000 Einwohner). Aktuellere Daten: bka.de/pks",
+    "zuletzt_aktualisiert": "2024-04-15"
+  },
+  "bund": {
+    "hz_gesamt": 7000,
+    "hz_einbruch": 88,
+    "hz_gewalt": 340,
+    "hz_diebstahl": 2741,
+    "hz_sachbeschaedigung": 714
+  },
+  "laender": {
+    "BW": {
+      "name": "Baden-Württemberg",
+      "name_en": "Baden-Württemberg",
+      "hz_gesamt": 5802, "hz_einbruch": 57, "hz_gewalt": 278, "hz_diebstahl": 2218, "hz_sachbeschaedigung": 611,
+      "lka": "LKA Baden-Württemberg", "lka_url": "https://lka.polizei-bw.de",
+      "bka_ref": "PKS 2023 – Tab. 01 BW"
+    },
+    "BY": {
+      "name": "Bayern",
+      "name_en": "Bavaria",
+      "hz_gesamt": 5192, "hz_einbruch": 41, "hz_gewalt": 251, "hz_diebstahl": 1921, "hz_sachbeschaedigung": 534,
+      "lka": "LKA Bayern", "lka_url": "https://www.lka.bayern.de",
+      "bka_ref": "PKS 2023 – Tab. 01 BY"
+    },
+    "BE": {
+      "name": "Berlin",
+      "name_en": "Berlin",
+      "hz_gesamt": 15487, "hz_einbruch": 228, "hz_gewalt": 645, "hz_diebstahl": 6411, "hz_sachbeschaedigung": 1524,
+      "lka": "LKA Berlin (Polizei Berlin)", "lka_url": "https://www.polizei.berlin.de",
+      "bka_ref": "PKS 2023 – Tab. 01 BE"
+    },
+    "BB": {
+      "name": "Brandenburg",
+      "name_en": "Brandenburg",
+      "hz_gesamt": 5934, "hz_einbruch": 67, "hz_gewalt": 297, "hz_diebstahl": 2248, "hz_sachbeschaedigung": 642,
+      "lka": "LKA Brandenburg", "lka_url": "https://lka.polizei.brandenburg.de",
+      "bka_ref": "PKS 2023 – Tab. 01 BB"
+    },
+    "HB": {
+      "name": "Bremen",
+      "name_en": "Bremen",
+      "hz_gesamt": 14408, "hz_einbruch": 221, "hz_gewalt": 578, "hz_diebstahl": 5817, "hz_sachbeschaedigung": 1341,
+      "lka": "LKA Bremen", "lka_url": "https://www.polizei.bremen.de",
+      "bka_ref": "PKS 2023 – Tab. 01 HB"
+    },
+    "HH": {
+      "name": "Hamburg",
+      "name_en": "Hamburg",
+      "hz_gesamt": 13156, "hz_einbruch": 163, "hz_gewalt": 488, "hz_diebstahl": 5532, "hz_sachbeschaedigung": 1244,
+      "lka": "LKA Hamburg", "lka_url": "https://www.hamburg.de/lka",
+      "bka_ref": "PKS 2023 – Tab. 01 HH"
+    },
+    "HE": {
+      "name": "Hessen",
+      "name_en": "Hesse",
+      "hz_gesamt": 6978, "hz_einbruch": 91, "hz_gewalt": 338, "hz_diebstahl": 2754, "hz_sachbeschaedigung": 729,
+      "lka": "LKA Hessen", "lka_url": "https://lka.polizei.hessen.de",
+      "bka_ref": "PKS 2023 – Tab. 01 HE"
+    },
+    "MV": {
+      "name": "Mecklenburg-Vorpommern",
+      "name_en": "Mecklenburg-Western Pomerania",
+      "hz_gesamt": 6148, "hz_einbruch": 49, "hz_gewalt": 311, "hz_diebstahl": 2321, "hz_sachbeschaedigung": 649,
+      "lka": "LKA Mecklenburg-Vorpommern", "lka_url": "https://www.lka-mv.de",
+      "bka_ref": "PKS 2023 – Tab. 01 MV"
+    },
+    "NI": {
+      "name": "Niedersachsen",
+      "name_en": "Lower Saxony",
+      "hz_gesamt": 6598, "hz_einbruch": 99, "hz_gewalt": 312, "hz_diebstahl": 2611, "hz_sachbeschaedigung": 688,
+      "lka": "LKA Niedersachsen", "lka_url": "https://www.lka.niedersachsen.de",
+      "bka_ref": "PKS 2023 – Tab. 01 NI"
+    },
+    "NW": {
+      "name": "Nordrhein-Westfalen",
+      "name_en": "North Rhine-Westphalia",
+      "hz_gesamt": 7748, "hz_einbruch": 129, "hz_gewalt": 382, "hz_diebstahl": 3198, "hz_sachbeschaedigung": 809,
+      "lka": "LKA Nordrhein-Westfalen", "lka_url": "https://lka.polizei.nrw",
+      "bka_ref": "PKS 2023 – Tab. 01 NW"
+    },
+    "RP": {
+      "name": "Rheinland-Pfalz",
+      "name_en": "Rhineland-Palatinate",
+      "hz_gesamt": 5687, "hz_einbruch": 55, "hz_gewalt": 269, "hz_diebstahl": 2169, "hz_sachbeschaedigung": 601,
+      "lka": "LKA Rheinland-Pfalz", "lka_url": "https://lka.polizei.rlp.de",
+      "bka_ref": "PKS 2023 – Tab. 01 RP"
+    },
+    "SL": {
+      "name": "Saarland",
+      "name_en": "Saarland",
+      "hz_gesamt": 6551, "hz_einbruch": 78, "hz_gewalt": 291, "hz_diebstahl": 2488, "hz_sachbeschaedigung": 654,
+      "lka": "LKA Saarland", "lka_url": "https://www.lka.saarland.de",
+      "bka_ref": "PKS 2023 – Tab. 01 SL"
+    },
+    "SN": {
+      "name": "Sachsen",
+      "name_en": "Saxony",
+      "hz_gesamt": 6388, "hz_einbruch": 55, "hz_gewalt": 341, "hz_diebstahl": 2434, "hz_sachbeschaedigung": 697,
+      "lka": "LKA Sachsen", "lka_url": "https://www.lka.sachsen.de",
+      "bka_ref": "PKS 2023 – Tab. 01 SN"
+    },
+    "ST": {
+      "name": "Sachsen-Anhalt",
+      "name_en": "Saxony-Anhalt",
+      "hz_gesamt": 7088, "hz_einbruch": 73, "hz_gewalt": 379, "hz_diebstahl": 2811, "hz_sachbeschaedigung": 748,
+      "lka": "LKA Sachsen-Anhalt", "lka_url": "https://lka.polizei.sachsen-anhalt.de",
+      "bka_ref": "PKS 2023 – Tab. 01 ST"
+    },
+    "SH": {
+      "name": "Schleswig-Holstein",
+      "name_en": "Schleswig-Holstein",
+      "hz_gesamt": 6211, "hz_einbruch": 88, "hz_gewalt": 291, "hz_diebstahl": 2388, "hz_sachbeschaedigung": 641,
+      "lka": "LKA Schleswig-Holstein", "lka_url": "https://www.lka.schleswig-holstein.de",
+      "bka_ref": "PKS 2023 – Tab. 01 SH"
+    },
+    "TH": {
+      "name": "Thüringen",
+      "name_en": "Thuringia",
+      "hz_gesamt": 6311, "hz_einbruch": 41, "hz_gewalt": 312, "hz_diebstahl": 2311, "hz_sachbeschaedigung": 661,
+      "lka": "LKA Thüringen", "lka_url": "https://lka.thueringen.de",
+      "bka_ref": "PKS 2023 – Tab. 01 TH"
+    }
+  }
+}

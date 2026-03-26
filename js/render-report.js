@@ -160,15 +160,22 @@ function _kskGlossaryHTML(){
 function _kskCrimeStatsHTML(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const plz=S.meta.plz||'';
-  const pks=typeof getPKSByPLZ!=='undefined'?getPKSByPLZ(plz):null;
-  const bund=typeof PKS_BUND!=='undefined'?PKS_BUND:null;
+  const pks=getPKSByPLZ(plz);
+  const bund=getPKSBund();
+  const meta=getPKSMeta();
+  const pksYear=meta?.berichtsjahr||'–';
+  const pksRef=meta?.url||'https://www.bka.de/pks';
+  const pksStand=meta?.zuletzt_aktualisiert||'–';
   if(!plz){
     return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No postal code entered. Please add a postal code in the object data to enable crime statistics lookup.':'Keine Postleitzahl hinterlegt. Bitte Postleitzahl in den Objektdaten ergänzen, um die Kriminalstatistik abzurufen.'}</p>`;
   }
-  if(!pks){
-    return`<p class="ksk-text" style="font-style:italic">${L==='en'?`No crime statistics available for postal code ${esc(plz)}.`:`Für Postleitzahl ${esc(plz)} sind keine Statistikdaten verfügbar.`}</p>`;
+  if(!pks||!bund){
+    return`<p class="ksk-text" style="font-style:italic">${L==='en'
+      ?`Crime statistics data is still loading or unavailable for postal code ${esc(plz)}. Please reload the page and try again. Data source: <a href="https://www.bka.de/pks" style="color:#60a5fa" target="_blank">bka.de/pks</a>.`
+      :`Statistikdaten werden geladen oder sind für PLZ ${esc(plz)} nicht verfügbar. Bitte Seite neu laden. Datenquelle: <a href="https://www.bka.de/pks" style="color:#60a5fa" target="_blank">bka.de/pks</a>.`
+    }</p>`;
   }
-  const {bl,data}=pks;
+  const {data}=pks;
   const rlEinbruch=pksRiskLevel(data.hz_einbruch,bund.hz_einbruch);
   const rlGewalt=pksRiskLevel(data.hz_gewalt,bund.hz_gewalt);
   const rlGesamt=pksRiskLevel(data.hz_gesamt,bund.hz_gesamt);
@@ -178,60 +185,27 @@ function _kskCrimeStatsHTML(){
   const badge=(rl)=>`<strong style="color:${rlColor[rl]}">${rlLabel[rl]}</strong>`;
   const pct=(hz,avg)=>Math.round(hz/avg*100);
   const bar=(hz,avg,col)=>{const w=Math.min(Math.round(hz/avg*100),200);return`<div style="background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden;min-width:80px;margin-top:3px"><div style="width:${w/2}%;height:100%;background:${col};border-radius:3px"></div></div>`;};
+  const row=(label,hzBl,hzBund)=>{const rl=pksRiskLevel(hzBl,hzBund);return`<tr><td><strong>${label}</strong></td><td style="font-family:var(--fm);font-weight:700">${hzBl.toLocaleString('de-DE')}</td><td style="font-family:var(--fm);color:var(--muted)">${hzBund.toLocaleString('de-DE')}</td><td>${badge(rl)}</td><td style="font-size:.72rem;color:var(--muted)">${pct(hzBl,hzBund)}% ${L==='en'?'of avg':'des Schnitts'}${bar(hzBl,hzBund,rlColor[rl])}</td></tr>`;};
   return`
   <p class="ksk-text">${L==='en'
-    ?`The following crime statistics are based on the <strong>Polizeiliche Kriminalstatistik (PKS) 2023</strong> published by the Bundeskriminalamt (BKA) in April 2024. Based on the postal code <strong>${esc(plz)}</strong>, the object is located in <strong>${blName}</strong>. The Häufigkeitszahl (HZ) indicates the number of recorded cases per 100,000 inhabitants.`
-    :`Die nachfolgenden Kriminalstatistiken basieren auf der <strong>Polizeilichen Kriminalstatistik (PKS) 2023</strong>, veröffentlicht vom Bundeskriminalamt (BKA) im April 2024. Auf Basis der Postleitzahl <strong>${esc(plz)}</strong> befindet sich das Objekt in <strong>${blName}</strong>. Die Häufigkeitszahl (HZ) gibt die Anzahl der erfassten Fälle je 100.000 Einwohner an.`
+    ?`The following crime statistics are based on the <strong>Polizeiliche Kriminalstatistik (PKS) ${pksYear}</strong> published by the Bundeskriminalamt (BKA). The data in this report is automatically loaded from the repository file <code>data/pks.json</code> (last updated: ${pksStand}) and updated annually via GitHub Action after each BKA publication. Based on postal code <strong>${esc(plz)}</strong>, the object is located in <strong>${blName}</strong>. The Häufigkeitszahl (HZ) indicates recorded cases per 100,000 inhabitants.`
+    :`Die nachfolgenden Kriminalstatistiken basieren auf der <strong>Polizeilichen Kriminalstatistik (PKS) ${pksYear}</strong> des Bundeskriminalamts (BKA). Die Daten werden automatisch aus der Repository-Datei <code>data/pks.json</code> geladen (zuletzt aktualisiert: ${pksStand}) und jährlich per GitHub Action nach BKA-Veröffentlichung aktualisiert. Auf Basis der Postleitzahl <strong>${esc(plz)}</strong> befindet sich das Objekt in <strong>${blName}</strong>. Die Häufigkeitszahl (HZ) gibt erfasste Fälle je 100.000 Einwohner an.`
   }</p>
   <table class="ksk-table">
-    <thead><tr><th>${L==='en'?'Crime Category':'Deliktkategorie'}</th><th>${L==='en'?`${blName} (HZ)`:`${blName} (HZ)`}</th><th>${L==='en'?'National Avg (HZ)':'Bundesschnitt (HZ)'}</th><th>${L==='en'?'Relative Level':'Relatives Niveau'}</th><th>${L==='en'?'Trend vs. Avg':'Abweichung'}</th></tr></thead>
+    <thead><tr><th>${L==='en'?'Crime Category':'Deliktkategorie'}</th><th>${blName} (HZ)</th><th>${L==='en'?'National Avg (HZ)':'Bundesschnitt (HZ)'}</th><th>${L==='en'?'Level':'Niveau'}</th><th>${L==='en'?'vs. Avg':'vs. Schnitt'}</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>${L==='en'?'All Offences':'Straftaten gesamt'}</strong></td>
-        <td style="font-family:var(--fm);font-weight:700">${data.hz_gesamt.toLocaleString('de-DE')}</td>
-        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_gesamt.toLocaleString('de-DE')}</td>
-        <td>${badge(rlGesamt)}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_gesamt,bund.hz_gesamt)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_gesamt,bund.hz_gesamt,rlColor[rlGesamt])}</td>
-      </tr>
-      <tr>
-        <td><strong>${L==='en'?'Residential Burglary':'Wohnungseinbruchdiebstahl'}</strong></td>
-        <td style="font-family:var(--fm);font-weight:700">${data.hz_einbruch.toLocaleString('de-DE')}</td>
-        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_einbruch.toLocaleString('de-DE')}</td>
-        <td>${badge(rlEinbruch)}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_einbruch,bund.hz_einbruch)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_einbruch,bund.hz_einbruch,rlColor[rlEinbruch])}</td>
-      </tr>
-      <tr>
-        <td><strong>${L==='en'?'Violent Crime':'Gewaltkriminalität'}</strong></td>
-        <td style="font-family:var(--fm);font-weight:700">${data.hz_gewalt.toLocaleString('de-DE')}</td>
-        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_gewalt.toLocaleString('de-DE')}</td>
-        <td>${badge(rlGewalt)}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_gewalt,bund.hz_gewalt)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_gewalt,bund.hz_gewalt,rlColor[rlGewalt])}</td>
-      </tr>
-      <tr>
-        <td><strong>${L==='en'?'Theft (total)':'Diebstahl gesamt'}</strong></td>
-        <td style="font-family:var(--fm);font-weight:700">${data.hz_diebstahl.toLocaleString('de-DE')}</td>
-        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_diebstahl.toLocaleString('de-DE')}</td>
-        <td>${badge(pksRiskLevel(data.hz_diebstahl,bund.hz_diebstahl))}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_diebstahl,bund.hz_diebstahl)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_diebstahl,bund.hz_diebstahl,rlColor[pksRiskLevel(data.hz_diebstahl,bund.hz_diebstahl)])}</td>
-      </tr>
-      <tr>
-        <td><strong>${L==='en'?'Criminal Damage':'Sachbeschädigung'}</strong></td>
-        <td style="font-family:var(--fm);font-weight:700">${data.hz_sachbeschaedigung.toLocaleString('de-DE')}</td>
-        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_sachbeschaedigung.toLocaleString('de-DE')}</td>
-        <td>${badge(pksRiskLevel(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung))}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung,rlColor[pksRiskLevel(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung)])}</td>
-      </tr>
+      ${row(L==='en'?'All Offences':'Straftaten gesamt',data.hz_gesamt,bund.hz_gesamt)}
+      ${row(L==='en'?'Residential Burglary':'Wohnungseinbruchdiebstahl',data.hz_einbruch,bund.hz_einbruch)}
+      ${row(L==='en'?'Violent Crime':'Gewaltkriminalität',data.hz_gewalt,bund.hz_gewalt)}
+      ${row(L==='en'?'Theft (total)':'Diebstahl gesamt',data.hz_diebstahl,bund.hz_diebstahl)}
+      ${row(L==='en'?'Criminal Damage':'Sachbeschädigung',data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung)}
     </tbody>
   </table>
   <div class="ksk-infobox" style="margin-top:10px">
-    <strong>${L==='en'?'Source & Authority:':'Quelle & Zuständigkeit:'}</strong>
+    <strong>${L==='en'?'Source & Data Currency:':'Quelle & Aktualität:'}</strong>
     ${L==='en'
-      ?`Bundeskriminalamt (BKA) – PKS 2023, ${data.bka_ref}. Responsible state authority: <strong>${data.lka}</strong>.`
-      :`Bundeskriminalamt (BKA) – PKS 2023, ${data.bka_ref}. Zuständige Landesbehörde: <strong>${data.lka}</strong>.`
-    }
-    ${L==='en'
-      ?`Current annual reports available at: BKA (<a href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/" style="color:#60a5fa" target="_blank">bka.de/pks2023</a>) and ${data.lka} (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>).`
-      :`Aktuelle Jahresberichte: BKA (<a href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/" style="color:#60a5fa" target="_blank">bka.de/pks2023</a>) und ${data.lka} (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>).`
+      ?`BKA PKS ${pksYear} (${data.bka_ref}). Responsible state authority: <strong>${data.lka}</strong> (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>). Data file: <a href="${pksRef}" style="color:#60a5fa" target="_blank">bka.de/pks</a>. The <code>data/pks.json</code> file is updated automatically each year via GitHub Action when BKA publishes the new PKS report (typically April).`
+      :`BKA PKS ${pksYear} (${data.bka_ref}). Zuständige Landesbehörde: <strong>${data.lka}</strong> (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>). Datenquelle: <a href="${pksRef}" style="color:#60a5fa" target="_blank">bka.de/pks</a>. Die Datei <code>data/pks.json</code> wird jährlich automatisch per GitHub Action aktualisiert, sobald das BKA den neuen PKS-Bericht veröffentlicht (typisch April).`
     }
   </div>`;
 }

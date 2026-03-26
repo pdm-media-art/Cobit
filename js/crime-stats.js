@@ -1,115 +1,29 @@
-// ═══ KRIMINALSTATISTIK – BKA PKS 2023 ═══
-// Quelle: Bundeskriminalamt, Polizeiliche Kriminalstatistik 2023
-// Erschienen: April 2024 · https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/
-// HZ = Häufigkeitszahl (Fälle je 100.000 Einwohner)
-// Stand: PKS 2023 (Berichtsjahr 2023)
+// ═══ KRIMINALSTATISTIK – dynamischer Loader ═══
+// Daten werden aus data/pks.json geladen (BKA PKS – aktuellstes Berichtsjahr).
+// Die JSON-Datei wird via GitHub Action jährlich im Mai aktualisiert (nach BKA-Veröffentlichung ~April).
+// BKA PKS: https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/
 
-const PKS_2023 = {
-  BW: {
-    name:'Baden-Württemberg', name_en:'Baden-Württemberg',
-    hz_gesamt:5802, hz_einbruch:57, hz_gewalt:278, hz_diebstahl:2218, hz_sachbeschaedigung:611,
-    lka:'LKA Baden-Württemberg', lka_url:'https://lka.polizei-bw.de',
-    bka_ref:'PKS 2023 – Tab. 01 BW'
-  },
-  BY: {
-    name:'Bayern', name_en:'Bavaria',
-    hz_gesamt:5192, hz_einbruch:41, hz_gewalt:251, hz_diebstahl:1921, hz_sachbeschaedigung:534,
-    lka:'LKA Bayern', lka_url:'https://www.lka.bayern.de',
-    bka_ref:'PKS 2023 – Tab. 01 BY'
-  },
-  BE: {
-    name:'Berlin', name_en:'Berlin',
-    hz_gesamt:15487, hz_einbruch:228, hz_gewalt:645, hz_diebstahl:6411, hz_sachbeschaedigung:1524,
-    lka:'LKA Berlin (Polizei Berlin)', lka_url:'https://www.polizei.berlin.de',
-    bka_ref:'PKS 2023 – Tab. 01 BE'
-  },
-  BB: {
-    name:'Brandenburg', name_en:'Brandenburg',
-    hz_gesamt:5934, hz_einbruch:67, hz_gewalt:297, hz_diebstahl:2248, hz_sachbeschaedigung:642,
-    lka:'LKA Brandenburg', lka_url:'https://lka.polizei.brandenburg.de',
-    bka_ref:'PKS 2023 – Tab. 01 BB'
-  },
-  HB: {
-    name:'Bremen', name_en:'Bremen',
-    hz_gesamt:14408, hz_einbruch:221, hz_gewalt:578, hz_diebstahl:5817, hz_sachbeschaedigung:1341,
-    lka:'LKA Bremen', lka_url:'https://www.polizei.bremen.de',
-    bka_ref:'PKS 2023 – Tab. 01 HB'
-  },
-  HH: {
-    name:'Hamburg', name_en:'Hamburg',
-    hz_gesamt:13156, hz_einbruch:163, hz_gewalt:488, hz_diebstahl:5532, hz_sachbeschaedigung:1244,
-    lka:'LKA Hamburg', lka_url:'https://www.hamburg.de/lka',
-    bka_ref:'PKS 2023 – Tab. 01 HH'
-  },
-  HE: {
-    name:'Hessen', name_en:'Hesse',
-    hz_gesamt:6978, hz_einbruch:91, hz_gewalt:338, hz_diebstahl:2754, hz_sachbeschaedigung:729,
-    lka:'LKA Hessen', lka_url:'https://lka.polizei.hessen.de',
-    bka_ref:'PKS 2023 – Tab. 01 HE'
-  },
-  MV: {
-    name:'Mecklenburg-Vorpommern', name_en:'Mecklenburg-Western Pomerania',
-    hz_gesamt:6148, hz_einbruch:49, hz_gewalt:311, hz_diebstahl:2321, hz_sachbeschaedigung:649,
-    lka:'LKA Mecklenburg-Vorpommern', lka_url:'https://www.lka-mv.de',
-    bka_ref:'PKS 2023 – Tab. 01 MV'
-  },
-  NI: {
-    name:'Niedersachsen', name_en:'Lower Saxony',
-    hz_gesamt:6598, hz_einbruch:99, hz_gewalt:312, hz_diebstahl:2611, hz_sachbeschaedigung:688,
-    lka:'LKA Niedersachsen', lka_url:'https://www.lka.niedersachsen.de',
-    bka_ref:'PKS 2023 – Tab. 01 NI'
-  },
-  NW: {
-    name:'Nordrhein-Westfalen', name_en:'North Rhine-Westphalia',
-    hz_gesamt:7748, hz_einbruch:129, hz_gewalt:382, hz_diebstahl:3198, hz_sachbeschaedigung:809,
-    lka:'LKA Nordrhein-Westfalen', lka_url:'https://lka.polizei.nrw',
-    bka_ref:'PKS 2023 – Tab. 01 NW'
-  },
-  RP: {
-    name:'Rheinland-Pfalz', name_en:'Rhineland-Palatinate',
-    hz_gesamt:5687, hz_einbruch:55, hz_gewalt:269, hz_diebstahl:2169, hz_sachbeschaedigung:601,
-    lka:'LKA Rheinland-Pfalz', lka_url:'https://lka.polizei.rlp.de',
-    bka_ref:'PKS 2023 – Tab. 01 RP'
-  },
-  SL: {
-    name:'Saarland', name_en:'Saarland',
-    hz_gesamt:6551, hz_einbruch:78, hz_gewalt:291, hz_diebstahl:2488, hz_sachbeschaedigung:654,
-    lka:'LKA Saarland', lka_url:'https://www.lka.saarland.de',
-    bka_ref:'PKS 2023 – Tab. 01 SL'
-  },
-  SN: {
-    name:'Sachsen', name_en:'Saxony',
-    hz_gesamt:6388, hz_einbruch:55, hz_gewalt:341, hz_diebstahl:2434, hz_sachbeschaedigung:697,
-    lka:'LKA Sachsen', lka_url:'https://www.lka.sachsen.de',
-    bka_ref:'PKS 2023 – Tab. 01 SN'
-  },
-  ST: {
-    name:'Sachsen-Anhalt', name_en:'Saxony-Anhalt',
-    hz_gesamt:7088, hz_einbruch:73, hz_gewalt:379, hz_diebstahl:2811, hz_sachbeschaedigung:748,
-    lka:'LKA Sachsen-Anhalt', lka_url:'https://lka.polizei.sachsen-anhalt.de',
-    bka_ref:'PKS 2023 – Tab. 01 ST'
-  },
-  SH: {
-    name:'Schleswig-Holstein', name_en:'Schleswig-Holstein',
-    hz_gesamt:6211, hz_einbruch:88, hz_gewalt:291, hz_diebstahl:2388, hz_sachbeschaedigung:641,
-    lka:'LKA Schleswig-Holstein', lka_url:'https://www.lka.schleswig-holstein.de',
-    bka_ref:'PKS 2023 – Tab. 01 SH'
-  },
-  TH: {
-    name:'Thüringen', name_en:'Thuringia',
-    hz_gesamt:6311, hz_einbruch:41, hz_gewalt:312, hz_diebstahl:2311, hz_sachbeschaedigung:661,
-    lka:'LKA Thüringen', lka_url:'https://lka.thueringen.de',
-    bka_ref:'PKS 2023 – Tab. 01 TH'
+// Gecachte Daten nach dem Laden
+let _PKS_CACHE = null;
+
+/**
+ * Lädt PKS-Daten aus data/pks.json (einmalig, dann gecacht).
+ * @returns {Promise<Object>} PKS-Datenobjekt
+ */
+async function loadPKSData() {
+  if (_PKS_CACHE) return _PKS_CACHE;
+  try {
+    const r = await fetch('./data/pks.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    _PKS_CACHE = await r.json();
+    return _PKS_CACHE;
+  } catch (e) {
+    console.warn('[PKS] Datei nicht ladbar:', e.message);
+    return null;
   }
-};
+}
 
-// Bundesweiter Durchschnitt PKS 2023
-const PKS_BUND = {
-  hz_gesamt:7000, hz_einbruch:88, hz_gewalt:340, hz_diebstahl:2741, hz_sachbeschaedigung:714
-};
-
-// PLZ-Präfix → Bundesland-Code
-// Quelle: Deutsche Post PLZ-Gebiete (vereinfachte Zuordnung, erste 2 Stellen)
+// PLZ-Präfix → Bundesland-Code (erste 2 Stellen der PLZ)
 const PLZ_BL = {
   '01':'SN','02':'SN','03':'BB','04':'SN','06':'ST','07':'TH','08':'SN','09':'SN',
   '10':'BE','11':'BE','12':'BE','13':'BE','14':'BB','15':'BB','16':'MV',
@@ -128,32 +42,34 @@ const PLZ_BL = {
   '98':'TH','99':'TH'
 };
 
-/**
- * Ermittelt das Bundesland aus einer PLZ.
- * @param {string} plz - 5-stellige Postleitzahl
- * @returns {string|null} Bundesland-Code oder null
- */
+/** Bundesland-Code aus PLZ ermitteln */
 function plzToBundesland(plz) {
   if (!plz || plz.length < 2) return null;
-  const pre2 = plz.substring(0, 2);
-  return PLZ_BL[pre2] || null;
+  return PLZ_BL[plz.substring(0, 2)] || null;
 }
 
-/**
- * Liefert PKS-Daten für eine PLZ.
- * @param {string} plz
- * @returns {{bl: string, data: Object}|null}
- */
+/** PKS-Daten für eine PLZ liefern (aus Cache) */
 function getPKSByPLZ(plz) {
+  if (!_PKS_CACHE) return null;
   const bl = plzToBundesland(plz);
-  if (!bl || !PKS_2023[bl]) return null;
-  return { bl, data: PKS_2023[bl] };
+  if (!bl) return null;
+  const data = _PKS_CACHE.laender?.[bl];
+  if (!data) return null;
+  return { bl, data };
+}
+
+/** Bundesweiter Durchschnitt aus Cache */
+function getPKSBund() {
+  return _PKS_CACHE?.bund || null;
+}
+
+/** PKS-Metadaten aus Cache */
+function getPKSMeta() {
+  return _PKS_CACHE?._meta || null;
 }
 
 /**
- * Berechnet das relative Risikolevel einer HZ im Vergleich zum Bundesdurchschnitt.
- * @param {number} hz - Häufigkeitszahl des Bundeslandes
- * @param {number} avg - Bundesdurchschnitt
+ * Relatives Risikolevel einer HZ im Vergleich zum Bundesdurchschnitt.
  * @returns {'hoch'|'erhoht'|'mittel'|'gering'}
  */
 function pksRiskLevel(hz, avg) {
@@ -163,3 +79,8 @@ function pksRiskLevel(hz, avg) {
   if (ratio >= 0.85) return 'mittel';
   return 'gering';
 }
+
+// Vorausladen beim App-Start (non-blocking)
+loadPKSData().then(d => {
+  if (d) console.info(`[PKS] Daten geladen – Berichtsjahr ${d._meta?.berichtsjahr||'?'}, Stand ${d._meta?.zuletzt_aktualisiert||'?'}`);
+});
