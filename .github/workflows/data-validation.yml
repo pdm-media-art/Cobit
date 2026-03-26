@@ -1,0 +1,104 @@
+name: Data Validation — PKS & JSON
+
+on:
+  push:
+    paths:
+      - 'data/**'
+  pull_request:
+    paths:
+      - 'data/**'
+  workflow_dispatch:
+
+jobs:
+  validate-pks:
+    runs-on: ubuntu-latest
+    name: PKS-Daten validieren
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate pks.json structure
+        id: validate
+        run: |
+          python3 - <<'PYEOF'
+          import json, sys
+
+          with open('data/pks.json') as f:
+              d = json.load(f)
+
+          errors = []
+          warnings = []
+
+          # ── Meta block ──
+          meta = d.get('_meta', {})
+          if not meta:
+              errors.append('Fehlender _meta-Block')
+          else:
+              for k in ['berichtsjahr', 'veroeffentlicht', 'zuletzt_aktualisiert', 'quelle']:
+                  if k not in meta:
+                      warnings.append(f'_meta fehlt: {k}')
+              year = meta.get('berichtsjahr')
+              if not isinstance(year, int) or year < 2020 or year > 2030:
+                  errors.append(f'Ungültiges berichtsjahr: {year}')
+
+          # ── Bundesweit ──
+          bund = d.get('bund', {})
+          if not bund:
+              errors.append('Fehlender bund-Block')
+          else:
+              for hz in ['hz_gesamt','hz_einbruch','hz_gewalt','hz_diebstahl','hz_sachbeschaedigung']:
+                  if hz not in bund:
+                      errors.append(f'bund fehlt: {hz}')
+                  elif not isinstance(bund[hz], (int, float)) or bund[hz] <= 0:
+                      errors.append(f'bund.{hz} ungültig: {bund[hz]}')
+
+          # ── Bundesländer ──
+          laender = d.get('laender', {})
+          required_bl = ['BW','BY','BE','BB','HB','HH','HE','MV','NI','NW','RP','SL','SN','ST','SH','TH']
+          if len(laender) != 16:
+              warnings.append(f'Erwarte 16 Bundesländer, gefunden: {len(laender)}')
+          for bl in required_bl:
+              if bl not in laender:
+                  errors.append(f'Fehlendes Bundesland: {bl}')
+              else:
+                  bl_data = laender[bl]
+                  for hz in ['hz_gesamt','hz_einbruch','hz_gewalt','hz_diebstahl','hz_sachbeschaedigung']:
+                      if hz not in bl_data:
+                          errors.append(f'{bl} fehlt: {hz}')
+                      elif not isinstance(bl_data[hz], (int, float)) or bl_data[hz] <= 0:
+                          errors.append(f'{bl}.{hz} ungültig: {bl_data[hz]}')
+                  if 'name' not in bl_data:
+                      warnings.append(f'{bl} fehlt: name')
+
+          # ── Cross-check: Bundesland HZ should be reasonable vs bund ──
+          if bund and laender:
+              hz_bund = bund.get('hz_gesamt', 0)
+              for bl, bl_data in laender.items():
+                  hz_bl = bl_data.get('hz_gesamt', 0)
+                  if hz_bl > hz_bund * 5:
+                      warnings.append(f'{bl}.hz_gesamt ({hz_bl}) scheint unplausibel hoch (Bund: {hz_bund})')
+
+          # ── Output ──
+          for w in warnings:
+              print(f'::warning::pks.json: {w}')
+          if errors:
+              for e in errors:
+                  print(f'::error::pks.json: {e}')
+              sys.exit(1)
+
+          berichtsjahr = d.get('_meta',{}).get('berichtsjahr','?')
+          aktualisiert = d.get('_meta',{}).get('zuletzt_aktualisiert','?')
+          print(f'::notice::✅ pks.json gültig — Berichtsjahr {berichtsjahr}, aktualisiert {aktualisiert}, {len(laender)} Bundesländer')
+          PYEOF
+
+      - name: Berichtsjahr prüfen (Aktualitäts-Warnung)
+        run: |
+          EXPECTED_YEAR=$(($(date +%Y) - 1))
+          CURRENT_YEAR=$(python3 -c "import json; d=json.load(open('data/pks.json')); print(d['_meta']['berichtsjahr'])")
+          echo "Erwartetes Berichtsjahr: $EXPECTED_YEAR | In pks.json: $CURRENT_YEAR"
+          if [ "$CURRENT_YEAR" -lt "$EXPECTED_YEAR" ]; then
+            echo "::warning::pks.json enthält PKS $CURRENT_YEAR — neue Daten (PKS $EXPECTED_YEAR) könnten verfügbar sein. Siehe BKA PKS-Portal."
+          else
+            echo "::notice::Berichtsjahr $CURRENT_YEAR ist aktuell."
+          fi

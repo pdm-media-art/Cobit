@@ -170,9 +170,11 @@ function _kskCrimeStatsHTML(){
     return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No postal code entered. Please add a postal code in the object data to enable crime statistics lookup.':'Keine Postleitzahl hinterlegt. Bitte Postleitzahl in den Objektdaten ergänzen, um die Kriminalstatistik abzurufen.'}</p>`;
   }
   if(!pks||!bund){
-    return`<p class="ksk-text" style="font-style:italic">${L==='en'
-      ?`Crime statistics data is still loading or unavailable for postal code ${esc(plz)}. Please reload the page and try again. Data source: <a href="https://www.bka.de/pks" style="color:#60a5fa" target="_blank">bka.de/pks</a>.`
-      :`Statistikdaten werden geladen oder sind für PLZ ${esc(plz)} nicht verfügbar. Bitte Seite neu laden. Datenquelle: <a href="https://www.bka.de/pks" style="color:#60a5fa" target="_blank">bka.de/pks</a>.`
+    // Trigger async load and re-render once data arrives
+    if(typeof loadPKSData==='function')loadPKSData().then(d=>{if(d)render();});
+    return`<p class="ksk-text" style="color:var(--muted)">⏳ ${L==='en'
+      ?`Crime statistics loading for postal code <strong>${esc(plz)}</strong>… If this persists, check that <code>data/pks.json</code> is accessible.`
+      :`Kriminalstatistik für PLZ <strong>${esc(plz)}</strong> wird geladen… Falls dies anhält, prüfen Sie ob <code>data/pks.json</code> erreichbar ist.`
     }</p>`;
   }
   const {data}=pks;
@@ -292,7 +294,7 @@ function renderKonzept(){
         ${metricRows?`<p class="ksk-text" style="margin-top:10px"><strong>${L==='en'?'Building metrics:':'Objektkennzahlen:'}</strong></p><table class="ksk-table">${metricRows}</table>`:''}
       `)}
       ${S2(3,L==='en'?'Environmental Analysis':'Umfeldanalyse',_kskUmfeldHTML())}
-      ${S2(4,L==='en'?'Crime Statistics (BKA PKS 2023)':'Kriminalstatistik (BKA PKS 2023)',_kskCrimeStatsHTML())}
+      ${S2(4,L==='en'?`Crime Statistics (BKA PKS ${getPKSMeta()?.berichtsjahr||''})`:`Kriminalstatistik (BKA PKS ${getPKSMeta()?.berichtsjahr||''})`,_kskCrimeStatsHTML())}
       ${S2(5,L==='en'?'Protection Objectives':'Schutzziele',`
         <p class="ksk-text">${L==='en'?'The following protection objectives form the basis of this security report:':'Die folgenden Schutzziele bilden die Grundlage dieses Sicherheitsberichts:'}</p>
         <table class="ksk-table"><thead><tr><th>ID</th><th>${L==='en'?'Objective':'Schutzziel'}</th><th>${L==='en'?'Description':'Beschreibung'}</th><th>${L==='en'?'Priority':'Priorität'}</th></tr></thead><tbody>${sz.map(s=>`<tr><td style="font-family:var(--fm);font-size:.65rem;font-weight:700">${s.id}</td><td><strong style="color:#e2e8f0">${s.z}</strong></td><td style="font-size:.76rem">${s.d}</td><td><span class="${s.p==='HOCH'?'risk-krit':'risk-mangel'}">${s.p}</span></td></tr>`).join('')}</tbody></table>
@@ -347,7 +349,7 @@ function renderKonzept(){
         <p class="ksk-text">${L==='en'?'The following glossary defines the key technical terms used in this security concept. The definitions are based on internationally recognised standards, in particular <strong>ISO 31000:2018</strong> (Risk Management), <strong>ISO/IEC 27001:2022</strong> (Information Security), <strong>ISO 22301:2019</strong> (Business Continuity) and the <strong>BSI IT-Grundschutz</strong>. Understanding these terms ensures a common basis for the assessment, communication and treatment of risks.':'Das nachfolgende Glossar definiert die wesentlichen Fachbegriffe dieses Sicherheitskonzepts. Die Definitionen basieren auf international anerkannten Normen, insbesondere <strong>ISO 31000:2018</strong> (Risikomanagement), <strong>ISO/IEC 27001:2022</strong> (Informationssicherheit), <strong>ISO 22301:2019</strong> (Business Continuity) sowie dem <strong>BSI IT-Grundschutz</strong>. Das Verständnis dieser Begriffe schafft eine gemeinsame Grundlage für die Beurteilung, Kommunikation und Behandlung von Risiken.'}</p>
         ${_kskGlossaryHTML()}
       `)}
-      <div style="background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(16,185,129,.03));border-top:1px solid rgba(37,99,235,.15);padding:24px 40px;text-align:center">
+      <div class="ksk-brand-footer" style="background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(16,185,129,.03));border-top:1px solid rgba(37,99,235,.15);padding:24px 40px;text-align:center">
         <div style="font-family:var(--fh);font-weight:800;color:#f1f5f9;font-size:1rem">SecureStay: Analytics</div>
         <div style="font-size:.76rem;color:#94a3b8;margin-top:3px">SecureStay Solutions UG (haftungsbeschränkt)</div>
         <div style="font-size:.64rem;color:#64748b;margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
