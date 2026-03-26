@@ -54,6 +54,8 @@ function newAudit(){
   if(hasData)toast(L==='en'?'New audit started — previous data saved to History.':'Neues Audit gestartet — vorheriger Stand in der Historie gesichert.','info');
 }
 
+function selMod(m){S.module=m;S.norms=[];render();save();}
+
 function renderModule(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const hasData=!!(S.module||S.meta.objekt||Object.keys(S.findings||{}).length);
