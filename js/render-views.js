@@ -96,7 +96,7 @@ function renderDash(){
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Control Points':'Prüfpunkte'} (${total})</div><div style="height:185px;position:relative"><canvas id="c1"></canvas></div></div>
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Compliance by Domain':'Compliance pro Bereich'}</div><div style="height:185px;position:relative"><canvas id="c2"></canvas></div></div>
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Maturity by Domain':'Reifegrad pro Bereich'}</div><div style="height:185px;position:relative"><canvas id="c3"></canvas></div></div>
-      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Object Risk Profile':'Objekt-Risikoprofil'}</div><div style="height:185px;position:relative"><canvas id="c4"></canvas></div></div>
+      <div class="chart-box"><div class="chart-box-title">${L==='en'?'Risk Matrix (5×5)':'Risikomatrix (5×5)'}</div><div style="height:185px;position:relative"><canvas id="c4"></canvas></div></div>
     </div>
     <div class="chart-grid" style="grid-template-columns:1fr 1fr">
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Measures':'Maßnahmen'}</div><div style="height:140px;position:relative"><canvas id="c5"></canvas></div></div>
@@ -132,51 +132,62 @@ function renderDash(){
           y:{stacked:true,ticks:{color:tc,font:{size:8}},grid:{display:false}}},
           plugins:{...df.plugins,tooltip:{mode:'index'}}}}));
     } else if(el2){el2.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No findings yet':'Noch keine Befunde'}</div>`;}
-    // C3 — radar maturity
+    // C3 — spider web radar (always visible; placeholder labels when no module active)
     const el3=document.getElementById('c3');
-    if(el3&&domStats.length>=3){
+    if(el3){
+      const phLabels=L==='en'
+        ?['Perimeter','Access Ctrl','CCTV','Alarm','Fire Safety','IT Security']
+        :['Perimeter','Zutritt','Video','Alarm','Brandschutz','IT-Sicherheit'];
+      const radarLabels=domStats.length>=3?domStats.map(d=>d.l):phLabels;
+      const radarData=domStats.length>=3?domStats.map(d=>d.mat):Array(phLabels.length).fill(0);
       window._dashCharts.push(new Chart(el3,{type:'radar',
-        data:{labels:domStats.map(d=>d.l),
-          datasets:[{label:L==='en'?'Maturity':'Reifegrad',data:domStats.map(d=>d.mat),
+        data:{labels:radarLabels,
+          datasets:[{label:L==='en'?'Maturity':'Reifegrad',data:radarData,
             borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.15)',borderWidth:2,pointRadius:3,
             pointBackgroundColor:'#a78bfa',pointHoverRadius:5}]},
         options:{...df,scales:{r:{min:0,max:5,ticks:{stepSize:1,color:tc,backdropColor:'transparent',font:{size:7}},
           grid:{color:gc},pointLabels:{color:tc,font:{size:7}}}}}}));
-    } else if(el3&&domStats.length>0){
-      // fallback bar for <3 domains
-      window._dashCharts.push(new Chart(el3,{type:'bar',
-        data:{labels:domStats.map(d=>d.l),datasets:[{label:L==='en'?'Maturity Level':'Reifegrad',data:domStats.map(d=>d.mat),backgroundColor:'#a78bfa',borderRadius:4,borderWidth:0}]},
-        options:{...dfNoLeg,scales:{x:{ticks:{color:tc},grid:{display:false}},y:{min:0,max:5,ticks:{stepSize:1,color:tc},grid:{color:gc}}}}}));
-    } else if(el3){el3.parentElement.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.75rem">${L==='en'?'No maturity data':'Keine Reifegraddaten'}</div>`;}
-    // C4 — risk profile radar (object meta risk factors)
+    }
+    // C4 — 5×5 risk matrix (colour-coded: likelihood × impact)
     const el4=document.getElementById('c4');
     if(el4){
-      const m=S.meta;
-      const yn=v=>v==='ja'?100:v==='teilweise'?50:v==='vollständig'?100:v==='nein'||v===''?0:20;
-      const riskFactors=[
-        {l:L==='en'?'Break-ins':'Einbrüche',v:yn(m.einbrueche)},
-        {l:L==='en'?'Theft':'Diebstahl',v:yn(m.diebstahl)},
-        {l:L==='en'?'Sabotage':'Sabotage',v:yn(m.sabotage)},
-        {l:L==='en'?'IT Incidents':'IT-Vorfälle',v:yn(m.itVorfaelle)},
-        {l:L==='en'?'Fire Damage':'Brandschäden',v:yn(m.brandschaden)},
-        {l:L==='en'?'Int. Theft':'Pers.diebst.',v:yn(m.personaldiebstahl)},
-      ];
-      const mitFactors=[
-        {l:L==='en'?'Access Ctrl':'Zugang',v:yn(m.zugangskontrolle)},
-        {l:L==='en'?'Alarm':'Alarm',v:yn(m.alarmanlage==='ja'||m.alarmanlage==='teilweise'?m.alarmanlage:'nein')},
-        {l:L==='en'?'Security':'Wachdienst',v:yn(m.sicherheitsdienst)},
-        {l:L==='en'?'Fence':'Zaun',v:yn(m.einzaeunung)},
-        {l:L==='en'?'Lighting':'Beleuchtg.',v:yn(m.aussenbeleuchtung)},
-        {l:L==='en'?'24h Guard':'24h-Bewachg.',v:yn(m.bewachung24h)},
-      ];
-      window._dashCharts.push(new Chart(el4,{type:'bar',
-        data:{labels:[...riskFactors.map(f=>f.l),...mitFactors.map(f=>f.l)],
-          datasets:[
-            {label:L==='en'?'Risk Factors':'Risikofaktoren',data:[...riskFactors.map(f=>f.v),...mitFactors.map(()=>0)],backgroundColor:'rgba(239,68,68,.7)',borderWidth:0,borderRadius:3},
-            {label:L==='en'?'Mitigations':'Schutzmaßnahmen',data:[...riskFactors.map(()=>0),...mitFactors.map(f=>f.v)],backgroundColor:'rgba(34,197,94,.6)',borderWidth:0,borderRadius:3}
-          ]},
-        options:{...df,scales:{x:{ticks:{color:tc,font:{size:7}},grid:{display:false}},y:{min:0,max:100,ticks:{color:tc,font:{size:8}},grid:{color:gc}}},
-          plugins:{...df.plugins,annotation:{},tooltip:{mode:'index'}}}}));
+      el4.style.display='none';
+      const wrap=el4.parentElement;
+      const mkPos=d=>{
+        const lik=d.mat>0?Math.max(1,Math.min(5,Math.round(6-d.mat))):3;
+        const tot=d.ok+d.mn+d.kr;
+        const imp=tot>0?Math.max(1,Math.min(5,Math.round((d.kr*2+d.mn)/tot*4+1))):1;
+        return{x:lik,y:imp,l:d.l,kr:d.kr,mn:d.mn};
+      };
+      const items=domStats.map(mkPos);
+      const cellBg=(x,y)=>{const r=x*y;return r>=15?'rgba(239,68,68,.28)':r>=9?'rgba(249,115,22,.22)':r>=4?'rgba(234,179,8,.18)':'rgba(34,197,94,.14)';};
+      let rows='';
+      for(let y=5;y>=1;y--){
+        let cells='';
+        for(let x=1;x<=5;x++){
+          const here=items.filter(i=>i.x===x&&i.y===y);
+          const dots=here.map(i=>`<span title="${esc(i.l)}" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${i.kr>0?'#ef4444':i.mn>0?'#eab308':'#a78bfa'};margin:1px;vertical-align:middle"></span>`).join('');
+          cells+=`<td style="border:1px solid rgba(255,255,255,.05);background:${cellBg(x,y)};text-align:center;vertical-align:middle;padding:1px">${dots||''}</td>`;
+        }
+        rows+=`<tr><td style="font-size:.5rem;color:${tc};text-align:right;padding-right:2px;white-space:nowrap;width:12px">${y}</td>${cells}</tr>`;
+      }
+      wrap.innerHTML=`<div style="height:185px;display:flex;flex-direction:column;padding:4px 2px 2px">
+        <div style="display:flex;flex:1;min-height:0">
+          <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:.5rem;color:${tc};padding-right:2px;white-space:nowrap;align-self:center">${L==='en'?'Impact':'Auswirkung'}</div>
+          <div style="flex:1;min-width:0">
+            <table style="width:100%;height:140px;border-collapse:collapse;table-layout:fixed">${rows}</table>
+            <div style="display:flex;padding-left:12px;margin-top:1px">${[1,2,3,4,5].map(x=>`<div style="flex:1;text-align:center;font-size:.5rem;color:${tc}">${x}</div>`).join('')}</div>
+            <div style="text-align:center;font-size:.52rem;color:${tc};margin-top:1px">${L==='en'?'Likelihood':'Wahrscheinlichkeit'}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:4px;flex-wrap:wrap">
+          <span style="font-size:.57rem;color:#22c55e">■ ${L==='en'?'Low':'Gering'}</span>
+          <span style="font-size:.57rem;color:#eab308">■ ${L==='en'?'Med':'Mittel'}</span>
+          <span style="font-size:.57rem;color:#f97316">■ ${L==='en'?'High':'Hoch'}</span>
+          <span style="font-size:.57rem;color:#ef4444">■ ${L==='en'?'Critical':'Kritisch'}</span>
+          ${domStats.length?`<span style="font-size:.57rem;color:${tc};margin-left:4px">● ${L==='en'?'Criticals':'Kritisch'} ◆ ${L==='en'?'Defic.':'Mängel'}</span>`:''}
+        </div>
+      </div>`;
     }
     // C5 — measures
     const el5=document.getElementById('c5');
