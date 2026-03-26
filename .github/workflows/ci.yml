@@ -2,14 +2,14 @@ name: CI — Validate & Quality Check
 
 on:
   push:
-    branches: [main, 'claude/**', 'feature/**']
+    branches: [main, master, 'claude/**', 'feature/**']
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: HTML Validation & Size Check
+    name: HTML & JS Validation
 
     steps:
       - name: Checkout
@@ -28,28 +28,121 @@ jobs:
           htmlhint index.html --config .htmlhintrc 2>/dev/null || \
           htmlhint index.html || true
 
-      - name: Check file size
+      - name: Check JS syntax (all files in js/)
         run: |
-          SIZE=$(wc -c < index.html)
-          SIZE_KB=$((SIZE / 1024))
-          echo "index.html size: ${SIZE_KB} KB (${SIZE} bytes)"
-          if [ $SIZE -gt 5242880 ]; then
-            echo "::error::index.html exceeds 5 MB limit (${SIZE_KB} KB)"
+          echo "Checking JS syntax in js/ directory..."
+          ERRORS=0
+          for f in js/*.js; do
+            if [ -f "$f" ]; then
+              node --check "$f" 2>&1 && echo "✓ $f" || { echo "✗ $f has syntax errors"; ERRORS=$((ERRORS+1)); }
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "::error::$ERRORS JS file(s) have syntax errors"
             exit 1
           fi
-          echo "::notice::File size OK: ${SIZE_KB} KB"
+          echo "::notice::All JS files syntax OK"
 
-      - name: Check for console errors in JS
+      - name: Validate JSON data files
         run: |
-          # Warn on leftover debug statements
-          if grep -n 'console\.log' index.html; then
-            echo "::warning::console.log statements found in index.html"
+          echo "Validating JSON files in data/..."
+          ERRORS=0
+          for f in data/*.json; do
+            if [ -f "$f" ]; then
+              python3 -c "import json,sys; json.load(open('$f')); print('✓ $f')" 2>&1 \
+                || { echo "✗ $f is invalid JSON"; ERRORS=$((ERRORS+1)); }
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "::error::$ERRORS JSON file(s) are invalid"
+            exit 1
           fi
 
-      - name: Lint check — no TODO left in prod
+      - name: Validate PKS data structure
         run: |
-          if grep -in 'TODO\|FIXME\|HACK\|XXX' index.html; then
+          python3 - <<'PYEOF'
+          import json, sys
+          with open('data/pks.json') as f:
+              d = json.load(f)
+          errors = []
+          if '_meta' not in d:
+              errors.append('Missing _meta block')
+          else:
+              for k in ['berichtsjahr', 'veroeffentlicht', 'zuletzt_aktualisiert']:
+                  if k not in d['_meta']:
+                      errors.append(f'_meta missing field: {k}')
+          if 'bund' not in d:
+              errors.append('Missing bund block')
+          if 'laender' not in d:
+              errors.append('Missing laender block')
+          else:
+              required = ['BW','BY','BE','BB','HB','HH','HE','MV','NI','NW','RP','SL','SN','ST','SH','TH']
+              for bl in required:
+                  if bl not in d['laender']:
+                      errors.append(f'Missing Bundesland: {bl}')
+                  else:
+                      for hz in ['hz_gesamt','hz_einbruch','hz_gewalt','hz_diebstahl','hz_sachbeschaedigung']:
+                          if hz not in d['laender'][bl]:
+                              errors.append(f'{bl} missing: {hz}')
+          if errors:
+              for e in errors:
+                  print(f'::error::pks.json: {e}')
+              sys.exit(1)
+          print(f"::notice::pks.json OK — Berichtsjahr {d['_meta']['berichtsjahr']}, {len(d['laender'])} Bundesländer")
+          PYEOF
+
+      - name: Check file sizes
+        run: |
+          echo "=== File size report ==="
+          for f in index.html styles.css js/*.js data/*.json; do
+            if [ -f "$f" ]; then
+              SIZE=$(wc -c < "$f")
+              SIZE_KB=$((SIZE / 1024))
+              echo "  $f — ${SIZE_KB} KB (${SIZE} bytes)"
+              if [ $SIZE -gt 2097152 ]; then
+                echo "::warning::$f exceeds 2 MB"
+              fi
+            fi
+          done
+          TOTAL=$(cat index.html styles.css js/*.js data/*.json 2>/dev/null | wc -c)
+          TOTAL_KB=$((TOTAL / 1024))
+          echo "Total payload: ${TOTAL_KB} KB"
+          if [ $TOTAL -gt 10485760 ]; then
+            echo "::error::Total payload exceeds 10 MB"
+            exit 1
+          fi
+          echo "::notice::Total payload OK: ${TOTAL_KB} KB"
+
+      - name: Debug statement check
+        run: |
+          # Warn on leftover console.log in JS files
+          if grep -rn 'console\.log' js/ 2>/dev/null; then
+            echo "::warning::console.log found in js/ — consider removing before production"
+          fi
+          # Warn on TODO/FIXME in all source files
+          if grep -rn 'TODO\|FIXME\|HACK\|XXX' index.html js/ styles.css 2>/dev/null; then
             echo "::warning::Unresolved TODO/FIXME markers found"
+          fi
+
+      - name: Security scan — no secrets
+        run: |
+          # Detect common secret patterns
+          FOUND=0
+          for pattern in \
+            'password\s*=\s*"[^"]+"' \
+            'api[_-]?key\s*[=:]\s*"[^"]+"' \
+            'secret\s*[=:]\s*"[^"]+"' \
+            'Bearer [A-Za-z0-9\-_\.]{20,}' \
+            'AKIA[0-9A-Z]{16}'; do
+            if grep -rniE "$pattern" index.html js/ data/ 2>/dev/null | grep -v '\.gitignore'; then
+              echo "::warning::Possible secret pattern detected: $pattern"
+              FOUND=$((FOUND+1))
+            fi
+          done
+          if [ $FOUND -gt 0 ]; then
+            echo "::warning::Run 'git secret' or 'truffleHog' scan before merging to production"
+          else
+            echo "::notice::No obvious secret patterns found"
           fi
 
   size-report:
@@ -69,12 +162,12 @@ jobs:
 
       - name: Compare sizes
         run: |
-          PR_SIZE=$(wc -c < index.html)
-          BASE_SIZE=$(wc -c < base/index.html)
-          DIFF=$((PR_SIZE - BASE_SIZE))
-          PR_KB=$((PR_SIZE / 1024))
-          BASE_KB=$((BASE_SIZE / 1024))
-          echo "Base: ${BASE_KB} KB | PR: ${PR_KB} KB | Delta: ${DIFF} bytes"
-          if [ $DIFF -gt 51200 ]; then
-            echo "::warning::index.html grew by more than 50 KB in this PR"
+          PR_TOTAL=$(cat index.html styles.css js/*.js data/*.json 2>/dev/null | wc -c)
+          BASE_TOTAL=$(cat base/index.html base/styles.css base/js/*.js base/data/*.json 2>/dev/null | wc -c)
+          DIFF=$((PR_TOTAL - BASE_TOTAL))
+          PR_KB=$((PR_TOTAL / 1024))
+          BASE_KB=$((BASE_TOTAL / 1024))
+          echo "Base payload: ${BASE_KB} KB | PR payload: ${PR_KB} KB | Delta: +${DIFF} bytes"
+          if [ $DIFF -gt 102400 ]; then
+            echo "::warning::Payload grew by more than 100 KB in this PR"
           fi

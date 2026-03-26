@@ -1,0 +1,109 @@
+name: PKS Jahres-Update (BKA Kriminalstatistik)
+
+# Läuft automatisch jährlich am 1. Mai (nach typischer BKA-Veröffentlichung im April)
+# Kann auch manuell ausgelöst werden
+on:
+  schedule:
+    - cron: '0 8 1 5 *'   # 01. Mai, 08:00 UTC
+  workflow_dispatch:
+    inputs:
+      berichtsjahr:
+        description: 'PKS Berichtsjahr (z.B. 2024)'
+        required: true
+        default: '2024'
+      hinweis:
+        description: 'Hinweis / Notiz zur Aktualisierung'
+        required: false
+
+jobs:
+  pks-update-reminder:
+    name: PKS-Daten prüfen & Issue erstellen
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Aktuelles Berichtsjahr ermitteln
+        id: jahr
+        run: |
+          # BKA veröffentlicht PKS für Jahr X typisch im April von Jahr X+1
+          # Am 01. Mai ist das Vorjahr das aktuellste Berichtsjahr
+          YEAR=$(date +%Y)
+          BERICHT=$((YEAR - 1))
+          echo "berichtsjahr=$BERICHT" >> $GITHUB_OUTPUT
+          echo "stand=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          echo "Berichtsjahr: $BERICHT"
+
+      - name: Aktuelle pks.json lesen
+        id: current
+        run: |
+          CURRENT=$(cat data/pks.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('_meta',{}).get('berichtsjahr','unbekannt'))")
+          echo "aktuell=$CURRENT" >> $GITHUB_OUTPUT
+          echo "Aktuell in pks.json: PKS $CURRENT"
+
+      - name: GitHub Issue erstellen (wenn Update nötig)
+        if: steps.current.outputs.aktuell != steps.jahr.outputs.berichtsjahr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const bericht = '${{ steps.jahr.outputs.berichtsjahr }}';
+            const aktuell = '${{ steps.current.outputs.aktuell }}';
+            const stand   = '${{ steps.jahr.outputs.stand }}';
+
+            const body = `## 🔔 PKS-Daten aktualisieren – PKS ${bericht}
+
+            Das BKA hat den PKS-Bericht **${bericht}** voraussichtlich im April ${parseInt(bericht)+1} veröffentlicht.
+            Die Datei \`data/pks.json\` enthält aktuell noch die Daten von PKS **${aktuell}**.
+
+            ### Was zu tun ist
+
+            1. **PKS ${bericht} herunterladen:**
+               - BKA PKS Portal: https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/
+               - Bundesländer-Tabellen (Excel/CSV): "Tabelle 01 – Straftaten insgesamt"
+
+            2. **HZ-Werte für alle 16 Bundesländer** aus Tabelle 01 entnehmen:
+               - Straftaten gesamt (HZ)
+               - Wohnungseinbruchdiebstahl (HZ)
+               - Gewaltkriminalität (HZ)
+               - Diebstahl gesamt (HZ)
+               - Sachbeschädigung (HZ)
+
+            3. **\`data/pks.json\` aktualisieren:**
+               \`\`\`json
+               {
+                 "_meta": {
+                   "berichtsjahr": ${bericht},
+                   "veroeffentlicht": "April ${parseInt(bericht)+1}",
+                   "url": "https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS${bericht}/",
+                   "zuletzt_aktualisiert": "${stand}"
+                 },
+                 ...
+               }
+               \`\`\`
+
+            4. **Commit & Push** auf den main Branch.
+
+            ### Quellen
+            - 🔗 BKA PKS ${bericht}: https://www.bka.de/pks${bericht}
+            - 📊 Direkt-Download Bundesländer: Über das BKA-Portal abrufbar
+
+            ---
+            *Automatisch erstellt am ${stand} durch GitHub Action \`update-pks.yml\`*`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📊 PKS ${bericht} – data/pks.json aktualisieren`,
+              body: body,
+              labels: ['data-update', 'kriminalstatistik']
+            });
+            console.log(`Issue erstellt: PKS ${bericht} Update`);
+
+      - name: Kein Update nötig
+        if: steps.current.outputs.aktuell == steps.jahr.outputs.berichtsjahr
+        run: |
+          echo "✅ pks.json ist aktuell (PKS ${{ steps.current.outputs.aktuell }}). Kein Update nötig."

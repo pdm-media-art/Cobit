@@ -1,7 +1,7 @@
 
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{
-  objekt:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',
+  objekt:'',strasse:'',hausnummer:'',plz:'',ort:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',
   eingaenge:'',einfahrten:'',stockwerke:'',mitarbeiter:'',flaeche:'',parkplaetze:'',kameras:'',
   gebaeudetype:'',baujahr:'',anzahlGebaeude:'1',aussengelaende:'',
   zugangskontrolle:'',alarmanlage:'',sicherheitsdienst:'',bewachung24h:'',
@@ -15,7 +15,7 @@ meta:{
   konzeptVersion:'1.0',konzeptStatus:'Entwurf'
 },
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
-umfeld:{done:false},reportView:'begehung',
+umfeld:{done:false,selectedRadius:1000},reportView:'begehung',
 kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva',kleinunternehmer:false}};
 function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem('ssa4'));if(d)Object.assign(S,d)}catch(e){}}
