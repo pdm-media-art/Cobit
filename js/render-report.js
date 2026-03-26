@@ -13,7 +13,7 @@ function renderReport(){
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
     <div class="rpt-tabs">
       <button class="rpt-tab active" onclick="S.reportView='begehung';render()">${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
-      <button class="rpt-tab konzept-tab" onclick="S.reportView='konzept';render()">${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+      <button class="rpt-tab konzept-tab" onclick="S.reportView='konzept';render()">${L==='en'?'Security Report':'Sicherheitsbericht'}</button>
     </div>
     <div style="display:flex;gap:6px">
       <button class="print-btn" onclick="exportData()" title="${L==='en'?'Backup as JSON':'Als JSON sichern'}">Backup</button>
@@ -63,7 +63,7 @@ function renderReport(){
     <div style="font-size:.76rem;color:var(--muted);margin-top:2px">SecureStay Solutions UG (haftungsbeschränkt)</div>
     <div style="font-size:.64rem;color:var(--soft);margin-top:2px">Kirchstr. 8b · 55270 Essenheim · securestay@outlook.de</div>
   </div>
-  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Concept':'Konzept generieren'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
+  <div class="nav-row"><button class="btn-s" onclick="prev()">←</button><div style="display:flex;gap:6px"><button class="btn-p konzept-tab" onclick="S.reportView='konzept';render()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(167,139,250,.3)">📐 ${typeof _LANG!=='undefined'&&_LANG==='en'?'Generate Security Report':'Sicherheitsbericht erstellen'}</button><button class="btn-p" onclick="window.print()">🖨 PDF</button></div></div>`;
 }
 
 // ═══ KONZEPT HELPERS ═══
@@ -82,10 +82,49 @@ function _kskMeasureTable(items,prio,idOffset){
 }
 function _kskUmfeldHTML(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  if(!S.umfeld?.done)return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No environmental analysis conducted. For a complete security concept, a site-specific environmental analysis in accordance with DIN 14675 / VdS 2311 is recommended.':'Keine Umfeldanalyse durchgeführt. Für ein vollständiges Sicherheitskonzept wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen.'}</p>`;
-  const highRisks=(S.umfeld.risks||[]).filter(r=>r.level==='hoch'||r.level==='mittel');
-  const rows=highRisks.map(r=>`<tr><td><strong>${r.category}</strong></td><td style="text-align:center">${r.count}</td><td><span class="${r.level==='hoch'?'risk-krit':'risk-mangel'}">${r.level.toUpperCase()}</span></td><td style="font-size:.72rem">${r.recommend}</td></tr>`).join('');
-  return`<p class="ksk-text">${L==='en'?`The environmental analysis recorded <strong>${S.umfeld.poiCount||'–'} security-relevant objects</strong> within a radius of <strong>${S.umfeld.radius||250} m</strong>. Overall environmental risk: <strong>${S.umfeld.overallRisk||'–'}</strong>.`:`Im Rahmen der Umfeldanalyse wurden <strong>${S.umfeld.poiCount||'–'} sicherheitsrelevante Objekte</strong> in einem Radius von <strong>${S.umfeld.radius||250} m</strong> erfasst. Gesamtbewertung Umfeld-Risiko: <strong>${S.umfeld.overallRisk||'–'}</strong>.`}</p>${highRisks.length?`<table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Count':'Anzahl'}</th><th>${L==='en'?'Risk Level':'Risikostufe'}</th><th>${L==='en'?'Recommendation':'Handlungsempfehlung'}</th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="ksk-okbox">✓ ${L==='en'?'No elevated environmental risks identified.':'Keine erhöhten Umfeldrisiken identifiziert.'}</div>`}`;
+  const addrStr=S.meta.strasse?`${S.meta.strasse} ${S.meta.hausnummer||''}, ${S.meta.plz||''} ${S.meta.ort||''}`.trim():(S.meta.adresse||'');
+  if(!S.umfeld?.done){
+    return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No environmental analysis conducted. For a complete security report, a site-specific environmental analysis of the vicinity in accordance with DIN 14675 / VdS 2311 is recommended. The analysis can be started via the "Site Analysis" step in the audit wizard.':'Keine Umfeldanalyse durchgeführt. Für einen vollständigen Sicherheitsbericht wird eine standortbezogene Umfeldanalyse gemäß DIN 14675 / VdS 2311 empfohlen. Die Analyse kann über den Schritt „Umfeld" im Audit-Assistenten gestartet werden.'}</p>
+    ${addrStr?`<div class="ksk-infobox"><strong>${L==='en'?'Object address:':'Objektadresse:'}</strong> ${esc(addrStr)}</div>`:''}`;
+  }
+  const u=S.umfeld;
+  const ts=u.timestamp?new Date(u.timestamp).toLocaleDateString(L==='de'?'de-DE':'en-GB',{day:'2-digit',month:'long',year:'numeric'}):'';
+  const allRisks=u.risks||[];
+  const highRisks=allRisks.filter(r=>r.level==='hoch');
+  const midRisks=allRisks.filter(r=>r.level==='mittel');
+  const lowRisks=allRisks.filter(r=>r.level==='niedrig'||r.level==='info');
+  const riskRows=allRisks.map(r=>{
+    const cls=r.level==='hoch'?'risk-krit':r.level==='mittel'?'risk-mangel':'risk-ok';
+    const lbl=r.level==='hoch'?(L==='en'?'HIGH':'HOCH'):r.level==='mittel'?(L==='en'?'MEDIUM':'MITTEL'):(L==='en'?'LOW':'GERING');
+    const itemStr=r.items?.length?`<div style="font-size:.68rem;color:var(--soft);margin-top:2px">${r.items.slice(0,5).join(' · ')}${r.items.length>5?` +${r.items.length-5} ${L==='en'?'more':'weitere'}`:''}</div>`:'';
+    return`<tr><td><strong>${esc(r.category)}</strong>${itemStr}</td><td style="text-align:center;font-family:var(--fm)">${r.count||0}</td><td><span class="${cls}">${lbl}</span></td><td style="font-size:.72rem">${esc(r.recommend||'')}</td></tr>`;
+  }).join('');
+  const osmLink=u.lat&&u.lon?`<a href="https://www.openstreetmap.org/#map=15/${u.lat.toFixed(5)}/${u.lon.toFixed(5)}" style="color:#60a5fa;font-size:.72rem" target="_blank">OpenStreetMap ↗</a>`:'';
+  return`
+  <p class="ksk-text">${L==='en'
+    ?`The environmental analysis was conducted on <strong>${ts}</strong> using OpenStreetMap data (Overpass API). The analysis covered a radius of <strong>${u.radius||250} m</strong> around the object and recorded <strong>${u.poiCount||0} security-relevant objects</strong> in the vicinity. The overall environmental risk was assessed as <strong>${u.overallRisk||'–'}</strong>.`
+    :`Die Umfeldanalyse wurde am <strong>${ts}</strong> auf Basis von OpenStreetMap-Daten (Overpass API) durchgeführt. Die Analyse umfasste einen Radius von <strong>${u.radius||250} m</strong> um das Objekt und erfasste <strong>${u.poiCount||0} sicherheitsrelevante Objekte</strong> in der Umgebung. Das Gesamt-Umfeldrisiko wurde als <strong>${u.overallRisk||'–'}</strong> eingestuft.`
+  }</p>
+  <table class="ksk-table" style="margin-bottom:10px">
+    <thead><tr><th colspan="2">${L==='en'?'Location Details':'Standortangaben'}</th></tr></thead>
+    <tbody>
+      ${addrStr?`<tr><td style="color:var(--muted);width:140px">${L==='en'?'Address':'Adresse'}</td><td><strong style="color:#e2e8f0">${esc(addrStr)}</strong></td></tr>`:''}
+      ${u.lat&&u.lon?`<tr><td style="color:var(--muted)">${L==='en'?'Coordinates':'Koordinaten'}</td><td style="font-family:var(--fm);font-size:.76rem">${u.lat.toFixed(6)}, ${u.lon.toFixed(6)} · ${osmLink}</td></tr>`:''}
+      <tr><td style="color:var(--muted)">${L==='en'?'Analysis Radius':'Analyseradius'}</td><td style="font-family:var(--fm)">${u.radius||250} m</td></tr>
+      <tr><td style="color:var(--muted)">${L==='en'?'Objects found':'Objekte gefunden'}</td><td style="font-family:var(--fm)">${u.poiCount||0}</td></tr>
+      <tr><td style="color:var(--muted)">${L==='en'?'Overall Risk':'Gesamtrisiko'}</td><td><strong style="color:${u.overallRiskCls==='ok'?'#22c55e':u.overallRiskCls==='warn'?'#eab308':'#ef4444'}">${u.overallRisk||'–'}</strong></td></tr>
+    </tbody>
+  </table>
+  ${allRisks.length?`
+  <table class="ksk-table">
+    <thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Count':'Anzahl'}</th><th>${L==='en'?'Risk Level':'Risikostufe'}</th><th>${L==='en'?'Recommendation':'Handlungsempfehlung'}</th></tr></thead>
+    <tbody>${riskRows}</tbody>
+  </table>
+  `:`<div class="ksk-okbox">✓ ${L==='en'?'No elevated environmental risks identified in the vicinity.':'Keine erhöhten Umfeldrisiken in der Umgebung identifiziert.'}</div>`}
+  ${highRisks.length||midRisks.length?`<div class="ksk-warnbox"><strong>${L==='en'?'Assessment:':'Bewertung:'}</strong> ${L==='en'
+    ?`The environmental analysis identified <strong>${highRisks.length} high-risk</strong> and <strong>${midRisks.length} medium-risk</strong> factors in the vicinity. These environmental risks must be taken into account in the security concept and addressed through appropriate preventive measures in accordance with <strong>ISO 31000:2018, Clause 6.3</strong> (risk identification).`
+    :`Die Umfeldanalyse identifizierte <strong>${highRisks.length} Hochrisiko-</strong> und <strong>${midRisks.length} Mittelrisiko</strong>-Faktoren in der Umgebung. Diese Umfeldrisiken sind im Sicherheitsbericht zu berücksichtigen und durch geeignete Präventivmaßnahmen gemäß <strong>ISO 31000:2018, Kl. 6.3</strong> (Risikoidentifikation) zu adressieren.`
+  }</div>`:`<div class="ksk-okbox">✓ ${L==='en'?'No critical or elevated environmental risks identified. Regular monitoring of the site environment is recommended per ISO 31000 risk monitoring requirements (Clause 6.7).':'Keine kritischen oder erhöhten Umfeldrisiken identifiziert. Eine regelmäßige Überwachung der Objektumgebung wird gemäß ISO 31000 Überwachungsanforderungen (Kl. 6.7) empfohlen.'}</div>`}`;
 }
 function _kskNormHTML(norms){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
@@ -117,7 +156,87 @@ function _kskGlossaryHTML(){
   return html;
 }
 
-// ═══ KONZEPT ═══
+// ═══ KRIMINALSTATISTIK HELPER ═══
+function _kskCrimeStatsHTML(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const plz=S.meta.plz||'';
+  const pks=typeof getPKSByPLZ!=='undefined'?getPKSByPLZ(plz):null;
+  const bund=typeof PKS_BUND!=='undefined'?PKS_BUND:null;
+  if(!plz){
+    return`<p class="ksk-text" style="font-style:italic">${L==='en'?'No postal code entered. Please add a postal code in the object data to enable crime statistics lookup.':'Keine Postleitzahl hinterlegt. Bitte Postleitzahl in den Objektdaten ergänzen, um die Kriminalstatistik abzurufen.'}</p>`;
+  }
+  if(!pks){
+    return`<p class="ksk-text" style="font-style:italic">${L==='en'?`No crime statistics available for postal code ${esc(plz)}.`:`Für Postleitzahl ${esc(plz)} sind keine Statistikdaten verfügbar.`}</p>`;
+  }
+  const {bl,data}=pks;
+  const rlEinbruch=pksRiskLevel(data.hz_einbruch,bund.hz_einbruch);
+  const rlGewalt=pksRiskLevel(data.hz_gewalt,bund.hz_gewalt);
+  const rlGesamt=pksRiskLevel(data.hz_gesamt,bund.hz_gesamt);
+  const rlColor={hoch:'#dc2626',erhoht:'#ea580c',mittel:'#ca8a04',gering:'#16a34a'};
+  const rlLabel={hoch:L==='en'?'HIGH':'HOCH',erhoht:L==='en'?'ELEVATED':'ERHÖHT',mittel:L==='en'?'MEDIUM':'MITTEL',gering:L==='en'?'LOW':'GERING'};
+  const blName=L==='en'?data.name_en:data.name;
+  const badge=(rl)=>`<strong style="color:${rlColor[rl]}">${rlLabel[rl]}</strong>`;
+  const pct=(hz,avg)=>Math.round(hz/avg*100);
+  const bar=(hz,avg,col)=>{const w=Math.min(Math.round(hz/avg*100),200);return`<div style="background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden;min-width:80px;margin-top:3px"><div style="width:${w/2}%;height:100%;background:${col};border-radius:3px"></div></div>`;};
+  return`
+  <p class="ksk-text">${L==='en'
+    ?`The following crime statistics are based on the <strong>Polizeiliche Kriminalstatistik (PKS) 2023</strong> published by the Bundeskriminalamt (BKA) in April 2024. Based on the postal code <strong>${esc(plz)}</strong>, the object is located in <strong>${blName}</strong>. The Häufigkeitszahl (HZ) indicates the number of recorded cases per 100,000 inhabitants.`
+    :`Die nachfolgenden Kriminalstatistiken basieren auf der <strong>Polizeilichen Kriminalstatistik (PKS) 2023</strong>, veröffentlicht vom Bundeskriminalamt (BKA) im April 2024. Auf Basis der Postleitzahl <strong>${esc(plz)}</strong> befindet sich das Objekt in <strong>${blName}</strong>. Die Häufigkeitszahl (HZ) gibt die Anzahl der erfassten Fälle je 100.000 Einwohner an.`
+  }</p>
+  <table class="ksk-table">
+    <thead><tr><th>${L==='en'?'Crime Category':'Deliktkategorie'}</th><th>${L==='en'?`${blName} (HZ)`:`${blName} (HZ)`}</th><th>${L==='en'?'National Avg (HZ)':'Bundesschnitt (HZ)'}</th><th>${L==='en'?'Relative Level':'Relatives Niveau'}</th><th>${L==='en'?'Trend vs. Avg':'Abweichung'}</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>${L==='en'?'All Offences':'Straftaten gesamt'}</strong></td>
+        <td style="font-family:var(--fm);font-weight:700">${data.hz_gesamt.toLocaleString('de-DE')}</td>
+        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_gesamt.toLocaleString('de-DE')}</td>
+        <td>${badge(rlGesamt)}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_gesamt,bund.hz_gesamt)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_gesamt,bund.hz_gesamt,rlColor[rlGesamt])}</td>
+      </tr>
+      <tr>
+        <td><strong>${L==='en'?'Residential Burglary':'Wohnungseinbruchdiebstahl'}</strong></td>
+        <td style="font-family:var(--fm);font-weight:700">${data.hz_einbruch.toLocaleString('de-DE')}</td>
+        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_einbruch.toLocaleString('de-DE')}</td>
+        <td>${badge(rlEinbruch)}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_einbruch,bund.hz_einbruch)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_einbruch,bund.hz_einbruch,rlColor[rlEinbruch])}</td>
+      </tr>
+      <tr>
+        <td><strong>${L==='en'?'Violent Crime':'Gewaltkriminalität'}</strong></td>
+        <td style="font-family:var(--fm);font-weight:700">${data.hz_gewalt.toLocaleString('de-DE')}</td>
+        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_gewalt.toLocaleString('de-DE')}</td>
+        <td>${badge(rlGewalt)}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_gewalt,bund.hz_gewalt)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_gewalt,bund.hz_gewalt,rlColor[rlGewalt])}</td>
+      </tr>
+      <tr>
+        <td><strong>${L==='en'?'Theft (total)':'Diebstahl gesamt'}</strong></td>
+        <td style="font-family:var(--fm);font-weight:700">${data.hz_diebstahl.toLocaleString('de-DE')}</td>
+        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_diebstahl.toLocaleString('de-DE')}</td>
+        <td>${badge(pksRiskLevel(data.hz_diebstahl,bund.hz_diebstahl))}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_diebstahl,bund.hz_diebstahl)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_diebstahl,bund.hz_diebstahl,rlColor[pksRiskLevel(data.hz_diebstahl,bund.hz_diebstahl)])}</td>
+      </tr>
+      <tr>
+        <td><strong>${L==='en'?'Criminal Damage':'Sachbeschädigung'}</strong></td>
+        <td style="font-family:var(--fm);font-weight:700">${data.hz_sachbeschaedigung.toLocaleString('de-DE')}</td>
+        <td style="font-family:var(--fm);color:var(--muted)">${bund.hz_sachbeschaedigung.toLocaleString('de-DE')}</td>
+        <td>${badge(pksRiskLevel(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung))}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${pct(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung)}% ${L==='en'?'of avg':'des Schnitts'}${bar(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung,rlColor[pksRiskLevel(data.hz_sachbeschaedigung,bund.hz_sachbeschaedigung)])}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="ksk-infobox" style="margin-top:10px">
+    <strong>${L==='en'?'Source & Authority:':'Quelle & Zuständigkeit:'}</strong>
+    ${L==='en'
+      ?`Bundeskriminalamt (BKA) – PKS 2023, ${data.bka_ref}. Responsible state authority: <strong>${data.lka}</strong>.`
+      :`Bundeskriminalamt (BKA) – PKS 2023, ${data.bka_ref}. Zuständige Landesbehörde: <strong>${data.lka}</strong>.`
+    }
+    ${L==='en'
+      ?`Current annual reports available at: BKA (<a href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/" style="color:#60a5fa" target="_blank">bka.de/pks2023</a>) and ${data.lka} (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>).`
+      :`Aktuelle Jahresberichte: BKA (<a href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/PKS2023/" style="color:#60a5fa" target="_blank">bka.de/pks2023</a>) und ${data.lka} (<a href="${data.lka_url}" style="color:#60a5fa" target="_blank">${data.lka_url.replace('https://','')}</a>).`
+    }
+  </div>`;
+}
+
+// ═══ SICHERHEITSBERICHT (vormals Konzept) ═══
 function renderKonzept(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const ac=activeChecks();
@@ -140,19 +259,20 @@ function renderKonzept(){
   const domainSec=(items,prio)=>{if(!items.length)return`<div class="ksk-okbox">✓ ${L==='en'?'No findings in this category.':'Keine Befunde in dieser Kategorie.'}</div>`;const sec=items.filter(f=>f.m==='security'),qm=items.filter(f=>f.m==='qm'),it=items.filter(f=>f.m==='itgov');let h='';if(sec.length)h+=`<div class="ksk-domain-header"><span class="ksk-domain-icon">${L==='en'?'PHYSICAL':'PHYSISCH'}</span><span class="ksk-domain-title">${L==='en'?'Physical Security':'Physische Sicherheit'}</span></div>${_kskMeasureTable(sec,prio,0)}`;if(qm.length)h+=`<div class="ksk-domain-header" style="margin-top:12px"><span class="ksk-domain-icon" style="color:#fb923c;border-color:rgba(251,146,60,.25);background:rgba(251,146,60,.08)">QM</span><span class="ksk-domain-title">${L==='en'?'Quality Management':'Qualitätsmanagement'}</span></div>${_kskMeasureTable(qm,prio,sec.length)}`;if(it.length)h+=`<div class="ksk-domain-header" style="margin-top:12px"><span class="ksk-domain-icon" style="color:#34d399;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.08)">IT-GOV</span><span class="ksk-domain-title">IT-Governance</span></div>${_kskMeasureTable(it,prio,sec.length+qm.length)}`;return h;};
   const sz=[{id:'SZ-01',z:L==='en'?'Physical Security':'Physische Sicherheit',d:L==='en'?'Protection of persons, assets and the building against unauthorised access, theft, vandalism and other physical threats.':'Schutz von Personen, Sachwerten und Gebäude vor unbefugtem Zutritt, Diebstahl, Vandalismus und sonstigen physischen Bedrohungen.',p:'HOCH'},{id:'SZ-02',z:L==='en'?'Business Continuity (BCM)':'Betriebskontinuität (BCM)',d:L==='en'?'Ensuring uninterrupted operations and swift recovery after incidents or security-related events.':'Sicherstellung des ununterbrochenen Geschäftsbetriebs sowie schnelle Wiederherstellung nach Störungen.',p:'HOCH'},{id:'SZ-03',z:L==='en'?'Compliance & Legal Certainty':'Compliance & Rechtssicherheit',d:L==='en'?'Adherence to all applicable legal, regulatory and normative requirements in security and data protection.':'Einhaltung aller relevanten gesetzlichen, regulatorischen und normativen Anforderungen im Bereich Sicherheit und Datenschutz.',p:'HOCH'},{id:'SZ-04',z:L==='en'?'Information Security (CIA)':'Informationssicherheit (CIA)',d:L==='en'?'Ensuring confidentiality, integrity and availability of all protected information and IT systems (ISO/IEC 27001).':'Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit aller schützenswerten Informationen und IT-Systeme.',p:'MITTEL'},{id:'SZ-05',z:L==='en'?'Loss Minimisation':'Schadensminimierung',d:L==='en'?'Reduction of probability and impact of identified risks through preventive and reactive measures (ISO 31000).':'Reduktion von Eintrittswahrscheinlichkeit und Schadensauswirkung durch präventive und reaktive Maßnahmen (ISO 31000).',p:'MITTEL'}];
   const matRows=ac.map(ch=>{const mat=S.maturity[ch.id]||0;const col=mat>=4?'#22c55e':mat>=3?'#eab308':mat>=2?'#f97316':'#ef4444';const lbl=mat===0?(L==='en'?'n/a':'k.A.'):mat===1?'Initial':mat===2?(L==='en'?'Repeatable':'Wiederholbar'):mat===3?(L==='en'?'Defined':'Definiert'):mat===4?(L==='en'?'Managed':'Gesteuert'):(L==='en'?'Optimising':'Optimierend');return`<tr><td>${ch.i} ${L==='en'?ch.l_en||ch.l:ch.l}</td><td><div style="background:rgba(255,255,255,.06);border-radius:3px;height:7px;overflow:hidden;min-width:80px"><div style="width:${mat/5*100}%;height:100%;background:${col};border-radius:3px"></div></div></td><td style="font-family:var(--fm);font-size:.65rem;font-weight:700;color:${col}">${mat}/5</td><td style="font-size:.72rem;color:var(--muted)">${lbl}</td></tr>`;}).join('');
-  const objRows=[['Objekt / Object',S.meta.objekt],[L==='en'?'Client':'Auftraggeber',S.meta.auftraggeber],[L==='en'?'Address':'Adresse',S.meta.adresse],[L==='en'?'Inspection Date':'Begehungsdatum',ds],[L==='en'?'Auditor':'Prüfer/in',pruefer],[L==='en'?'Occasion':'Anlass',S.meta.anlass],[L==='en'?'Doc. Version':'Dokumentversion',version],['Status',status],[L==='en'?'Generated':'Erstellt am',genDateTime]].filter(([,v])=>v).map(([k,v])=>`<tr><td>${k}</td><td><strong style="color:#e2e8f0">${esc(String(v))}</strong></td></tr>`).join('');
+  const fullAddrDisplay=S.meta.strasse?[S.meta.strasse+(S.meta.hausnummer?' '+S.meta.hausnummer:''),S.meta.plz&&S.meta.ort?S.meta.plz+' '+S.meta.ort:''].filter(Boolean).join(', '):(S.meta.adresse||'');
+  const objRows=[['Objekt / Object',S.meta.objekt],[L==='en'?'Client':'Auftraggeber',S.meta.auftraggeber],[L==='en'?'Address':'Adresse',fullAddrDisplay],[L==='en'?'Inspection Date':'Begehungsdatum',ds],[L==='en'?'Auditor':'Prüfer/in',pruefer],[L==='en'?'Occasion':'Anlass',S.meta.anlass],[L==='en'?'Doc. Version':'Dokumentversion',version],['Status',status],[L==='en'?'Generated':'Erstellt am',genDateTime]].filter(([,v])=>v).map(([k,v])=>`<tr><td>${k}</td><td><strong style="color:#e2e8f0">${esc(String(v))}</strong></td></tr>`).join('');
   const metricRows=[[L==='en'?'Entrances':'Eingänge',S.meta.eingaenge],[L==='en'?'Gates':'Einfahrten',S.meta.einfahrten],[L==='en'?'Floors':'Stockwerke',S.meta.stockwerke],[L==='en'?'Staff':'Mitarbeiter',S.meta.mitarbeiter],[L==='en'?'Area (m²)':'Fläche (m²)',S.meta.flaeche],[L==='en'?'Parking':'Parkplätze',S.meta.parkplaetze],[L==='en'?'Cameras':'Kameras',S.meta.kameras]].filter(([,v])=>v).map(([k,v])=>`<tr><td>${k}</td><td><strong style="color:#e2e8f0">${esc(String(v))}</strong></td></tr>`).join('');
   let totalMin=0,totalMax=0;kritisch.forEach(f=>{const[a,b]=parseCost(f.c?.kritisch||'');totalMin+=a;totalMax+=b;});mangel.forEach(f=>{const[a,b]=parseCost(f.c?.mangel||'');totalMin+=a;totalMax+=b;});
   const totalCostStr=totalMin||totalMax?`${totalMin.toLocaleString('de-DE')} – ${totalMax.toLocaleString('de-DE')}`:'0';
   const normBadges=(S.norms||[]).map(n=>`<span class="ksk-norm-badge">${n}</span>`).join(' ');
-  const tocL=L==='en'?['Executive Summary','Object Data','Environmental Analysis','Protection Objectives','Regulatory Framework','Risk Overview','Immediate Measures','Medium-Term Measures','Maturity Assessment','Investment Plan','Release & Signature','Glossary & Terminology']:['Zusammenfassung','Objektdaten','Umfeldanalyse','Schutzziele','Normgrundlagen','Risikoübersicht','Sofortmaßnahmen','Mittelfristige Maßnahmen','Reifegradübersicht','Investitionsplan','Freigabe & Unterschrift','Fachbegriffe & Glossar'];
+  const tocL=L==='en'?['Executive Summary','Object Data','Environmental Analysis','Crime Statistics','Protection Objectives','Regulatory Framework','Risk Overview','Immediate Measures','Medium-Term Measures','Maturity Assessment','Investment Plan','Release & Signature','Glossary & Terminology']:['Zusammenfassung','Objektdaten','Umfeldanalyse','Kriminalstatistik','Schutzziele','Normgrundlagen','Risikoübersicht','Sofortmaßnahmen','Mittelfristige Maßnahmen','Reifegradübersicht','Investitionsplan','Freigabe & Unterschrift','Fachbegriffe & Glossar'];
   const tocHTML=tocL.map((t,i)=>`<div class="ksk-toc-entry" onclick="document.getElementById('ksk-s${i+1}')?.scrollIntoView({behavior:'smooth'})"><span class="ksk-toc-num">${i+1}.</span><span>${t}</span></div>`).join('');
   const S2=(num,title,content)=>`<div class="ksk-section" id="ksk-s${num}"><div class="ksk-section-title"><span class="ksk-section-number">${num}</span>${title}</div>${content}</div>`;
   document.getElementById('mainContent').innerHTML=`
   <div class="ksk-controls">
     <div class="rpt-tabs">
       <button class="rpt-tab" onclick="S.reportView='begehung';render()">${L==='en'?'Inspection Report':'Begehungsprotokoll'}</button>
-      <button class="rpt-tab active konzept-tab">${L==='en'?'Security Concept':'Sicherheitskonzept'}</button>
+      <button class="rpt-tab active konzept-tab">${L==='en'?'Security Report':'Sicherheitsbericht'}</button>
     </div>
     <div style="display:flex;gap:6px">
       <button class="print-btn" onclick="exportData()">Backup</button>
@@ -162,7 +282,7 @@ function renderKonzept(){
   <div class="ksk-doc">
     <div class="ksk-cover">
       <div class="ksk-cover-logo">SecureStay<span>: Analytics</span></div>
-      <div class="ksk-cover-type">${L==='en'?'Security Concept · Confidential':'Sicherheitskonzept · Vertraulich'}</div>
+      <div class="ksk-cover-type">${L==='en'?'Security Report · Confidential':'Sicherheitsbericht · Vertraulich'}</div>
       <div class="ksk-cover-title">${objekt||'–'}</div>
       ${auftraggeber?`<div class="ksk-cover-objekt">${auftraggeber}</div>`:''}
       <table class="ksk-cover-meta-table">
@@ -198,12 +318,13 @@ function renderKonzept(){
         ${metricRows?`<p class="ksk-text" style="margin-top:10px"><strong>${L==='en'?'Building metrics:':'Objektkennzahlen:'}</strong></p><table class="ksk-table">${metricRows}</table>`:''}
       `)}
       ${S2(3,L==='en'?'Environmental Analysis':'Umfeldanalyse',_kskUmfeldHTML())}
-      ${S2(4,L==='en'?'Protection Objectives':'Schutzziele',`
-        <p class="ksk-text">${L==='en'?'The following protection objectives form the basis of this security concept:':'Die folgenden Schutzziele bilden die Grundlage dieses Sicherheitskonzepts:'}</p>
+      ${S2(4,L==='en'?'Crime Statistics (BKA PKS 2023)':'Kriminalstatistik (BKA PKS 2023)',_kskCrimeStatsHTML())}
+      ${S2(5,L==='en'?'Protection Objectives':'Schutzziele',`
+        <p class="ksk-text">${L==='en'?'The following protection objectives form the basis of this security report:':'Die folgenden Schutzziele bilden die Grundlage dieses Sicherheitsberichts:'}</p>
         <table class="ksk-table"><thead><tr><th>ID</th><th>${L==='en'?'Objective':'Schutzziel'}</th><th>${L==='en'?'Description':'Beschreibung'}</th><th>${L==='en'?'Priority':'Priorität'}</th></tr></thead><tbody>${sz.map(s=>`<tr><td style="font-family:var(--fm);font-size:.65rem;font-weight:700">${s.id}</td><td><strong style="color:#e2e8f0">${s.z}</strong></td><td style="font-size:.76rem">${s.d}</td><td><span class="${s.p==='HOCH'?'risk-krit':'risk-mangel'}">${s.p}</span></td></tr>`).join('')}</tbody></table>
       `)}
-      ${S2(5,L==='en'?'Regulatory Framework & Standards':'Normgrundlagen & Regelwerk',_kskNormHTML(S.norms||[]))}
-      ${S2(6,L==='en'?'Risk Overview':'Risikoübersicht',`
+      ${S2(6,L==='en'?'Regulatory Framework & Standards':'Normgrundlagen & Regelwerk',_kskNormHTML(S.norms||[]))}
+      ${S2(7,L==='en'?'Risk Overview':'Risikoübersicht',`
         <p class="ksk-text">${L==='en'?'Overall risk classification based on the number and severity of identified deficiencies:':'Gesamtrisikoeinstufung auf Basis der Anzahl und Schwere der festgestellten Mängel:'}</p>
         <p class="ksk-text">${L==='en'?`According to <strong>ISO 31000:2018</strong>, risk is defined as the <em>effect of uncertainty on objectives</em>. The risk level is determined by the interaction of <strong>likelihood</strong> (probability that a threat event occurs) and <strong>consequence</strong> (extent of potential damage). The risk matrix used classifies findings into four levels: <em>Low · Medium · High · Critical</em>. Critical findings represent an immediate threat to the protection objectives and require risk treatment within four weeks.`:`Gemäß <strong>ISO 31000:2018</strong> ist Risiko definiert als die <em>Auswirkung von Ungewissheit auf Ziele</em>. Die Risikostufe ergibt sich aus dem Zusammenspiel von <strong>Eintrittswahrscheinlichkeit</strong> (Wahrscheinlichkeit des Eintretens eines Bedrohungsereignisses) und <strong>Schadensauswirkung</strong> (Ausmaß des potenziellen Schadens). Die verwendete Risikomatrix klassifiziert Befunde in vier Stufen: <em>Gering · Mittel · Hoch · Kritisch</em>. Kritische Befunde stellen eine unmittelbare Gefährdung der Schutzziele dar und erfordern eine Risikobehandlung innerhalb von vier Wochen.`}</p>
         <div style="display:flex;align-items:center;gap:14px;margin:12px 0;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;flex-wrap:wrap">
@@ -217,21 +338,21 @@ function renderKonzept(){
           <tr style="border-top:1px solid rgba(255,255,255,.08)"><td><strong style="color:#e2e8f0">${L==='en'?'Total assessed':'Gesamt bewertet'}</strong></td><td><strong style="color:#e2e8f0">${assessed}</strong></td><td><strong style="color:#e2e8f0">100%</strong></td></tr>
         </tbody></table>
       `)}
-      ${S2(7,L==='en'?'Immediate Measures (Critical Deficiencies)':'Sofortmaßnahmen (Kritische Mängel)',`
+      ${S2(8,L==='en'?'Immediate Measures (Critical Deficiencies)':'Sofortmaßnahmen (Kritische Mängel)',`
         <p class="ksk-text">${L==='en'?'The following critical deficiencies require immediate remediation within <strong>4 weeks</strong>. Non-compliance may affect insurance coverage and lead to regulatory consequences.':'Die folgenden kritischen Mängel sind unverzüglich — innerhalb von <strong>4 Wochen</strong> — zu beheben. Ohne Mängelbeseitigung kann der Versicherungsschutz eingeschränkt sein und regulatorische Konsequenzen drohen.'}</p>
         <p class="ksk-text">${L==='en'?`In the framework of <strong>ISO 31000:2018 risk treatment</strong> (Clause 6.6), these findings are assigned to the option <em>"risk modification"</em>: the likelihood and/or impact of the risk is to be reduced through targeted corrective measures. Each measure listed below addresses the root cause of the identified deficiency and contributes to reducing residual risk to an acceptable level. Responsibility for implementation lies with the client's authorised management.`:`Im Rahmen der <strong>Risikobehandlung nach ISO 31000:2018</strong> (Kl. 6.6) sind diese Befunde der Option <em>„Risikoänderung"</em> zugeordnet: Durch gezielte Korrekturmaßnahmen soll die Eintrittswahrscheinlichkeit und/oder die Schadensauswirkung des Risikos reduziert werden. Jede der nachfolgend aufgeführten Maßnahmen adressiert die Grundursache des festgestellten Mangels und leistet einen Beitrag zur Reduktion des Restrisikos auf ein akzeptables Niveau. Die Umsetzungsverantwortung liegt bei der bevollmächtigten Geschäftsleitung des Auftraggebers.`}</p>
         ${domainSec(kritisch,'kritisch')}
       `)}
-      ${S2(8,L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)',`
+      ${S2(9,L==='en'?'Medium-Term Measures (Deficiencies)':'Mittelfristige Maßnahmen (Mängel)',`
         <p class="ksk-text">${L==='en'?'The following deficiencies should be addressed within <strong>3–6 months</strong> as part of a structured improvement programme.':'Die folgenden Mängel sind im Rahmen eines strukturierten Verbesserungsprogramms innerhalb von <strong>3–6 Monaten</strong> umzusetzen.'}</p>
         <p class="ksk-text">${L==='en'?`These findings are likewise classified as <em>risk modification measures</em> per <strong>ISO 31000:2018</strong>, but due to their lower risk level they may be implemented in a structured improvement programme. The implementation should be documented in an action plan with defined milestones, responsibilities and verification dates. After completion, the effectiveness of each measure is to be verified through a follow-up inspection.`:`Diese Befunde sind ebenfalls als <em>Risikoänderungsmaßnahmen</em> gemäß <strong>ISO 31000:2018</strong> klassifiziert, aufgrund des geringeren Risikoniveaus jedoch in einem strukturierten Verbesserungsprogramm umsetzbar. Die Umsetzung ist in einem Maßnahmenplan mit definierten Meilensteinen, Verantwortlichkeiten und Verifikationsterminen zu dokumentieren. Nach Abschluss ist die Wirksamkeit jeder Maßnahme im Rahmen einer Nachschauprüfung zu verifizieren.`}</p>
         ${domainSec(mangel,'mangel')}
       `)}
-      ${S2(9,L==='en'?'Maturity Assessment':'Reifegradübersicht',`
+      ${S2(10,L==='en'?'Maturity Assessment':'Reifegradübersicht',`
         <p class="ksk-text">${L==='en'?'Maturity levels per audit domain (0 = not assessed · 1 = Initial · 2 = Repeatable · 3 = Defined · 4 = Managed · 5 = Optimising):':'Reifegradstufen je Prüfbereich (0 = nicht bewertet · 1 = Initial · 2 = Wiederholbar · 3 = Definiert · 4 = Gesteuert · 5 = Optimierend):'}</p>
         <table class="ksk-table"><thead><tr><th>${L==='en'?'Domain':'Bereich'}</th><th>${L==='en'?'Maturity':'Reifegrad'}</th><th>${L==='en'?'Score':'Wert'}</th><th>${L==='en'?'Level':'Stufe'}</th></tr></thead><tbody>${matRows||`<tr><td colspan="4" style="text-align:center;color:var(--muted)">${L==='en'?'No maturity data entered.':'Keine Reifegrad-Daten erfasst.'}</td></tr>`}</tbody></table>
       `)}
-      ${S2(10,L==='en'?'Investment Plan':'Investitionsplan',`
+      ${S2(11,L==='en'?'Investment Plan':'Investitionsplan',`
         <p class="ksk-text">${L==='en'?'Estimated investment requirements for remediation of identified deficiencies (indicative market values, excl. VAT):':'Geschätzter Investitionsbedarf zur Behebung der festgestellten Mängel (Richtwerte, zzgl. MwSt.):'}</p>
         <table class="ksk-table"><thead><tr><th>${L==='en'?'Category':'Kategorie'}</th><th>${L==='en'?'Findings':'Befunde'}</th><th>${L==='en'?'Estimate':'Schätzung'}</th><th>${L==='en'?'Timeline':'Zeitrahmen'}</th></tr></thead><tbody>
           <tr><td><strong class="risk-krit">${L==='en'?'Critical (immediate)':'Kritisch (sofort)'}</strong></td><td>${kritisch.length}</td><td><strong style="color:#e2e8f0">€ ${fmtCA(kritisch,'kritisch')}</strong></td><td style="font-size:.76rem">${L==='en'?'≤ 4 weeks':'≤ 4 Wochen'}</td></tr>
@@ -239,8 +360,8 @@ function renderKonzept(){
         </tbody><tfoot><tr><td colspan="2" style="padding-top:10px;border-top:1px solid rgba(255,255,255,.1)"><strong style="color:#f1f5f9">${L==='en'?'Total estimate':'Gesamt Schätzung'}</strong></td><td colspan="2" style="padding-top:10px;border-top:1px solid rgba(255,255,255,.1)"><strong style="color:#60a5fa;font-family:var(--fh);font-size:.9rem">€ ${totalCostStr}</strong></td></tr></tfoot></table>
         <div class="ksk-infobox">${L==='en'?'<strong>Note:</strong> All cost estimates are indicative market values based on standard security equipment and installation. Final costs depend on specific product selection, tender results and local conditions. All amounts excl. VAT.':'<strong>Hinweis:</strong> Alle Kostenangaben sind Richtwerte auf Basis marktüblicher Sicherheitstechnik. Endkosten hängen von Produktauswahl, Ausschreibungsergebnissen und örtlichen Gegebenheiten ab. Alle Beträge netto zzgl. MwSt.'}</div>
       `)}
-      ${S2(11,L==='en'?'Release & Signature':'Freigabe & Unterschrift',`
-        <p class="ksk-text">${L==='en'?'This security concept was prepared by SecureStay: Analytics and requires review and approval by the authorised representatives of the client.':'Das vorliegende Sicherheitskonzept wurde durch SecureStay: Analytics erstellt und bedarf der Prüfung und Freigabe durch die bevollmächtigten Vertreter des Auftraggebers.'}</p>
+      ${S2(12,L==='en'?'Release & Signature':'Freigabe & Unterschrift',`
+        <p class="ksk-text">${L==='en'?'This security report was prepared by SecureStay: Analytics and requires review and approval by the authorised representatives of the client.':'Der vorliegende Sicherheitsbericht wurde durch SecureStay: Analytics erstellt und bedarf der Prüfung und Freigabe durch die bevollmächtigten Vertreter des Auftraggebers.'}</p>
         <div class="ksk-sig-row">
           <div class="ksk-sig-box"><div style="color:#e2e8f0;font-size:.82rem;font-weight:700;margin-bottom:3px">${pruefer}</div><div>${L==='en'?'Auditor · SecureStay: Analytics':'Auditor/in · SecureStay: Analytics'}</div><div style="color:#60a5fa;font-size:.68rem;margin-top:2px">Kirchstr. 8b · 55270 Essenheim</div></div>
           <div class="ksk-sig-box"><div style="color:#e2e8f0;font-size:.82rem;font-weight:700;margin-bottom:3px">${auftraggeber||'___________________________'}</div><div>${L==='en'?'Client / Authorised Representative':'Auftraggeber / Bevollmächtigte/r'}</div></div>
@@ -248,7 +369,7 @@ function renderKonzept(){
         </div>
         <div class="ksk-infobox" style="margin-top:18px;font-size:.74rem">${L==='en'?`Generated: ${genDateTime} · Version: ${version} · Status: ${status}`:`Erstellt: ${genDateTime} · Version: ${version} · Status: ${status}`}</div>
       `)}
-      ${S2(12,L==='en'?'Glossary & Terminology':'Fachbegriffe & Glossar',`
+      ${S2(13,L==='en'?'Glossary & Terminology':'Fachbegriffe & Glossar',`
         <p class="ksk-text">${L==='en'?'The following glossary defines the key technical terms used in this security concept. The definitions are based on internationally recognised standards, in particular <strong>ISO 31000:2018</strong> (Risk Management), <strong>ISO/IEC 27001:2022</strong> (Information Security), <strong>ISO 22301:2019</strong> (Business Continuity) and the <strong>BSI IT-Grundschutz</strong>. Understanding these terms ensures a common basis for the assessment, communication and treatment of risks.':'Das nachfolgende Glossar definiert die wesentlichen Fachbegriffe dieses Sicherheitskonzepts. Die Definitionen basieren auf international anerkannten Normen, insbesondere <strong>ISO 31000:2018</strong> (Risikomanagement), <strong>ISO/IEC 27001:2022</strong> (Informationssicherheit), <strong>ISO 22301:2019</strong> (Business Continuity) sowie dem <strong>BSI IT-Grundschutz</strong>. Das Verständnis dieser Begriffe schafft eine gemeinsame Grundlage für die Beurteilung, Kommunikation und Behandlung von Risiken.'}</p>
         ${_kskGlossaryHTML()}
       `)}
