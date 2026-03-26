@@ -1,7 +1,7 @@
 
 let S={mode:'audit',dbTab:'all',dbSearch:'',step:0,module:null,norms:[],
 meta:{
-  objekt:'',strasse:'',hausnummer:'',plz:'',ort:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',
+  objekt:'',strasse:'',hausnummer:'',plz:'',ort:'',land:'',adresse:'',datum:'',pruefer:'',auftraggeber:'',anlass:'',typ:'',notizen:'',
   eingaenge:'',einfahrten:'',stockwerke:'',mitarbeiter:'',flaeche:'',parkplaetze:'',kameras:'',
   gebaeudetype:'',baujahr:'',anzahlGebaeude:'1',aussengelaende:'',
   zugangskontrolle:'',alarmanlage:'',sicherheitsdienst:'',bewachung24h:'',

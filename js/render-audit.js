@@ -29,10 +29,11 @@ function renderMeta(){
   <div class="mg" style="margin-bottom:14px">
     <div class="fg"><label>${L==='en'?'Object / Site Name':'Objekt / Standortname'}</label><input value="${esc(S.meta.objekt)}" oninput="S.meta.objekt=this.value;save()"></div>
     <div class="fg"><label>${L==='en'?'Client / Operator':'Auftraggeber / Betreiber'}</label><input value="${esc(S.meta.auftraggeber)}" oninput="S.meta.auftraggeber=this.value;save()"></div>
-    <div class="fg"><label>${L==='en'?'Street':'Straße'}</label><input value="${esc(S.meta.strasse)}" oninput="S.meta.strasse=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ');save()"></div>
-    <div class="fg" style="max-width:160px"><label>${L==='en'?'House No.':'Hausnummer'}</label><input value="${esc(S.meta.hausnummer)}" oninput="S.meta.hausnummer=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ');save()"></div>
-    <div class="fg" style="max-width:160px"><label>${L==='en'?'Postal Code':'Postleitzahl'}</label><input value="${esc(S.meta.plz)}" maxlength="5" oninput="S.meta.plz=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ');save()"></div>
-    <div class="fg"><label>${L==='en'?'City':'Ort'}</label><input value="${esc(S.meta.ort)}" oninput="S.meta.ort=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ');save()"></div>
+    <div class="fg"><label>${L==='en'?'Street':'Straße'}</label><input value="${esc(S.meta.strasse)}" oninput="S.meta.strasse=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');save()"></div>
+    <div class="fg" style="max-width:160px"><label>${L==='en'?'House No.':'Hausnummer'}</label><input value="${esc(S.meta.hausnummer)}" oninput="S.meta.hausnummer=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');save()"></div>
+    <div class="fg" style="max-width:160px"><label>${L==='en'?'Postal Code':'Postleitzahl'}</label><input value="${esc(S.meta.plz)}" maxlength="5" oninput="S.meta.plz=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');save()"></div>
+    <div class="fg"><label>${L==='en'?'City':'Ort'}</label><input value="${esc(S.meta.ort)}" oninput="S.meta.ort=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');save()"></div>
+    <div class="fg"><label>${L==='en'?'Country':'Land'}</label><select onchange="S.meta.land=this.value;S.meta.adresse=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');save()">${[{code:'',de:'',en:''},...COUNTRIES].map(c=>c.disabled?`<option disabled>──────────────</option>`:c.code===''?`<option value="" ${!S.meta.land?'selected':''}>${L==='en'?'— Please select —':'— Bitte wählen —'}</option>`:`<option value="${L==='en'?c.en:c.de}" ${S.meta.land===(L==='en'?c.en:c.de)?'selected':''}>${L==='en'?c.en:c.de}</option>`).join('')}</select></div>
     <div class="fg"><label>${L==='en'?'Audit Date':'Auditdatum'}</label><input type="date" value="${esc(S.meta.datum)}" oninput="S.meta.datum=this.value;save()"></div>
     <div class="fg"><label>Auditor</label><input value="${esc(S.meta.pruefer)}" oninput="S.meta.pruefer=this.value;save()"></div>
     <div class="fg"><label>${L==='en'?'Occasion / Audit Type':'Anlass / Auditart'}</label><select onchange="S.meta.anlass=this.value;save()">${opts.map(o=>`<option ${S.meta.anlass===o?'selected':''}>${o||(L==='en'?'Please select…':'Bitte wählen…')}</option>`).join('')}</select></div>
@@ -108,7 +109,7 @@ function renderMeta(){
 function renderUmfeld(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
   const u=S.umfeld||{};
-  const fullAddr=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ');
+  const fullAddr=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ');
   const hasAddr=!!(fullAddr.length>=5||S.meta.adresse&&S.meta.adresse.trim().length>=5);
   const riskCol={hoch:'var(--danger)',mittel:'var(--warn)',niedrig:'var(--ok)',info:'var(--cyan)'};
   const riskIcon={hoch:'HIGH',mittel:'MED',niedrig:'LOW',info:'INFO'};
@@ -135,7 +136,7 @@ function renderUmfeld(){
     ${!hasAddr?`<div style="background:var(--warnDim);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:.82rem;color:var(--warn)">${L==='en'?'Please enter an address in Object Data first.':'Bitte zuerst eine Adresse in den Objektdaten eingeben.'}</div>`:''}
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
       <div style="font-family:var(--fm);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">${L==='en'?'Address':'Adresse'}</div>
-      <div style="font-size:.9rem;color:var(--text2);font-weight:600">${S.meta.strasse?`${esc(S.meta.strasse)} ${esc(S.meta.hausnummer||'')}, ${esc(S.meta.plz||'')} ${esc(S.meta.ort||'')}`.trim():esc(S.meta.adresse||'–')}</div>
+      <div style="font-size:.9rem;color:var(--text2);font-weight:600">${S.meta.strasse?[`${esc(S.meta.strasse)} ${esc(S.meta.hausnummer||'')}`.trim(),`${esc(S.meta.plz||'')} ${esc(S.meta.ort||'')}`.trim(),esc(S.meta.land||'')].filter(Boolean).join(', '):esc(S.meta.adresse||'–')}</div>
       ${u.done?`<div style="font-size:.7rem;color:var(--muted);margin-top:4px">${L==='en'?'Coordinates':'Koordinaten'}: ${u.lat?.toFixed(5)}, ${u.lon?.toFixed(5)} · ${ts}</div>`:''}
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
@@ -171,7 +172,7 @@ function renderUmfeld(){
 
 async function startUmfeldanalyse(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  const addr=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort].filter(Boolean).join(' ')||S.meta.adresse;
+  const addr=[S.meta.strasse,S.meta.hausnummer,S.meta.plz,S.meta.ort,S.meta.land].filter(Boolean).join(' ')||S.meta.adresse;
   if(!addr||addr.trim().length<5){toast(L==='en'?'Please enter an address first':'Bitte zuerst Adresse eingeben','warn');return;}
   const btn=document.getElementById('uf-btn');
   const status=document.getElementById('uf-status');
