@@ -88,7 +88,7 @@ function renderDash(){
       <div class="stat ${risk.cls}"><div class="stat-val">${risk.score}</div><div class="stat-lbl">${L==='en'?'Risk':'Risiko'}</div></div>
     </div>
     ${!S.module?`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
-      <div style="font-size:1.2rem;opacity:.5">📋</div>
+      
       <div style="flex:1;font-size:.8rem;color:var(--muted)">${L==='en'?'No audit active — charts show placeholder data.':'Kein Audit aktiv — Diagramme zeigen Platzhalterdaten.'}</div>
       <button class="btn-sm" onclick="go('audit')" style="white-space:nowrap">${L==='en'?'Start Audit →':'Audit starten →'}</button>
       ${S.history?.length?`<button class="btn-sm" onclick="go('historie')" style="white-space:nowrap">${L==='en'?'From History':'Aus Historie'}</button>`:''}</div>`:''}

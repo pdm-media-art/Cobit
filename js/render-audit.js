@@ -176,8 +176,8 @@ async function startUmfeldanalyse(){
   if(!addr||addr.trim().length<5){toast(L==='en'?'Please enter an address first':'Bitte zuerst Adresse eingeben','warn');return;}
   const btn=document.getElementById('uf-btn');
   const status=document.getElementById('uf-status');
-  if(btn){btn.disabled=true;btn.textContent='⏳ '+(L==='en'?'Analysing...':'Analyse läuft...');}
-  if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">🔍 ${L==='en'?'Geocoding address...':'Geocodierung der Adresse...'}</div>`;
+  if(btn){btn.disabled=true;btn.textContent=''+(L==='en'?'Analysing...':'Analyse läuft...');}
+  if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">${L==='en'?'Geocoding address...':'Geocodierung der Adresse...'}</div>`;
   const OVERPASS_ENDPOINTS=[
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
@@ -205,11 +205,11 @@ async function startUmfeldanalyse(){
     if(!geoData||!geoData.length){
       toast(L==='en'?'Address not found':'Adresse nicht gefunden','error');
       if(btn){btn.disabled=false;btn.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
-      if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">❌ ${L==='en'?'Address not found. Please check.':'Adresse nicht gefunden. Bitte prüfen.'}</div>`;
+      if(status)status.innerHTML=`<div style="color:var(--danger);font-size:.8rem;padding:8px 0">${L==='en'?'Address not found. Please check.':'Adresse nicht gefunden. Bitte prüfen.'}</div>`;
       return;
     }
     const {lat,lon}=geoData[0];const latF=parseFloat(lat),lonF=parseFloat(lon);
-    if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">📡 ${L==='en'?'Fetching nearby objects...':'Umgebungsobjekte werden geladen...'}</div>`;
+    if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">${L==='en'?'Fetching nearby objects...':'Umgebungsobjekte werden geladen...'}</div>`;
     const radius=S.umfeld?.selectedRadius||1000;const radLbl=radius>=1000?(radius/1000)+' km':radius+' m';
     const q=`[out:json][timeout:30];(node(around:${radius},${latF},${lonF})[amenity=place_of_worship];way(around:${radius},${latF},${lonF})[amenity=place_of_worship];node(around:${radius},${latF},${lonF})[amenity=police];node(around:${radius},${latF},${lonF})[amenity=hospital];node(around:${radius},${latF},${lonF})[amenity=school];node(around:${radius},${latF},${lonF})[amenity=university];node(around:${radius},${latF},${lonF})[amenity=bank];node(around:${radius},${latF},${lonF})[amenity=courthouse];node(around:${radius},${latF},${lonF})[amenity=embassy];node(around:${radius},${latF},${lonF})[office=government];node(around:${radius},${latF},${lonF})[landuse=military];node(around:${radius},${latF},${lonF})[amenity=fire_station];node(around:${radius},${latF},${lonF})[railway=station];node(around:${radius},${latF},${lonF})[public_transport=station];node(around:${radius},${latF},${lonF})[shop=mall];node(around:${radius},${latF},${lonF})[amenity=marketplace];node(around:${radius},${latF},${lonF})[tourism=museum];node(around:${radius},${latF},${lonF})[historic=memorial];node(around:${radius},${latF},${lonF})[amenity=prison];);out body qt;`;
     const ovData=await fetchOverpass(q);
@@ -254,7 +254,7 @@ async function startUmfeldanalyse(){
     const btnE=document.getElementById('uf-btn');
     const statusE=document.getElementById('uf-status');
     if(btnE){btnE.disabled=false;btnE.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
-    if(statusE)statusE.innerHTML=`<div style="color:var(--danger);font-size:.82rem;padding:10px 12px;background:var(--dangerDim);border:1px solid rgba(220,38,38,.2);border-radius:8px;margin-bottom:8px">❌ <strong>${L==='en'?'Error':'Fehler'}:</strong> ${esc(err.message)}<br><span style="color:var(--muted);font-size:.78rem">${L==='en'?'You can continue the audit without this analysis using "Continue →".':'Sie können das Audit ohne diese Analyse mit „Weiter →" fortsetzen.'}</span></div>`;
+    if(statusE)statusE.innerHTML=`<div style="color:var(--danger);font-size:.82rem;padding:10px 12px;background:var(--dangerDim);border:1px solid rgba(220,38,38,.2);border-radius:8px;margin-bottom:8px"><strong>${L==='en'?'Error':'Fehler'}:</strong> ${esc(err.message)}<br><span style="color:var(--muted);font-size:.78rem">${L==='en'?'You can continue the audit without this analysis using "Continue →".':'Sie können das Audit ohne diese Analyse mit „Weiter →" fortsetzen.'}</span></div>`;
     toast((L==='en'?'Analysis failed: ':'Analyse fehlgeschlagen: ')+err.message,'error');
   }
 }
@@ -288,9 +288,9 @@ function renderCheck(ck){
   const ckSub=(ckL==='en'&&ck.s_en)?ck.s_en:ck.s;
   const legend=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:9px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;align-items:center">
     <span style="font-family:var(--fm);font-size:.46rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-right:4px">${ckL==='en'?'LEGEND:':'LEGENDE:'}</span>
-    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:var(--ok);border:1px solid rgba(34,197,94,.2)">${ckL==='en'?'✓ OK — Requirement met':'✓ OK — Anforderung erfüllt'}</span>
-    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:var(--warnDim);color:var(--warn);border:1px solid rgba(234,179,8,.2)">${ckL==='en'?'⚠ Deficiency — Partial/documentation missing':'⚠ Mangel — Teilweise/Nachweis fehlt'}</span>
-    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:var(--dangerDim);color:var(--danger);border:1px solid rgba(239,68,68,.2)">${ckL==='en'?'✕ Critical — Not implemented':'✕ Kritisch — Nicht umgesetzt'}</span>
+    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:var(--ok);border:1px solid rgba(34,197,94,.2)">${ckL==='en'?'OK — Requirement met':'OK — Anforderung erfüllt'}</span>
+    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:var(--warnDim);color:var(--warn);border:1px solid rgba(234,179,8,.2)">${ckL==='en'?'Deficiency — Partial/documentation missing':'Mangel — Teilweise/Nachweis fehlt'}</span>
+    <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:var(--dangerDim);color:var(--danger);border:1px solid rgba(239,68,68,.2)">${ckL==='en'?'✕ Critical — Not implemented':'Kritisch — Nicht umgesetzt'}</span>
     <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:rgba(100,116,139,.08);color:var(--muted);border:1px solid rgba(100,116,139,.2)">${ckL==='en'?'– N/A — Not applicable':'– N/A — Nicht zutreffend'}</span>
   </div>`;
   document.getElementById('mainContent').innerHTML=`<div class="panel"><div>${nb}</div><div class="panel-title">${ckTitle}</div><p class="panel-sub">${ckSub} <strong style="color:var(--accent)">${done}/${ck.items.length}</strong></p>${legend}${items}<div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${ckL==='en'?'Continue →':'Weiter →'}</button></div></div>`;
