@@ -178,17 +178,25 @@ async function startUmfeldanalyse(){
   const status=document.getElementById('uf-status');
   if(btn){btn.disabled=true;btn.textContent='⏳ '+(L==='en'?'Analysing...':'Analyse läuft...');}
   if(status)status.innerHTML=`<div style="color:var(--muted);font-size:.8rem;padding:8px 0">🔍 ${L==='en'?'Geocoding address...':'Geocodierung der Adresse...'}</div>`;
-  const OVERPASS_ENDPOINTS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  const OVERPASS_ENDPOINTS=[
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.openstreetmap.ru/api/interpreter',
+    'https://overpass.osm.ch/api/interpreter',
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+  ];
   async function fetchOverpass(q){
     for(const ep of OVERPASS_ENDPOINTS){
       try{
-        const r=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+        const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),12000);
+        const r=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctrl.signal});
+        clearTimeout(tid);
         if(!r.ok)continue;
         const d=await r.json();
         if(d&&d.elements!==undefined)return d;
       }catch(e){continue;}
     }
-    throw new Error(L==='en'?'Overpass API unavailable — all endpoints failed':'Overpass API nicht erreichbar — alle Endpunkte fehlgeschlagen');
+    throw new Error(L==='en'?'Overpass API unavailable — all endpoints failed.\nThe analysis requires internet access to OpenStreetMap.':'Overpass API nicht erreichbar — alle Endpunkte fehlgeschlagen.\nDie Analyse benötigt Internetzugang zu OpenStreetMap.');
   }
   try{
     const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr)}&format=json&limit=1&addressdetails=1`,{headers:{'Accept':'application/json'}});
@@ -246,7 +254,7 @@ async function startUmfeldanalyse(){
     const btnE=document.getElementById('uf-btn');
     const statusE=document.getElementById('uf-status');
     if(btnE){btnE.disabled=false;btnE.textContent=L==='en'?'Start Site Analysis':'Umfeldanalyse starten';}
-    if(statusE)statusE.innerHTML=`<div style="color:var(--danger);font-size:.82rem;padding:10px 12px;background:var(--dangerDim);border:1px solid rgba(220,38,38,.2);border-radius:8px;margin-bottom:8px">❌ <strong>${L==='en'?'Error':'Fehler'}:</strong> ${err.message}</div>`;
+    if(statusE)statusE.innerHTML=`<div style="color:var(--danger);font-size:.82rem;padding:10px 12px;background:var(--dangerDim);border:1px solid rgba(220,38,38,.2);border-radius:8px;margin-bottom:8px">❌ <strong>${L==='en'?'Error':'Fehler'}:</strong> ${esc(err.message)}<br><span style="color:var(--muted);font-size:.78rem">${L==='en'?'You can continue the audit without this analysis using "Continue →".':'Sie können das Audit ohne diese Analyse mit „Weiter →" fortsetzen.'}</span></div>`;
     toast((L==='en'?'Analysis failed: ':'Analyse fehlgeschlagen: ')+err.message,'error');
   }
 }
