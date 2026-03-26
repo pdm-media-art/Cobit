@@ -27,7 +27,7 @@ function adminDoLogin() {
     document.getElementById('admLoginCard').classList.add('shake');
     setTimeout(()=>document.getElementById('admLoginCard').classList.remove('shake'),400);
     const rem = 5-_admAttempts;
-    err.textContent = rem>0 ? (L==='en'?`❌ Wrong password. (${rem} attempt${rem!==1?'s':''} remaining)`:`❌ Falsches Passwort. (${rem} Versuch${rem!==1?'e':''} verbleibend)`) : (L==='en'?'⛔ Too many failed attempts.':'⛔ Zu viele Fehlversuche.');
+    err.textContent = rem>0 ? (L==='en'?`Wrong password. (${rem} attempt${rem!==1?'s':''} remaining)`:`Falsches Passwort. (${rem} Versuch${rem!==1?'e':''} verbleibend)`) : (L==='en'?'Too many failed attempts.':'Zu viele Fehlversuche.');
     err.classList.add('show');
     if(_admAttempts>=5){setTimeout(()=>{_admAttempts=0;err.classList.remove('show');},30000);}
   }
@@ -126,7 +126,7 @@ function renderKVAPanel() {
         <td style="cursor:pointer" onclick="kvaOpenEdit(${i})"><div class="kva-pos-name">${esc(p.name)}</div><div class="kva-pos-desc">${esc(p.desc||'—')}</div><span class="kva-cat ${p.category||'custom'}">${catLabels[p.category||'custom']||p.category}</span></td>
         <td><input class="kva-h-input" type="number" min="0" step="0.5" value="${p.h}" oninput="S.kva.positions[${i}].h=Number(this.value)||0;save();renderAdmin()"></td>
         <td style="font-family:var(--fm);font-size:.78rem;color:var(--accent);text-align:right;white-space:nowrap">${((p.included!==false?Number(p.h)||0:0)*rate).toLocaleString('de-DE')} €</td>
-        <td style="white-space:nowrap"><button class="login-eye" onclick="kvaOpenEdit(${i})" title="${L==='en'?'Edit':'Bearbeiten'}" style="color:var(--muted);margin-right:2px">✏️</button><button class="login-eye" onclick="S.kva.positions.splice(${i},1);save();renderAdmin()" title="${L==='en'?'Remove':'Entfernen'}" style="color:var(--danger)">✕</button></td>
+        <td style="white-space:nowrap"><button class="login-eye" onclick="kvaOpenEdit(${i})" title="${L==='en'?'Edit':'Bearbeiten'}" style="color:var(--muted);margin-right:2px">✎</button><button class="login-eye" onclick="S.kva.positions.splice(${i},1);save();renderAdmin()" title="${L==='en'?'Remove':'Entfernen'}" style="color:var(--danger)">✕</button></td>
       </tr>`).join('')}
     </tbody>
     <tfoot>
@@ -295,7 +295,7 @@ function renderSettingsPanel(){
   </div>
   <div class="nav-row"><div></div>
     <div style="display:flex;gap:6px">
-      <button class="btn-sm danger" onclick="localStorage.removeItem('ssa_ejs_svc');localStorage.removeItem('ssa_ejs_tpl');localStorage.removeItem('ssa_ejs_key');renderAdmin();toast('Konfiguration gelöscht','warn')">🗑 Zurücksetzen</button>
+      <button class="btn-sm danger" onclick="localStorage.removeItem('ssa_ejs_svc');localStorage.removeItem('ssa_ejs_tpl');localStorage.removeItem('ssa_ejs_key');renderAdmin();toast('Konfiguration gelöscht','warn')">Zurücksetzen</button>
       <button class="btn-p" onclick="saveEmailSettings()">Speichern</button>
     </div>
   </div>`;
@@ -332,13 +332,13 @@ function openEmailModal(type) {
     const disc=Number(S.kva.discount)||0;
     const netto=totalH*rate*(1-disc/100);
     const brutto=kuE?netto:netto*1.19;
-    document.getElementById('emailModalTitle').textContent='📋 Kostenvoranschlag senden';
+    document.getElementById('emailModalTitle').textContent='Kostenvoranschlag senden';
     document.getElementById('emailModalSub').textContent=`Von: securestay@outlook.de · KVA ${S.kva.nr||''}`;
     subject=`Kostenvoranschlag ${S.kva.nr||''} – ${S.meta.objekt||'Audit-Beratung'} | SecureStay Solutions`;
     body=`Sehr geehrte Damen und Herren,${S.meta.auftraggeber?'\nfür '+S.meta.auftraggeber:''},\n\nvielen Dank für Ihr Vertrauen. Anbei erhalten Sie unseren Kostenvoranschlag für die Beratungsleistungen im Rahmen des durchgeführten Audits.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nKOSTENVORANSCHLAG ${S.kva.nr||''}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nObjekt:      ${S.meta.objekt||'–'}\nAuftrag:     ${S.meta.auftraggeber||'–'}\nDatum:       ${S.kva.date?new Date(S.kva.date).toLocaleDateString('de-DE'):ds}\nGültig bis:  ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}\nStundensatz: ${rate} €/h\n\nLEISTUNGSPOSITIONEN:\n${activePos.map((p,i)=>`${String(i+1).padStart(2,'0')}. ${p.name}\n    ${p.desc}\n    Aufwand: ${p.h} Std. × ${rate} € = ${(Number(p.h)*rate).toLocaleString('de-DE')} €`).join('\n\n')}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGESAMT: ${totalH} Std.\nNettobetrag:  ${(totalH*rate).toLocaleString('de-DE',{minimumFractionDigits:2})} €${disc>0?`\nRabatt ${disc}%: – ${(totalH*rate*disc/100).toLocaleString('de-DE',{minimumFractionDigits:2})} €`:''}
 Netto:        ${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n${kuE?'§ 19 UStG: keine Umsatzsteuer':'MwSt. 19%:   '+(netto*0.19).toLocaleString('de-DE',{minimumFractionDigits:2})+' €'}\nGESAMT (${kuE?'netto':'brutto'}): ${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${S.kva.notes?'\nBesondere Vereinbarungen:\n'+S.kva.notes+'\n':''}\nBei Fragen stehen wir Ihnen jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\n\nSecureStay Solutions UG (haftungsbeschränkt)\nKirchstr. 8b · 55270 Essenheim\nsecurestay@outlook.de`;
   } else {
-    document.getElementById('emailModalTitle').textContent='📝 Begehungsprotokoll senden';
+    document.getElementById('emailModalTitle').textContent='Begehungsprotokoll senden';
     document.getElementById('emailModalSub').textContent='Von: securestay@outlook.de · Zusammenfassung der Audit-Ergebnisse';
     subject=`Begehungsprotokoll${S.meta.objekt?' – '+S.meta.objekt:''} | SecureStay Solutions`;
     const assessed=Object.values(S.findings).filter(f=>f.status).length;
@@ -348,7 +348,7 @@ Netto:        ${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €\n${
   document.getElementById('em_sub').value=subject;
   document.getElementById('em_body').value=body;
   document.getElementById('emailSendBtn').disabled=false;
-  document.getElementById('emailSendBtn').textContent='📤 Senden';
+  document.getElementById('emailSendBtn').textContent='Senden';
   document.getElementById('emailModal').classList.add('open');
 }
 
@@ -364,7 +364,7 @@ function sendEmail(){
   const ejsOk=ejsCfg.svc&&ejsCfg.tpl&&ejsCfg.key;
   if(!ejsOk){toast(L==='en'?'EmailJS not configured — open Settings':'EmailJS nicht konfiguriert – Einstellungen öffnen','error',null,null,5000);return;}
   const btn=document.getElementById('emailSendBtn');
-  btn.disabled=true;btn.textContent=L==='en'?'⏳ Sending…':'⏳ Wird gesendet…';
+  btn.disabled=true;btn.textContent=L==='en'?'Sending…':'Wird gesendet…';
   try{emailjs.init(ejsCfg.key);}catch(e){}
   emailjs.send(ejsCfg.svc,ejsCfg.tpl,{to_email:to,subject:sub,message:body,from_name:'SecureStay Solutions UG',reply_to:'securestay@outlook.de'})
     .then(()=>{
@@ -372,7 +372,7 @@ function sendEmail(){
       closeModal('emailModal');
     })
     .catch(err=>{
-      btn.disabled=false;btn.textContent=L==='en'?'📤 Retry':'📤 Erneut senden';
+      btn.disabled=false;btn.textContent=L==='en'?'Retry':'Erneut senden';
       toast(`${L==='en'?'Error':'Fehler'}: ${err?.text||(L==='en'?'Sending failed':'Versand fehlgeschlagen')}`,'error',null,null,6000);
     });
 }
@@ -446,7 +446,7 @@ function printKVA(){
   <div class="client-col"><div class="label">Adresse</div><div class="val">${S.meta.adresse||'–'}</div></div>
   <div class="client-col"><div class="label">Begehungsdatum</div><div class="val">${S.meta.datum?new Date(S.meta.datum).toLocaleDateString('de-DE'):'–'}</div></div>
 </div>
-<div class="validity-box">📋 Dieser Kostenvoranschlag ist unverbindlich und gilt bis zum ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}. Alle Preise verstehen sich zzgl. gesetzlicher Mehrwertsteuer.</div>
+<div class="validity-box">Dieser Kostenvoranschlag ist unverbindlich und gilt bis zum ${S.kva.validUntil?new Date(S.kva.validUntil).toLocaleDateString('de-DE'):'–'}. Alle Preise verstehen sich zzgl. gesetzlicher Mehrwertsteuer.</div>
 <div class="section-title">Leistungsübersicht</div>
 <table>
   <thead><tr><th style="width:26px">Pos.</th><th>Leistung / Beschreibung</th><th style="width:50px">Std.</th><th style="width:70px">Preis/Std.</th><th style="width:80px">Betrag</th></tr></thead>

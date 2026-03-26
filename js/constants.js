@@ -13,45 +13,45 @@ const NORMS={
 
 const CK=[
 // ═══ SECURITY ═══
-{id:'perimeter',l:'Perimeter & Gelände',l_en:'Perimeter & Premises',m:'security',norms:['ISO 31000','KRITIS-DachG','BSI IT-Grundschutz'],i:'🏗️',s:'Außensicherung, Gelände, Beleuchtung.',items:[
+{id:'perimeter',l:'Perimeter & Gelände',l_en:'Perimeter & Premises',m:'security',norms:['ISO 31000','KRITIS-DachG','BSI IT-Grundschutz'],i:'EXT',s:'Außensicherung, Gelände, Beleuchtung.',items:[
 {id:'p1',l:'Geländeeinfriedung',n:'DIN EN 1627 · BSI INF.1',d:'Zustand, Höhe ≥2m, Lückenfreiheit.',c:{mangel:'2.000–8.000',kritisch:'8.000–25.000'},m:'security'},
 {id:'p2',l:'Fahrzeugsperre / Poller',n:'PAS 68 · IWA 14',d:'Rammschutz an Eingängen.',c:{mangel:'5.000–15.000',kritisch:'15.000–60.000'},m:'security'},
 {id:'p3',l:'Geländebeleuchtung',n:'DIN EN 12464',d:'Lückenlose Ausleuchtung.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'security'},
 {id:'p4',l:'Beschilderung',n:'ASR A1.3',d:'Schilder komplett.',c:{mangel:'200–800',kritisch:'800–2.000'},m:'security'},
 {id:'p5',l:'Drohnenabwehr',n:'KRITIS-DachG §13',d:'UAV-Schutz.',c:{mangel:'10.000–30.000',kritisch:'30.000–100.000'},m:'security'},
 ]},
-{id:'zutritt',l:'Zutrittskontrolle',l_en:'Access Control',m:'security',norms:['ISO/IEC 27001','BSI IT-Grundschutz','NIS2'],i:'🔐',s:'ZKS, Schlüssel, Schleusen, Besucher.',items:[
+{id:'zutritt',l:'Zutrittskontrolle',l_en:'Access Control',m:'security',norms:['ISO/IEC 27001','BSI IT-Grundschutz','NIS2'],i:'ACC',s:'ZKS, Schlüssel, Schleusen, Besucher.',items:[
 {id:'z1',l:'Elektronische ZKS',n:'DIN VDE 0830-8',d:'Protokollierung, Karten/PIN/Bio.',c:{mangel:'5.000–15.000',kritisch:'15.000–40.000'},m:'security'},
 {id:'z2',l:'Schlüsselverwaltung',n:'VdS 2311',d:'Register, Ausgabeprotokoll.',c:{mangel:'500–2.000',kritisch:'2.000–8.000'},m:'security'},
 {id:'z3',l:'Einlassschleuse',n:'DIN EN 1627',d:'Vereinzelung Hochsicherheit.',c:{mangel:'8.000–20.000',kritisch:'20.000–60.000'},m:'security'},
 {id:'z4',l:'Besuchermanagement',n:'ISO 27001 A.11',d:'Registrierung, Begleitpflicht.',c:{mangel:'1.000–4.000',kritisch:'4.000–10.000'},m:'security'},
 {id:'z5',l:'Berechtigungskonzept',n:'ISO 27001 A.9',d:'Dokumentiert, geprüft.',c:{mangel:'1.500–4.000',kritisch:'4.000–8.000'},m:'security'},
 ]},
-{id:'einbruch',l:'Einbruchhemmung',l_en:'Intrusion Prevention',m:'security',norms:['ISO 31000'],i:'🚪',s:'Türen, Fenster, Tresore.',items:[
+{id:'einbruch',l:'Einbruchhemmung',l_en:'Intrusion Prevention',m:'security',norms:['ISO 31000'],i:'EIN',s:'Türen, Fenster, Tresore.',items:[
 {id:'e1',l:'Außentüren RC2+',n:'DIN EN 1627',d:'≥ RC2.',c:{mangel:'1.500–5.000',kritisch:'5.000–15.000'},m:'security'},
 {id:'e2',l:'Fenster ≥ P6B',n:'EN 356',d:'EG einbruchhemmend.',c:{mangel:'2.000–8.000',kritisch:'8.000–25.000'},m:'security'},
 {id:'e3',l:'Tresore',n:'EN 1143-1',d:'Zertifiziert, verankert.',c:{mangel:'2.000–6.000',kritisch:'6.000–20.000'},m:'security'},
 ]},
-{id:'video',l:'Videoüberwachung',l_en:'Video Surveillance',m:'security',norms:['ISO/IEC 27001','BSI IT-Grundschutz'],i:'📹',s:'Kameras, Auflösung, Speicher, DSGVO.',items:[
+{id:'video',l:'Videoüberwachung',l_en:'Video Surveillance',m:'security',norms:['ISO/IEC 27001','BSI IT-Grundschutz'],i:'VID',s:'Kameras, Auflösung, Speicher, DSGVO.',items:[
 {id:'v1',l:'Kamera Eingänge',n:'DIN EN 62676-4',d:'Identifikationsqualität.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'security'},
 {id:'v2',l:'Innenraum',n:'DIN EN 62676-4',d:'Kritische Bereiche.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'security'},
 {id:'v3',l:'≥1080p',n:'DIN EN 62676-4',d:'Auflösung/Framerate.',c:{mangel:'4.000–12.000',kritisch:'12.000–30.000'},m:'security'},
 {id:'v4',l:'Speicherung ≥72h',n:'VdS 2366',d:'Manipulationsschutz.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'security'},
 {id:'v5',l:'DSGVO-Schilder',n:'DSGVO Art.13',d:'Hinweise vorhanden.',c:{mangel:'200–600',kritisch:'600–2.000'},m:'security'},
 ]},
-{id:'alarm',l:'Alarm & Meldeanlagen',l_en:'Alarm Systems',m:'security',norms:['ISO 31000','BSI IT-Grundschutz'],i:'🚨',s:'EMA, ÜMA, NSL, Wartung.',items:[
+{id:'alarm',l:'Alarm & Meldeanlagen',l_en:'Alarm Systems',m:'security',norms:['ISO 31000','BSI IT-Grundschutz'],i:'ALM',s:'EMA, ÜMA, NSL, Wartung.',items:[
 {id:'a1',l:'EMA',n:'DIN EN 50131',d:'VdS-anerkannt.',c:{mangel:'5.000–15.000',kritisch:'15.000–40.000'},m:'security'},
 {id:'a2',l:'NSL-Aufschaltung',n:'VdS 2311',d:'24/7.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'security'},
 {id:'a3',l:'Bewegungsmelder',n:'DIN EN 50131-2',d:'PIR/Dual-Tech.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'security'},
 {id:'a4',l:'Wartungsnachweis',n:'VdS 2311',d:'Jährlich.',c:{mangel:'500–1.500',kritisch:'1.500–4.000'},m:'security'},
 ]},
-{id:'brand',l:'Brandschutz',l_en:'Fire Protection',m:'security',norms:['ISO 45001','BSI IT-Grundschutz'],i:'🔥',s:'BMA, Löscher, Fluchtwege.',items:[
+{id:'brand',l:'Brandschutz',l_en:'Fire Protection',m:'security',norms:['ISO 45001','BSI IT-Grundschutz'],i:'BRD',s:'BMA, Löscher, Fluchtwege.',items:[
 {id:'b1',l:'BMA',n:'DIN 14675',d:'Automatische Melder.',c:{mangel:'8.000–25.000',kritisch:'25.000–80.000'},m:'security'},
 {id:'b2',l:'Feuerlöscher',n:'DIN EN 3',d:'Geprüft, korrekte Klassen.',c:{mangel:'500–2.000',kritisch:'2.000–6.000'},m:'security'},
 {id:'b3',l:'Fluchtwege',n:'ASR A2.3',d:'Frei, gekennzeichnet.',c:{mangel:'1.000–4.000',kritisch:'4.000–12.000'},m:'security'},
 {id:'b4',l:'Brandschutzordnung',n:'DIN 14096',d:'Teil A/B/C aktuell.',c:{mangel:'800–2.500',kritisch:'2.500–6.000'},m:'security'},
 ]},
-{id:'orga',l:'Sicherheitsorganisation',l_en:'Security Organisation',m:'security',norms:['ISO 31000','ISO/IEC 27001','ISO 22301','NIS2','KRITIS-DachG'],i:'📋',s:'Richtlinien, Schulungen, BCM.',items:[
+{id:'orga',l:'Sicherheitsorganisation',l_en:'Security Organisation',m:'security',norms:['ISO 31000','ISO/IEC 27001','ISO 22301','NIS2','KRITIS-DachG'],i:'ORG',s:'Richtlinien, Schulungen, BCM.',items:[
 {id:'o1',l:'Sicherheitsrichtlinie',n:'ISO 27001 A.5',d:'GF-unterzeichnet.',c:{mangel:'2.000–5.000',kritisch:'5.000–10.000'},m:'security'},
 {id:'o2',l:'Security Awareness',n:'BSI ORP.3',d:'Regelmäßig.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'security'},
 {id:'o3',l:'Notfall-/Krisenplan',n:'ISO 22301 §8.4',d:'Getestet.',c:{mangel:'4.000–10.000',kritisch:'10.000–25.000'},m:'security'},
@@ -67,44 +67,44 @@ const CK=[
 {id:'rel6',l:'Notfallplan für politisch motivierte Gewalt',l_en:'Emergency Plan for Politically Motivated Violence',n:'ISO 22301 · NIS2',d:'Spezifischer Notfallplan für Anschlagsszenarien, Hasskriminalität und politisch motivierte Gewalt vorhanden und geübt.',d_en:'Specific emergency plan for attack scenarios, hate crime and politically motivated violence exists and has been rehearsed.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'security'},
 ]},
 // ═══ QM ═══
-{id:'qm_kf',l:'Kontext & Führung',l_en:'Context & Leadership',m:'qm',norms:['ISO 9001','ISO 45001'],i:'🎯',s:'Kontext, Parteien, Politik.',items:[
+{id:'qm_kf',l:'Kontext & Führung',l_en:'Context & Leadership',m:'qm',norms:['ISO 9001','ISO 45001'],i:'KON',s:'Kontext, Parteien, Politik.',items:[
 {id:'q1',l:'Kontext',n:'ISO 9001 4.1',d:'Themen identifiziert.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'qm'},
 {id:'q2',l:'Interessierte Parteien',n:'ISO 9001 4.2',d:'Stakeholder-Analyse.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'qm'},
 {id:'q3',l:'Qualitätspolitik',n:'ISO 9001 5.2',d:'Kommuniziert.',c:{mangel:'1.000–3.000',kritisch:'3.000–6.000'},m:'qm'},
 {id:'q4',l:'Rollen & Verantwortung',n:'ISO 9001 5.3',d:'Organigramm.',c:{mangel:'1.500–4.000',kritisch:'4.000–8.000'},m:'qm'},
 ]},
-{id:'qm_plan',l:'Planung & Risiken',l_en:'Planning & Risks',m:'qm',norms:['ISO 9001','ISO 45001'],i:'📊',s:'Risikobewertung, Ziele, Gefährdungsbeurteilung.',items:[
+{id:'qm_plan',l:'Planung & Risiken',l_en:'Planning & Risks',m:'qm',norms:['ISO 9001','ISO 45001'],i:'PLN',s:'Risikobewertung, Ziele, Gefährdungsbeurteilung.',items:[
 {id:'qp1',l:'Risiken & Chancen',n:'ISO 9001 6.1',d:'Systematisch bewertet.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'qm'},
 {id:'qp2',l:'Qualitätsziele SMART',n:'ISO 9001 6.2',d:'Messbar, nachverfolgt.',c:{mangel:'1.000–3.000',kritisch:'3.000–6.000'},m:'qm'},
 {id:'qp3',l:'Gefährdungsbeurteilung',n:'ISO 45001 6.1.2',d:'Alle Arbeitsplätze.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'qm'},
 {id:'qp4',l:'Rechtskataster',n:'ISO 45001 6.1.3',d:'Aktuell.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'qm'},
 ]},
-{id:'qm_res',l:'Ressourcen & Kompetenz',l_en:'Resources & Competence',m:'qm',norms:['ISO 9001','ISO 45001'],i:'👥',s:'Personal, Schulung, Dokumentation.',items:[
+{id:'qm_res',l:'Ressourcen & Kompetenz',l_en:'Resources & Competence',m:'qm',norms:['ISO 9001','ISO 45001'],i:'RES',s:'Personal, Schulung, Dokumentation.',items:[
 {id:'qs1',l:'Kompetenz',n:'ISO 9001 7.2',d:'Schulungsplan, Nachweise.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'qm'},
 {id:'qs2',l:'Dokumentenlenkung',n:'ISO 9001 7.5',d:'Erstellen, Genehmigen.',c:{mangel:'2.000–5.000',kritisch:'5.000–10.000'},m:'qm'},
 ]},
-{id:'qm_op',l:'Betrieb & Steuerung',l_en:'Operations & Control',m:'qm',norms:['ISO 9001','ISO 45001'],i:'⚙️',s:'Planung, Lieferanten, Nichtkonformitäten.',items:[
+{id:'qm_op',l:'Betrieb & Steuerung',l_en:'Operations & Control',m:'qm',norms:['ISO 9001','ISO 45001'],i:'BET',s:'Planung, Lieferanten, Nichtkonformitäten.',items:[
 {id:'qb1',l:'Betriebliche Planung',n:'ISO 9001 8.1',d:'Prozesse gesteuert.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'qm'},
 {id:'qb2',l:'Lieferantensteuerung',n:'ISO 9001 8.4',d:'Bewertung, Überwachung.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'qm'},
 {id:'qb3',l:'Nichtkonformitäten',n:'ISO 9001 8.7',d:'Identifiziert, korrigiert.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'qm'},
 ]},
-{id:'qm_kvp',l:'Bewertung & KVP',l_en:'Evaluation & CIP',m:'qm',norms:['ISO 9001','ISO 45001'],i:'📈',s:'Audits, Managementbewertung, KVP.',items:[
+{id:'qm_kvp',l:'Bewertung & KVP',l_en:'Evaluation & CIP',m:'qm',norms:['ISO 9001','ISO 45001'],i:'KVP',s:'Audits, Managementbewertung, KVP.',items:[
 {id:'qv1',l:'Internes Audit',n:'ISO 9001 9.2',d:'Auditplan, Berichte.',c:{mangel:'3.000–8.000',kritisch:'8.000–18.000'},m:'qm'},
 {id:'qv2',l:'Managementbewertung',n:'ISO 9001 9.3',d:'Jährlich.',c:{mangel:'2.000–5.000',kritisch:'5.000–10.000'},m:'qm'},
 {id:'qv3',l:'KVP-Prozess',n:'ISO 9001 10.3',d:'Systematisch.',c:{mangel:'1.500–4.000',kritisch:'4.000–8.000'},m:'qm'},
 ]},
 // ═══ IT-GOVERNANCE (COBIT) ═══
-{id:'itg_org',l:'1. IT-Organisation',l_en:'1. IT Organisation',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🏛️',s:'Rollen, Verantwortlichkeiten, Personalbedarf.',items:[
+{id:'itg_org',l:'1. IT-Organisation',l_en:'1. IT Organisation',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'ORG',s:'Rollen, Verantwortlichkeiten, Personalbedarf.',items:[
 {id:'c01',l:'Rollen & Verantwortlichkeiten IT',n:'APO01.05',d:'IT-Organigramm, Stellenbeschreibungen.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Leadership',rd:'IT-Organigramm; IT-Stellenbeschreibungen',f:'J'},
 {id:'c02',l:'Personalbedarf regelmäßig bewertet',n:'APO01.08',d:'Prozess zur Bewertung des IT-Personalbedarfs.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'itgov',iso20k:'Support – Resources',rd:'Personalbedarfsanalyse',f:'J'},
 {id:'c03',l:'Zielkompetenzen IT-Personal',n:'APO01.08',d:'Kompetenzprofile, Weiterbildungsplan.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Support – Competence',rd:'Kompetenzmatrix; Schulungsplan',f:'J'},
 ]},
-{id:'itg_strat',l:'2. IT-Strategie',l_en:'2. IT Strategy',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🧭',s:'Strategieplan, KPIs, Stakeholder-Genehmigung.',items:[
+{id:'itg_strat',l:'2. IT-Strategie',l_en:'2. IT Strategy',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'STR',s:'Strategieplan, KPIs, Stakeholder-Genehmigung.',items:[
 {id:'c04',l:'IT-Strategie dokumentiert',n:'APO02.05',d:'Ganzheitliche IT-Strategie und Roadmap.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Planning – Objectives',rd:'IT-Strategiedokument',f:'J'},
 {id:'c05',l:'IT-KPIs messbar definiert',n:'APO02.05',d:'Strategische Ziele in messbare KPIs übersetzt.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Planning – Objectives',rd:'KPI-Maßnahmenplan',f:'Q'},
 {id:'c06',l:'IT-Strategie genehmigt',n:'APO02.05',d:'Formale Genehmigung durch Stakeholder/GF.',c:{mangel:'1.000–3.000',kritisch:'3.000–6.000'},m:'itgov',iso20k:'Planning – Plan the SMS',rd:'Genehmigungsnachweis',f:'J'},
 ]},
-{id:'itg_isms',l:'3. Informationssicherheit',l_en:'3. Information Security',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO/IEC 27001'],i:'🔒',s:'ISMS, Richtlinien, SOA, Audits, Reporting.',items:[
+{id:'itg_isms',l:'3. Informationssicherheit',l_en:'3. Information Security',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO/IEC 27001'],i:'SEC',s:'ISMS, Richtlinien, SOA, Audits, Reporting.',items:[
 {id:'c07',l:'ISMS-Rollen definiert',n:'APO13.01',d:'Informationssicherheitsbeauftragter benannt.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Service Assurance',rd:'Rollenbeschreibung ISO',f:'J'},
 {id:'c08',l:'Informationssicherheits-Policy',n:'APO13.01',d:'Von Management genehmigte Policy.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Management Policy',rd:'Informationssicherheits-Policy',f:'J'},
 {id:'c09',l:'Sicherheitsrichtlinien abgeleitet',n:'APO13.02',d:'Spezifische Richtlinien aus Policy abgeleitet.',c:{mangel:'2.000–5.000',kritisch:'5.000–10.000'},m:'itgov',iso20k:'Service Assurance',rd:'Sicherheitsrichtlinien',f:'J'},
@@ -112,7 +112,7 @@ const CK=[
 {id:'c11',l:'ISMS-Audits durchgeführt',n:'APO13.03',d:'Regelmäßige ISMS-Reviews und Audits.',c:{mangel:'3.000–8.000',kritisch:'8.000–18.000'},m:'itgov',iso20k:'Service Assurance',rd:'ISMS-Auditberichte',f:'J'},
 {id:'c12',l:'ISMS-Reporting an Management',n:'APO13.03',d:'Regelmäßige Berichte an GF.',c:{mangel:'1.000–3.000',kritisch:'3.000–6.000'},m:'itgov',iso20k:'Communication',rd:'ISMS-Management-Reports',f:'Q'},
 ]},
-{id:'itg_risk',l:'4. IT-Risikomanagement',l_en:'4. IT Risk Management',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'⚡',s:'Risiko-Policy, Assets, Schutzbedarfe, Reports.',items:[
+{id:'itg_risk',l:'4. IT-Risikomanagement',l_en:'4. IT Risk Management',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'RSK',s:'Risiko-Policy, Assets, Schutzbedarfe, Reports.',items:[
 {id:'c13',l:'IT-Risikomanagement-Policy',n:'APO12.01',d:'Methode zur Risikoerfassung etabliert.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Risks and Opportunities',rd:'IT-Risikomanagement-Policy',f:'J'},
 {id:'c14',l:'IT-Asset-Inventar',n:'APO12.03',d:'Geschäftsprozesse und IT-Assets inventarisiert.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'itgov',iso20k:'Service Portfolio',rd:'IT-Asset-Inventar; Prozesslandschaft',f:'Q'},
 {id:'c15',l:'Schutzbedarfsfeststellung',n:'APO12.03',d:'Schutzniveaus für IT-Services festgelegt.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Risks and Opportunities',rd:'Schutzbedarfsfeststellung',f:'J'},
@@ -120,12 +120,12 @@ const CK=[
 {id:'c17',l:'Risikominderungsplan',n:'APO12.05',d:'Kontrollaktivitäten inventarisiert.',c:{mangel:'2.000–5.000',kritisch:'5.000–10.000'},m:'itgov',iso20k:'Risks and Opportunities',rd:'Risikominderungsplan',f:'Q'},
 {id:'c18',l:'Audit-Feststellungen nachverfolgt',n:'MEA03.03',d:'Remediation Tracking vorhanden.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Performance Evaluation',rd:'Maßnahmenlisten; Remediation Tracking',f:'Q'},
 ]},
-{id:'itg_inc',l:'5. Incident-Management',l_en:'5. Incident Management',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🚧',s:'Incident-Prozess, Tickets, Reporting.',items:[
+{id:'itg_inc',l:'5. Incident-Management',l_en:'5. Incident Management',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'INC',s:'Incident-Prozess, Tickets, Reporting.',items:[
 {id:'c19',l:'Incident-Management-Prozess',n:'DSS02.02',d:'Klassifizierung, Priorisierung, Eskalation.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Resolution and Fulfilment',rd:'Incident-Policy; Eskalationsregeln; Klassifizierung',f:'O'},
 {id:'c20',l:'Incident-Analyse & Diagnose',n:'DSS02.04',d:'Symptome identifiziert, Root-Cause-Analyse.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Resolution and Fulfilment',rd:'Incident-Tickets; Incident-Log',f:'O'},
 {id:'c21',l:'Incident-Reporting & Trends',n:'DSS02.07',d:'Regelmäßige Statusberichte und Trendanalyse.',c:{mangel:'1.500–4.000',kritisch:'4.000–8.000'},m:'itgov',iso20k:'Resolution and Fulfilment',rd:'Incident-Status-Reports; Trendberichte',f:'M'},
 ]},
-{id:'itg_access',l:'6. Logischer Zugriff',l_en:'6. Logical Access',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO/IEC 27001'],i:'🔑',s:'Berechtigungen, Passwörter, privilegierte Accounts.',items:[
+{id:'itg_access',l:'6. Logischer Zugriff',l_en:'6. Logical Access',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO/IEC 27001'],i:'ZGR',s:'Berechtigungen, Passwörter, privilegierte Accounts.',items:[
 {id:'c22',l:'Zugriffs-Policy & Verfahren',n:'DSS05.04',d:'Richtlinien für Vergabe/Änderung/Entzug.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'User-Access-Policy; Berechtigungskonzept',f:'J'},
 {id:'c23',l:'Änderungen an Zugriffsrechten',n:'DSS05.04',d:'Erstellung/Änderung/Löschung dokumentiert.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Service Assurance',rd:'Genehmigte Zugriffsanträge',f:'O'},
 {id:'c24',l:'Privilegierte Accounts',n:'DSS05.04',d:'Nur autorisierte Administratoren.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Admin-Rollenkonzept',f:'Q'},
@@ -133,14 +133,14 @@ const CK=[
 {id:'c26',l:'Passwort-Richtlinie',n:'DSS05.04',d:'Authentifizierung, Komplexität, MFA.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'itgov',iso20k:'Service Assurance',rd:'Passwort-Guideline',f:'J'},
 {id:'c27',l:'Jährlicher Account-Review',n:'DSS05.04',d:'Alle Accounts und Berechtigungen überprüft.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'Account-Review-Dokumentation',f:'J'},
 ]},
-{id:'itg_phys',l:'7. Physischer IT-Zugriff',l_en:'7. Physical IT Access',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🚪',s:'Serverraum-Zugang, Besucherlogbuch, Autorisierung.',items:[
+{id:'itg_phys',l:'7. Physischer IT-Zugriff',l_en:'7. Physical IT Access',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'EIN',s:'Serverraum-Zugang, Besucherlogbuch, Autorisierung.',items:[
 {id:'c28',l:'Perimeter-Schutz IT-Bereiche',n:'DSS05.05',d:'Zugang einschränken und überwachen.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Zugangskonzept IT-Räume',f:'Q'},
 {id:'c29',l:'Besucher-Registrierung IT',n:'DSS05.05',d:'Alle Besucher/Dienstleister registriert.',c:{mangel:'500–2.000',kritisch:'2.000–5.000'},m:'itgov',iso20k:'Service Assurance',rd:'Besucherlogbuch',f:'O'},
 {id:'c30',l:'Zugangsgenehmigung IT-Bereiche',n:'DSS05.05',d:'Zugangsanträge genehmigt und autorisiert.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'itgov',iso20k:'Service Assurance',rd:'Genehmigte Zugangsanträge',f:'O'},
 {id:'c31',l:'Zugangs-Review IT-Räume',n:'DSS05.05',d:'Autorisierungen regelmäßig überprüft.',c:{mangel:'1.000–3.000',kritisch:'3.000–6.000'},m:'itgov',iso20k:'Service Assurance',rd:'Review-Ergebnisse',f:'Q'},
 {id:'c32',l:'Zugangs-Logs ausgewertet',n:'DSS05.07',d:'Protokolle regelmäßig evaluiert.',c:{mangel:'1.000–3.000',kritisch:'3.000–8.000'},m:'itgov',iso20k:'Service Assurance',rd:'Zugangs-Logs; Auswertungen',f:'M'},
 ]},
-{id:'itg_physec',l:'8. Physische IT-Sicherheit',l_en:'8. Physical IT Security',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🏢',s:'USV, Klima, Wartung, Umgebungsschutz.',items:[
+{id:'itg_physec',l:'8. Physische IT-Sicherheit',l_en:'8. Physical IT Security',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'INF',s:'USV, Klima, Wartung, Umgebungsschutz.',items:[
 {id:'c33',l:'Sauberkeit & Sicherheit IT-Räume',n:'DSS01.04',d:'Ordnung, Brandlasten minimiert.',c:{mangel:'500–2.000',kritisch:'2.000–6.000'},m:'itgov',iso20k:'Service Assurance',rd:'Begehungsprotokolle',f:'Q'},
 {id:'c34',l:'Umgebungsschutz Serverraum',n:'DSS01.04',d:'Gegen Umwelteinflüsse geschützt.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Security-Policy IT-Facilities',f:'J'},
 {id:'c35',l:'Umgebungsüberwachung',n:'DSS01.04',d:'Klima, Feuchte, Temperatur-Monitoring.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'Monitoring-Protokolle',f:'M'},
@@ -148,7 +148,7 @@ const CK=[
 {id:'c37',l:'Redundante Stromversorgung',n:'DSS01.05',d:'Mehr als eine Stromquelle.',c:{mangel:'5.000–15.000',kritisch:'15.000–40.000'},m:'itgov',iso20k:'Service Assurance',rd:'Infrastruktur-Dokumentation',f:'J'},
 {id:'c38',l:'Wartungsverträge IT-Infrastruktur',n:'DSS01.05',d:'Herstellervorgaben eingehalten.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'Wartungspläne; Wartungsverträge',f:'J'},
 ]},
-{id:'itg_dev',l:'9. Anwendungsentwicklung',l_en:'9. Application Development',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'💻',s:'Change Management, Testing, Release, CMDB.',items:[
+{id:'itg_dev',l:'9. Anwendungsentwicklung',l_en:'9. Application Development',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'DEV',s:'Change Management, Testing, Release, CMDB.',items:[
 {id:'c39',l:'Entwicklungs-/Change-Richtlinie',n:'BAI03.02',d:'Standardisiertes Verfahren.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Design Build and Transition',rd:'Change-Management-Guideline; Rollen/Verantwortlichkeiten',f:'J'},
 {id:'c40',l:'Anforderungsdokumentation',n:'BAI03.02',d:'Funktionale/nicht-funktionale Anforderungen.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Design Build and Transition',rd:'Anforderungsdokumente; Genehmigungsnachweise',f:'O'},
 {id:'c41',l:'Getrennte Entwicklungs-/Testumgebung',n:'BAI03.03',d:'Dev/Test separat von Produktion.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'itgov',iso20k:'Design Build and Transition',rd:'Umgebungs-Dokumentation',f:'J'},
@@ -157,21 +157,21 @@ const CK=[
 {id:'c44',l:'Testdurchführung dokumentiert',n:'BAI03.08',d:'Testergebnisse, Bug-Listen.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Design Build and Transition',rd:'Testergebnisse; Bug-Listen',f:'O'},
 {id:'c45',l:'Release-/Konfigurationsmanagement',n:'BAI03.09',d:'CMDB, Change-Tracking in Produktion.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'itgov',iso20k:'Design Build and Transition',rd:'CMDB; Produktions-Changelog',f:'O'},
 ]},
-{id:'itg_mon',l:'10. Infrastruktur-Monitoring',l_en:'10. Infrastructure Monitoring',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'📡',s:'Performance- und Kapazitätsüberwachung.',items:[
+{id:'itg_mon',l:'10. Infrastruktur-Monitoring',l_en:'10. Infrastructure Monitoring',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'MON',s:'Performance- und Kapazitätsüberwachung.',items:[
 {id:'c46',l:'IT-Infrastruktur-Monitoring',n:'DSS01.03',d:'Performance/Kapazität kontinuierlich überwacht.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Portfolio',rd:'Monitoring-Regeln; Incident-Tickets aus Monitoring',f:'O'},
 ]},
-{id:'itg_malware',l:'11. Schutz vor Schadsoftware',l_en:'11. Malware Protection',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🛡️',s:'Anti-Malware, Penetration Tests, Awareness, Endpoints.',items:[
+{id:'itg_malware',l:'11. Schutz vor Schadsoftware',l_en:'11. Malware Protection',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'MAL',s:'Anti-Malware, Penetration Tests, Awareness, Endpoints.',items:[
 {id:'c47',l:'Anti-Malware aktiv',n:'DSS05.01',d:'Auf allen Systemen installiert/aktiv.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'Anti-Malware-Policy',f:'O'},
 {id:'c48',l:'Traffic-Filterung & Penetration Tests',n:'DSS05.01',d:'E-Mail/Download-Filter, regelmäßige Pentests.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Pentest-Ergebnisse',f:'J'},
 {id:'c49',l:'Security-Awareness-Programm',n:'DSS05.01',d:'Mitarbeiter geschult, Präventionsmaßnahmen.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Service Assurance',rd:'Security-Awareness-Programm; Schulungsnachweise',f:'J'},
 {id:'c50',l:'Endpoint-Sicherheit',n:'DSS05.03',d:'Endpoints konfiguriert, Netzwerktrennung.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Endpoint-Security-Policies',f:'Q'},
 ]},
-{id:'itg_vendor',l:'12. Auslagerung & Vendor Mgmt',l_en:'12. Outsourcing & Vendor Mgmt',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'🤝',s:'Lieferantenauswahl, Risikobewertung, SLA-Monitoring.',items:[
+{id:'itg_vendor',l:'12. Auslagerung & Vendor Mgmt',l_en:'12. Outsourcing & Vendor Mgmt',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000'],i:'VND',s:'Lieferantenauswahl, Risikobewertung, SLA-Monitoring.',items:[
 {id:'c51',l:'Vendor-Management-Prozess',n:'APO10.01',d:'Auswahl, Bewertung, Katalog.',c:{mangel:'2.000–5.000',kritisch:'5.000–12.000'},m:'itgov',iso20k:'Relationship and Agreement',rd:'Vendor-Policy; Lieferantenkatalog',f:'J'},
 {id:'c52',l:'Vendor-Risikobewertung',n:'APO10.04',d:'Third-Party-Risk-Assessment.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'itgov',iso20k:'Relationship and Agreement',rd:'Third-Party-Risk-Reports',f:'J'},
 {id:'c53',l:'Vendor-Performance-Monitoring',n:'APO10.05',d:'SLA-Überwachung, Compliance-Check.',c:{mangel:'1.500–4.000',kritisch:'4.000–10.000'},m:'itgov',iso20k:'Relationship and Agreement',rd:'Vendor-Compliance-Reports',f:'Q'},
 ]},
-{id:'itg_bcm',l:'13. BCM & Backup',l_en:'13. BCM & Backup',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO 22301'],i:'🔄',s:'BIA, BCP, DRP, Backup-Tests.',items:[
+{id:'itg_bcm',l:'13. BCM & Backup',l_en:'13. BCM & Backup',m:'itgov',norms:['COBIT 2019','ISO/IEC 20000','ISO 22301'],i:'BCM',s:'BIA, BCP, DRP, Backup-Tests.',items:[
 {id:'c54',l:'Business Impact Analyse (IT)',n:'DSS04.02',d:'BIA für IT-Prozesse.',c:{mangel:'3.000–8.000',kritisch:'8.000–20.000'},m:'itgov',iso20k:'Service Assurance',rd:'Business Impact Analyse',f:'J'},
 {id:'c55',l:'BCP & DRP vorhanden',n:'DSS04.03',d:'Business Continuity & Disaster Recovery Plan.',c:{mangel:'4.000–10.000',kritisch:'10.000–25.000'},m:'itgov',iso20k:'Service Assurance',rd:'BCP; DRP',f:'J'},
 {id:'c56',l:'BCP/DRP getestet',n:'DSS04.04',d:'Übungen durchgeführt, Ergebnisse dokumentiert.',c:{mangel:'2.000–6.000',kritisch:'6.000–15.000'},m:'itgov',iso20k:'Service Assurance',rd:'BCM-Testergebnisse',f:'J'},
