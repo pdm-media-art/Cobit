@@ -237,6 +237,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @media(max-width:1024px){.mcards{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.hdr{padding:6px 10px;flex-wrap:wrap}.wrap{padding:10px 8px 60px}.mg{grid-template-columns:1fr}.panel{padding:14px 12px}.mcards,.tpl-cards{grid-template-columns:1fr}.chart-grid{grid-template-columns:1fr}.top-nav{order:10;width:100%}}
 @media print{
+  /* ── Alle CSS-Variablen auf helles Theme umschalten ── */
+  :root{
+    --bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;
+    --surface:#ffffff;--surface2:#f8fafc;--surface3:#f1f5f9;
+    --border:#e2e8f0;--border2:#cbd5e1;
+    --text:#1e293b;--text2:#0f172a;--muted:#475569;--soft:#64748b;
+    --accent:#0d9488;--accent2:#0f766e;--accentDim:#f0fdfa;
+    --orange:#c2410c;--orangeDim:#fff7ed;
+    --warn:#b45309;--warnDim:#fefce8;
+    --danger:#dc2626;--dangerDim:#fef2f2;
+    --ok:#15803d;--okDim:#f0fdf4;
+    --purple:#7c3aed;--purpleDim:#f5f3ff;
+    --blue:#1d4ed8;--blueDim:#eff6ff;
+    --cyan:#0e7490;--cyanDim:#ecfeff;
+    --emerald:#047857;--emeraldDim:#ecfdf5;
+  }
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   .hdr,.stepper,.progress-bar,.nav-row,.print-btn,.top-nav,.btn-sm,.ci-btns,.tabs,.ma-right,
   .toast-wrap,.login-overlay,.user-badge,.autosave-dot,.rpt-tabs,
@@ -255,7 +271,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   /* ── Counter für Seitenzahlen ── */
   body{counter-reset:page}
   /* ── Konzept Document Wrapper ── */
-  .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important}
+  .ksk-doc{background:#fff!important;box-shadow:none!important;border:none!important;padding:0!important;margin:0!important;max-width:100%!important;border-radius:0!important;color:#1e293b!important}
+  .ksk-body{color:#1e293b!important}
   .ksk-section{background:#fff!important;border:none!important;border-radius:0!important;padding:0 0 18pt 0!important;margin-bottom:18pt!important;page-break-inside:auto}
   .ksk-section-title{color:#1e293b!important;background:#fff!important;font-size:13pt!important;font-weight:700!important;border-bottom:2pt solid #0d9488!important;padding-bottom:5pt!important;margin-bottom:10pt!important;page-break-after:avoid!important}
   .ksk-section-number{color:#0d9488!important;margin-right:8pt}
@@ -272,6 +289,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .ksk-cover-meta-table td:first-child{font-weight:600!important;color:#1e293b!important;width:42%!important;white-space:nowrap!important}
   .ksk-cover-meta-table tr:last-child td{border-bottom:none!important}
   .ksk-vertraulich{background:#fef2f2!important;border:1.5pt solid #dc2626!important;border-radius:3pt!important;padding:8pt 12pt!important;font-weight:700!important;color:#dc2626!important;font-size:9pt!important;letter-spacing:.05em!important;text-transform:uppercase!important;margin-top:20pt!important;display:inline-block!important}
+  /* ── Links im Dokument (Inline-Style-Override für color:#60a5fa etc.) ── */
+  .ksk-doc a,.ksk-doc a:visited{color:#0d9488!important}
   /* ── Signaturen (Inline-Style-Override) ── */
   .ksk-sig-box div{color:#334155!important}
   .ksk-sig-box a{color:#0d9488!important}

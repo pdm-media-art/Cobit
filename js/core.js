@@ -31,9 +31,38 @@ function renderStepper(steps){document.getElementById('stepper').innerHTML=steps
 function renderProgress(steps){document.getElementById('progressFill').style.width=Math.round((S.step/Math.max(steps.length-1,1))*100)+'%';}
 
 // ═══ MODULE ═══
+function newAudit(){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const hasData=!!(S.module||S.meta.objekt||Object.keys(S.findings||{}).length);
+  if(hasData){
+    if(!confirm(L==='en'
+      ?'Start a new audit?\n\nAll current data (object data, findings, results) will be cleared.\nThe current audit will be saved to History first.'
+      :'Neues Audit starten?\n\nAlle aktuellen Daten (Objektdaten, Befunde, Ergebnisse) werden gelöscht.\nDer aktuelle Stand wird zuvor automatisch in der Historie gesichert.'))return;
+    // Auto-save snapshot to history
+    if(!S.history)S.history=[];
+    S.history.unshift({date:new Date().toISOString(),module:S.module,meta:{...S.meta},findings:{...S.findings},maturity:{...S.maturity},norms:[...(S.norms||[])]});
+    if(S.history.length>20)S.history.pop();
+  }
+  // Reset all audit data
+  S.module=null;S.norms=[];S.step=0;S.findings={};S.maturity={};S.docs=[];
+  S.umfeld={done:false,selectedRadius:S.umfeld?.selectedRadius||1000};
+  S.massnahmen=[];S.reportView='begehung';S.editDocId=null;S.editMaId=null;
+  const keepMeta={konzeptVersion:'1.0',konzeptStatus:'Entwurf',anzahlGebaeude:'1'};
+  Object.keys(S.meta).forEach(k=>S.meta[k]='');
+  Object.assign(S.meta,keepMeta);
+  save();render();
+  if(hasData)toast(L==='en'?'New audit started — previous data saved to History.':'Neues Audit gestartet — vorheriger Stand in der Historie gesichert.','info');
+}
+
 function renderModule(){
   const L=typeof _LANG!=='undefined'?_LANG:'de';
-  document.getElementById('mainContent').innerHTML=`<div class="panel"><div class="panel-title">${L==='en'?'Select Audit Module':'Audit-Modul wählen'}</div><p class="panel-sub">${L==='en'?'5 modules available. Use industry templates or select manually.':'5 Module verfügbar. Nutzen Sie Branchenvorlagen oder wählen Sie manuell.'}</p>
+  const hasData=!!(S.module||S.meta.objekt||Object.keys(S.findings||{}).length);
+  document.getElementById('mainContent').innerHTML=`<div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:6px">
+    <div><div class="panel-title">${L==='en'?'Select Audit Module':'Audit-Modul wählen'}</div>
+    <p class="panel-sub" style="margin-bottom:0">${L==='en'?'5 modules available. Use industry templates or select manually.':'5 Module verfügbar. Nutzen Sie Branchenvorlagen oder wählen Sie manuell.'}</p></div>
+    ${hasData?`<button class="btn-sm danger" onclick="newAudit()" style="white-space:nowrap;align-self:flex-start">${L==='en'?'+ New Audit':'+ Neues Audit'}</button>`:''}
+  </div>
   <div style="font-family:var(--fm);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:6px">${L==='en'?'Industry Templates':'Branchenvorlagen'}</div>
   <div class="tpl-cards">${TEMPLATES.map(t=>`<div class="tpl-card" onclick="selMod('${t.mod}')"><div class="tpl-icon">${t.icon}</div><div class="tpl-name">${L==='en'&&t.name_en?t.name_en:t.name}</div><div class="tpl-desc">${L==='en'&&t.desc_en?t.desc_en:t.desc}</div></div>`).join('')}</div>
   <div class="section-divider"></div>
@@ -45,7 +74,6 @@ function renderModule(){
   </div>
   <div class="nav-row"><div></div><button class="btn-p" onclick="next()" ${!S.module?'disabled':''}>${L==='en'?'Continue →':'Weiter →'}</button></div></div>`;
 }
-function selMod(m){S.module=m;S.norms=[];render();save();}
 
 // ═══ NORMS ═══
 function renderNorms(){
