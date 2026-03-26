@@ -87,12 +87,11 @@ function renderDash(){
       <div class="stat emerald"><div class="stat-val">${avgMat.toFixed(1)}</div><div class="stat-lbl">${L==='en'?'Maturity':'Reifegrad'}</div></div>
       <div class="stat ${risk.cls}"><div class="stat-val">${risk.score}</div><div class="stat-lbl">${L==='en'?'Risk':'Risiko'}</div></div>
     </div>
-    ${!S.module?`<div style="text-align:center;padding:40px 20px">
-      <div style="font-size:2rem;margin-bottom:12px;opacity:.4">📋</div>
-      <div style="font-size:.92rem;font-weight:600;color:var(--text2);margin-bottom:6px">${L==='en'?'No audit module selected':'Kein Audit-Modul gewählt'}</div>
-      <div style="font-size:.8rem;color:var(--muted);margin-bottom:18px">${L==='en'?'Charts and diagrams appear here once an audit is in progress.':'Diagramme erscheinen hier, sobald ein Audit durchgeführt wird.'}</div>
-      <button class="btn-p" onclick="setMode('audit')">${L==='en'?'Start / Continue Audit →':'Audit starten / fortsetzen →'}</button>
-      ${S.history?.length?`<div style="margin-top:10px"><button class="btn-sm" onclick="setMode('historie')">${L==='en'?'Load from History':'Aus Historie laden'}</button></div>`:''}</div>`:`
+    ${!S.module?`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+      <div style="font-size:1.2rem;opacity:.5">📋</div>
+      <div style="flex:1;font-size:.8rem;color:var(--muted)">${L==='en'?'No audit active — charts show placeholder data.':'Kein Audit aktiv — Diagramme zeigen Platzhalterdaten.'}</div>
+      <button class="btn-sm" onclick="go('audit')" style="white-space:nowrap">${L==='en'?'Start Audit →':'Audit starten →'}</button>
+      ${S.history?.length?`<button class="btn-sm" onclick="go('historie')" style="white-space:nowrap">${L==='en'?'From History':'Aus Historie'}</button>`:''}</div>`:''}
     <div class="chart-grid">
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Control Points':'Prüfpunkte'} (${total})</div><div style="height:185px;position:relative"><canvas id="c1"></canvas></div></div>
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Compliance by Domain':'Compliance pro Bereich'}</div><div style="height:185px;position:relative"><canvas id="c2"></canvas></div></div>
@@ -102,9 +101,8 @@ function renderDash(){
     <div class="chart-grid" style="grid-template-columns:1fr 1fr">
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Measures':'Maßnahmen'}</div><div style="height:140px;position:relative"><canvas id="c5"></canvas></div></div>
       <div class="chart-box"><div class="chart-box-title">${L==='en'?'Documents':'Dokumente'}</div><div style="height:140px;position:relative"><canvas id="c6"></canvas></div></div>
-    </div>`}
+    </div>
   </div>`;
-  if(!S.module)return;
   window._dashCharts=[];
   setTimeout(()=>{
     const tc='#94a3b8',gc='rgba(30,41,59,.4)';
