@@ -279,7 +279,12 @@ function renderCheck(ck){
       extras+=`</div>`;
       if(it.rd)extras+=`<div class="ci-req-docs">${chkL==='en'?'Required evidence:':'Geforderte Nachweise:'} ${it.rd}</div>`;
     }
-    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${itLabel} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${itDesc}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button></div></div><div class="ci-note ${s&&s!=='ok'&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="${chkL==='en'?'Note...':'Notiz...'}" value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div></div>`;
+    const photoCount=(f.photos||[]).length;
+    const camIcon=`<svg width="13" height="11" viewBox="0 0 24 20" fill="currentColor"><path d="M9 2L7.17 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 3c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3z"/></svg>`;
+    const photoBadge=photoCount?`<span class="photo-cnt">${photoCount}</span>`:'';
+    const photoThumbsHTML=(f.photos||[]).map((p,i)=>`<div style="position:relative;flex-shrink:0"><img src="${p}" style="width:52px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:pointer" onclick="viewPhoto('${it.id}',${i})" title="${chkL==='en'?'View photo':'Foto ansehen'}"><button onclick="removePhoto('${it.id}',${i})" style="position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;background:var(--danger);border:none;color:#fff;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0">✕</button></div>`).join('');
+    const photosDiv=`<div class="ci-photos" id="photos_${it.id}" style="${photoThumbsHTML?'display:flex':'display:none'};gap:5px;flex-wrap:wrap;margin-top:6px">${photoThumbsHTML}</div>`;
+    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${itLabel} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${itDesc}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button><button class="cb photo-btn ${photoCount?'has-photos':''}" onclick="addPhoto('${it.id}')" title="${chkL==='en'?'Add photo':'Foto hinzufügen'}">${camIcon}${photoBadge}</button></div></div><div class="ci-note ${s&&s!=='ok'&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="${chkL==='en'?'Note...':'Notiz...'}" value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div>${photosDiv}</div>`;
   }).join('');
   const done=ck.items.filter(i=>S.findings[i.id]?.status).length;
   const nb=ck.norms.map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}">${n}</span>`).join('');
@@ -297,6 +302,68 @@ function renderCheck(ck){
 }
 function setS(id,s){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].status=s;const ci=document.getElementById('ci_'+id);if(ci){ci.className='ci s-'+s;ci.querySelectorAll('.cb').forEach(b=>b.classList.toggle('active',b.classList.contains(s)));const n=document.getElementById('note_'+id);if(n)n.classList.toggle('show',s==='mangel'||s==='kritisch');}save();}
 function setN(id,v){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].note=v;save();}
+
+// ═══ FOTO-DOKUMENTATION ═══
+function addPhoto(id){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=800;let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        const b64=cv.toDataURL('image/jpeg',0.82);
+        if(!S.findings[id])S.findings[id]={status:'',note:''};
+        if(!S.findings[id].photos)S.findings[id].photos=[];
+        S.findings[id].photos.push(b64);
+        save();
+        try{const sz=new Blob([JSON.stringify(S)]).size;if(sz>4.5*1024*1024)toast(L==='en'?'Storage near limit — delete unused photos.':'Speicher fast voll — nicht benötigte Fotos löschen.','warn');}catch(e){}
+        _updatePhotoUI(id);
+        toast(L==='en'?'Photo added':'Foto hinzugefügt','success');
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+function removePhoto(id,idx){
+  if(!S.findings[id]?.photos)return;
+  S.findings[id].photos.splice(idx,1);
+  save();_updatePhotoUI(id);
+}
+function viewPhoto(id,idx){
+  const p=S.findings[id]?.photos?.[idx];if(!p)return;
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+  ov.onclick=()=>ov.remove();
+  ov.innerHTML=`<img src="${p}" style="max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 0 80px rgba(0,0,0,.9)">`;
+  document.body.appendChild(ov);
+}
+function _updatePhotoUI(id){
+  const photos=S.findings[id]?.photos||[];
+  // Update badge on button
+  const btn=document.querySelector(`#ci_${id} .photo-btn`);
+  if(btn){
+    const camIcon=`<svg width="13" height="11" viewBox="0 0 24 20" fill="currentColor"><path d="M9 2L7.17 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 3c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3z"/></svg>`;
+    btn.innerHTML=camIcon+(photos.length?`<span class="photo-cnt">${photos.length}</span>`:'');
+    btn.classList.toggle('has-photos',photos.length>0);
+  }
+  // Update thumbnails
+  const wrap=document.getElementById('photos_'+id);
+  if(wrap){
+    const L=typeof _LANG!=='undefined'?_LANG:'de';
+    if(!photos.length){wrap.style.display='none';wrap.innerHTML='';return;}
+    wrap.style.display='flex';
+    wrap.innerHTML=photos.map((p,i)=>`<div style="position:relative;flex-shrink:0"><img src="${p}" style="width:52px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:pointer" onclick="viewPhoto('${id}',${i})" title="${L==='en'?'View photo':'Foto ansehen'}"><button onclick="removePhoto('${id}',${i})" style="position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;background:var(--danger);border:none;color:#fff;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0">✕</button></div>`).join('');
+  }
+}
 
 // ═══ MATURITY ═══
 function renderMaturity(){

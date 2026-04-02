@@ -51,7 +51,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .tn.active.t-db{background:rgba(217,119,6,.15);color:#fbbf24}
 .tn.active.t-ma{background:rgba(124,58,237,.15);color:#c4b5fd}
 .tn.active.t-da{background:var(--accentDim);color:var(--accent)}
+.tn.active.t-an{background:rgba(20,184,166,.15);color:#2dd4bf;border-color:rgba(20,184,166,.3)}
 .tn.active.t-hi{background:rgba(8,145,178,.15);color:#67e8f9}
+.step-btn.visited .step-num{border-color:var(--border2);background:rgba(255,255,255,.03);color:var(--soft)}
+.step-btn.visited .step-label{color:var(--soft)}
+.photo-btn{position:relative;overflow:visible}
+.photo-btn.has-photos{border-color:rgba(59,130,246,.35)!important;color:var(--blue)!important;background:rgba(59,130,246,.08)!important}
+.photo-cnt{position:absolute;top:-5px;right:-5px;min-width:14px;height:14px;border-radius:999px;background:var(--blue);color:#fff;font-family:var(--fm);font-size:.44rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px;line-height:1;pointer-events:none}
 .hdr-badge{font-family:var(--fm);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:var(--rpill);border:1px solid rgba(20,184,166,.2);color:var(--accent);background:var(--accentDim);flex-shrink:0}
 
 .wrap{max-width:1200px;margin:0 auto;padding:18px 20px 80px;position:relative;z-index:1}
@@ -706,7 +712,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 <header class="hdr">
 <div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark" style="width:auto;padding:0 10px;font-size:.72rem;letter-spacing:.02em">S3<span>:</span>A</div><div class="logo-text"><span class="logo-name">S3<span style="color:var(--accent)">:</span>Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
-<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">Dashboard</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">Intern</button></div>
+<div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">Dashboard</button><button class="tn t-an" onclick="go('analyse')" id="nav_analyse">Analyse</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
 <button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">EN</button>
 <div class="hdr-badge" id="hdrBadge">–</div>
@@ -817,6 +823,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <script src="js/modals.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/render-analyse.js"></script>
 <script src="js/canvas.js"></script>
 </body>
 </html>

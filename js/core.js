@@ -10,7 +10,7 @@ function go(mode){
     }
   }
   S.mode=mode;document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
-  const map={audit:0,database:1,massnahmen:2,dashboard:3,historie:4,admin:5};
+  const map={audit:0,database:1,massnahmen:2,dashboard:3,analyse:4,historie:5,admin:6};
   document.querySelectorAll('.tn')[map[mode]??0]?.classList.add('active');render();save();
 }
 function goTo(i){S.step=i;render();scrollTo(0,0);save();}
@@ -20,14 +20,25 @@ function prev(){if(S.step>0){S.step--;render();scrollTo(0,0);save();}}
 function render(){
   document.getElementById('auditNav').style.display=(S.mode==='audit')?'':'none';
   if(S.mode==='audit'){const steps=getSteps();renderStepper(steps);renderProgress(steps);const st=steps[S.step];if(!st)return;if(st.id==='module')renderModule();else if(st.id==='norms')renderNorms();else if(st.id==='meta')renderMeta();else if(st.id==='umfeld')renderUmfeld();else if(st.id==='maturity')renderMaturity();else if(st.id==='report')renderReport();else{const c=CK.find(x=>x.id===st.id);if(c)renderCheck(c);}}
-  else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='historie')renderHist();else if(S.mode==='admin')renderAdmin();
+  else if(S.mode==='database')renderDB();else if(S.mode==='massnahmen')renderMA();else if(S.mode==='dashboard')renderDash();else if(S.mode==='analyse')renderAnalyse();else if(S.mode==='historie')renderHist();else if(S.mode==='admin')renderAdmin();
   const b=document.getElementById('hdrBadge');
   const bL=typeof _LANG!=='undefined'?_LANG:'de';
-  if(S.mode!=='audit'){b.textContent={database:bL==='en'?'Database':'Datenbank',massnahmen:bL==='en'?'Measures':'Maßnahmen',dashboard:'Dashboard',historie:bL==='en'?'History':'Historie',admin:bL==='en'?'Internal':'Intern'}[S.mode]||'';}
+  if(S.mode!=='audit'){b.textContent={database:bL==='en'?'Database':'Datenbank',massnahmen:bL==='en'?'Measures':'Maßnahmen',dashboard:'Dashboard',analyse:bL==='en'?'Analysis':'Analyse',historie:bL==='en'?'History':'Historie',admin:bL==='en'?'Internal':'Intern'}[S.mode]||'';}
   else if(!S.module)b.textContent=bL==='en'?'Select Module':'Modul wählen';
   else b.textContent={security:'Security',qm:'QM',itgov:'IT-Governance',combined:bL==='en'?'Combined':'Kombiniert',religion:bL==='en'?'Religion':'Religion'}[S.module]||'';
 }
-function renderStepper(steps){document.getElementById('stepper').innerHTML=steps.map((s,i)=>`<div class="step"><button class="step-btn ${i===S.step?'active':''} ${i<S.step?'done':''}" onclick="goTo(${i})"><span class="step-num">${i<S.step?'✓':(i+1)}</span><span class="step-label">${s.l}</span></button><div class="step-line"></div></div>`).join('');}
+function isStepDone(stepId){
+  if(stepId==='module')return!!S.module;
+  if(stepId==='norms')return(S.norms||[]).length>0;
+  if(stepId==='meta')return!!(S.meta.objekt||S.meta.strasse||S.meta.datum);
+  if(stepId==='umfeld')return S.umfeld.done===true;
+  if(stepId==='maturity')return Object.values(S.maturity||{}).some(v=>v>0);
+  if(stepId==='report')return false;
+  const ck=CK.find(x=>x.id===stepId);
+  if(ck)return ck.items.some(it=>S.findings[it.id]?.status);
+  return false;
+}
+function renderStepper(steps){document.getElementById('stepper').innerHTML=steps.map((s,i)=>{const visited=i<S.step;const done=visited&&isStepDone(s.id);return`<div class="step"><button class="step-btn ${i===S.step?'active':''} ${done?'done':visited?'visited':''}" onclick="goTo(${i})"><span class="step-num">${done?'✓':(i+1)}</span><span class="step-label">${s.l}</span></button><div class="step-line"></div></div>`;}).join('');}
 function renderProgress(steps){document.getElementById('progressFill').style.width=Math.round((S.step/Math.max(steps.length-1,1))*100)+'%';}
 
 // ═══ MODULE ═══

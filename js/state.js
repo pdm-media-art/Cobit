@@ -15,6 +15,7 @@ meta:{
   konzeptVersion:'1.0',konzeptStatus:'Entwurf'
 },
 findings:{},maturity:{},docs:[],massnahmen:[],history:[],editDocId:null,editMaId:null,
+analyse:{targets:{},riskDecisions:{},annualDamage:50000,tab:'soll_ist'},
 umfeld:{done:false,selectedRadius:1000},reportView:'begehung',
 kva:{nr:'',date:'',validUntil:'',rate:250,positions:[],notes:'',discount:0,recipient:'',admTab:'kva',kleinunternehmer:false}};
 function save(){try{localStorage.setItem('ssa4',JSON.stringify(S));triggerAutosave();}catch(e){}}
