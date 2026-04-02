@@ -76,7 +76,7 @@ function renderAnalyse(){
         <td style="text-align:center;padding:8px 6px">${istBar}<span style="font-family:var(--fm);font-size:.72rem;color:var(--purple)">${d.istMat||'–'}</span></td>
         <td style="padding:8px 6px"><div style="display:flex;gap:3px">${sollBtns}</div></td>
         <td style="text-align:center;padding:8px 6px"><span style="font-family:var(--fm);font-size:.72rem;font-weight:700;color:${gapColor}">${gapLabel}</span></td>
-        <td style="text-align:right;padding:8px 6px;font-size:.72rem;color:var(--muted)">${d.costLow>0?`€ ${d.costLow.toLocaleString('de-DE')}–${d.costHigh.toLocaleString('de-DE')}':'–'}</td>
+        <td style="text-align:right;padding:8px 6px;font-size:.72rem;color:var(--muted)">${d.costLow>0?`€ ${d.costLow.toLocaleString('de-DE')}–${d.costHigh.toLocaleString('de-DE')}`:'–'}</td>
       </tr>`;
     }).join('');
 
