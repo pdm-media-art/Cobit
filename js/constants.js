@@ -181,6 +181,48 @@ const CK=[
 ]},
 ];
 
+// ═══ ITEM-HINWEISE (Vorschlagstexte für Notizfeld) ═══
+const HINTS={
+  // Perimeter
+  p1:'Zaunhöhe (m), Material, Zustand, Lücken?',
+  p2:'Anzahl Poller, Belastungsklasse (PAS 68)?',
+  p3:'Ausleuchtungsgrad (lx), Lücken im Bereich?',
+  p4:'Anzahl Schilder, Standorte, aktuell?',
+  p5:'System/Hersteller, Detektionsbereich?',
+  // Zutrittskontrolle
+  z1:'System/Hersteller, Anzahl Türen, Protokollierung aktiv?',
+  z2:'Anzahl Schlüssel, Ausgabeliste vorhanden?',
+  z3:'Anzahl Schleusen, Ausführung?',
+  z4:'Registriersystem, Begleitpflicht eingehalten?',
+  z5:'Dokumentenstatus, letztes Review?',
+  // Einbruchhemmung
+  e1:'Anzahl Außentüren, RC-Klasse vorhanden?',
+  e2:'Anzahl EG-Fenster, Verglasung geprüft?',
+  e3:'Anzahl/Typ Tresore, Verankerung geprüft?',
+  // Video
+  v1:'Anzahl Kameras Eingang, Hersteller/Typ?',
+  v2:'Anzahl Innenkameras, Abdeckung kritischer Bereiche?',
+  v3:'Auflösung (MP), Framerate (fps)?',
+  v4:'Speicherdauer (Tage), RAID/Cloud-Sicherung?',
+  v5:'Anzahl Schilder, Standorte sichtbar?',
+  // Alarm
+  a1:'Anlage (Hersteller/VdS-Nr.), Melder-Anzahl?',
+  a2:'NSL-Anbieter, Reaktionszeit (Min.)?',
+  a3:'Anzahl Melder, Technologie (PIR/Dual)?',
+  a4:'Datum letzte Wartung, Protokoll vorhanden?',
+  // Brand
+  b1:'Melder-Anzahl, Typ (Rauch/Wärme), Hersteller?',
+  b2:'Anzahl, letzte Prüfung, Klassen (ABC)?',
+  b3:'Anzahl Ausgänge, Breite, Ausschilderung?',
+  b4:'Ausgabe-Datum, letzte Unterweisung?',
+  // Orga
+  o1:'Datum letzte Überarbeitung, unterschrieben?',
+  o2:'Letzte Schulung, Teilnehmerquote (%)?',
+  o3:'Datum letzter Test, Ergebnisse?',
+  o4:'RTO/RPO definiert, Datum BIA?',
+  o5:'Meldekette vorhanden, Verantwortlicher?',
+};
+
 const CATS=['Richtlinie','Zertifikat','Protokoll','Schulung','Wartung','Vertrag','Plan','Analyse','Sonstiges'];
 const CATI={Richtlinie:'RL',Zertifikat:'ZT',Protokoll:'PR',Schulung:'SH',Wartung:'WT',Vertrag:'VT',Plan:'PL',Analyse:'AN',Sonstiges:'SO'};
 const FREQ_LABEL={J:'Jährlich',Q:'Quartalsweise',M:'Monatlich',O:'Operativ/Laufend'};

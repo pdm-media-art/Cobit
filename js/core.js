@@ -35,7 +35,7 @@ function isStepDone(stepId){
   if(stepId==='maturity')return Object.values(S.maturity||{}).some(v=>v>0);
   if(stepId==='report')return false;
   const ck=CK.find(x=>x.id===stepId);
-  if(ck)return ck.items.some(it=>S.findings[it.id]?.status);
+  if(ck)return ck.items.length>0&&ck.items.every(it=>S.findings[it.id]?.status);
   return false;
 }
 function renderStepper(steps){document.getElementById('stepper').innerHTML=steps.map((s,i)=>{const visited=i<S.step;const done=visited&&isStepDone(s.id);return`<div class="step"><button class="step-btn ${i===S.step?'active':''} ${done?'done':visited?'visited':''}" onclick="goTo(${i})"><span class="step-num">${done?'✓':(i+1)}</span><span class="step-label">${s.l}</span></button><div class="step-line"></div></div>`;}).join('');}
