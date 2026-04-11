@@ -852,5 +852,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <script src="js/auth.js"></script>
 <script src="js/render-analyse.js"></script>
 <script src="js/canvas.js"></script>
+<script>
+// Remove "Built with Spline" badge from shadow DOM
+(function(){
+  const iv=setInterval(()=>{
+    const el=document.querySelector('spline-viewer');
+    if(el?.shadowRoot){
+      const badge=el.shadowRoot.querySelector('#logo');
+      if(badge){badge.remove();clearInterval(iv);}
+    }
+  },200);
+})();
+</script>
 </body>
 </html>
