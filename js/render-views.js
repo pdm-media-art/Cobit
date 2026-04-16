@@ -168,7 +168,7 @@ function renderDash(){
         for(let x=1;x<=5;x++){
           const here=items.filter(i=>i.x===x&&i.y===y);
           const dots=here.map(i=>`<span title="${esc(i.l)}" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${i.kr>0?'#ef4444':i.mn>0?'#eab308':'#a78bfa'};margin:1px;vertical-align:middle"></span>`).join('');
-          cells+=`<td style="border:1px solid rgba(255,255,255,.05);background:${cellBg(x,y)};text-align:center;vertical-align:middle;padding:1px">${dots||''}</td>`;
+          cells+=`<td style="border:1px solid var(--border);background:${cellBg(x,y)};text-align:center;vertical-align:middle;padding:1px">${dots||''}</td>`;
         }
         rows+=`<tr><td style="font-size:.5rem;color:${tc};text-align:right;padding-right:2px;white-space:nowrap;width:12px">${y}</td>${cells}</tr>`;
       }
@@ -224,7 +224,7 @@ function renderHist(){
   document.getElementById('mainContent').innerHTML=`<div class="panel"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px"><div><div class="panel-title">${L==='en'?'History':'Historie'}</div></div><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn-sm accent" onclick="importData()" title="${L==='en'?'Import JSON':'JSON importieren'}">Import</button><button class="btn-sm accent" onclick="exportData()" title="${L==='en'?'Export JSON':'JSON exportieren'}">Export</button><button class="btn-p" onclick="saveSnap()">Snapshot</button></div></div>
   ${S.history.length?`<div class="doc-grid">${S.history.map((h,i)=>`<div class="doc"><div class="doc-icon" style="font-family:var(--fm);font-size:.44rem;font-weight:700">AUD</div><div class="doc-body"><div class="doc-name">${esc(h.meta?.objekt||'Audit')} – ${new Date(h.savedAt).toLocaleDateString(L==='en'?'en-GB':'de-DE')}</div><div class="doc-meta"><span>${modLabels[h.module]||''}</span><span>OK:${h.okC||0} W:${h.maC||0} K:${h.krC||0}</span></div></div><button class="btn-sm accent" onclick="loadSnap(${i})">${L==='en'?'Load':'Laden'}</button><button class="btn-sm danger" onclick="deleteSnap(${i})">${L==='en'?'Del':'Löschen'}</button></div>`).join('')}</div>`:
   `<div style="text-align:center;padding:24px;opacity:.5">${L==='en'?'No snapshots — Tip: press <span class="kbd">5</span> for History':'Keine Snapshots — <span style="font-size:.72rem">Tipp: <span class="kbd">5</span> für Historie</span>'}</div>`}
-  <div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r);border:1px solid var(--border);font-size:.72rem;color:var(--soft)">
+  <div style="margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);font-size:.72rem;color:var(--soft)">
     <strong style="color:var(--muted)">${L==='en'?'Keyboard shortcuts:':'Tastenkürzel:'}</strong> &nbsp;<span class="kbd">1</span>–<span class="kbd">5</span> Navigation &nbsp;·&nbsp; <span class="kbd">Ctrl</span>+<span class="kbd">→</span> ${L==='en'?'Next Step':'Nächster Schritt'} &nbsp;·&nbsp; <span class="kbd">Esc</span> ${L==='en'?'Close modal':'Modal schließen'}
   </div></div>`;
 }
