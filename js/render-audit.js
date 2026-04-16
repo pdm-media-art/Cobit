@@ -301,7 +301,7 @@ function renderCheck(ck){
   </div>`;
   document.getElementById('mainContent').innerHTML=`<div class="panel"><div>${nb}</div><div class="panel-title">${ckTitle}</div><p class="panel-sub">${ckSub} <strong style="color:var(--accent)">${done}/${ck.items.length}</strong></p>${legend}${items}<div class="nav-row"><button class="btn-s" onclick="prev()">←</button><button class="btn-p" onclick="next()">${ckL==='en'?'Continue →':'Weiter →'}</button></div></div>`;
 }
-function setS(id,s){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].status=s;const ci=document.getElementById('ci_'+id);if(ci){ci.className='ci s-'+s;ci.querySelectorAll('.cb').forEach(b=>b.classList.toggle('active',b.classList.contains(s)));const n=document.getElementById('note_'+id);if(n)n.classList.toggle('show',!!s&&s!=='na');}save();}
+function setS(id,s){if(!S.findings[id])S.findings[id]={status:'',note:''};const ns=S.findings[id].status===s?'':s;S.findings[id].status=ns;const ci=document.getElementById('ci_'+id);if(ci){ci.className='ci'+(ns?' s-'+ns:'');ci.querySelectorAll('.cb').forEach(b=>b.classList.toggle('active',!!ns&&b.classList.contains(ns)));const n=document.getElementById('note_'+id);if(n)n.classList.toggle('show',!!ns&&ns!=='na');}save();}
 function setN(id,v){if(!S.findings[id])S.findings[id]={status:'',note:''};S.findings[id].note=v;save();}
 
 // ═══ FOTO-DOKUMENTATION ═══
