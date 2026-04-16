@@ -91,7 +91,7 @@ function renderAnalyse(){
       <tbody>${tblRows}</tbody>
     </table></div>`;
 
-    const legendBox=`<div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border);font-size:.7rem;color:var(--muted)">
+    const legendBox=`<div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:.7rem;color:var(--muted)">
       <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--purple);vertical-align:middle;margin-right:3px"></span>IST</span>
       <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);vertical-align:middle;margin-right:3px"></span>SOLL</span>
       <span style="color:var(--ok)">● ${L==='en'?'Gap = 0: On target':'Gap = 0: Ziel erreicht'}</span>
@@ -134,7 +134,7 @@ function renderAnalyse(){
           <label>${L==='en'?'Estimated annual damage / loss potential in €:':'Geschätzter Jahresschaden / Verlustpotenzial in €:'}</label>
           <input type="number" value="${annualDamage}" min="1000" step="1000"
             oninput="S.analyse.annualDamage=parseInt(this.value)||50000;save();renderAnalyse()"
-            style="background:rgba(8,18,36,.9);border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:8px 12px;color:var(--text2);font-size:.84rem;outline:none;width:100%">
+            style="background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--text2);font-size:.84rem;outline:none;width:100%">
         </div>
         <div style="font-size:.72rem;color:var(--muted);max-width:260px;line-height:1.5">${L==='en'?'This value represents the estimated financial damage per year in the absence of security measures (theft, downtime, fines, reputational damage).':'Dieser Wert entspricht dem geschätzten Finanziellen Schaden pro Jahr ohne Sicherheitsmaßnahmen (Diebstahl, Ausfälle, Bußgelder, Reputationsschaden).'}</div>
       </div>
@@ -156,15 +156,15 @@ function renderAnalyse(){
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
-        <div style="text-align:center;padding:8px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+        <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
           <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">${L==='en'?'Year 1 net':'Jahr 1 netto'}</div>
           <div style="font-family:var(--fm);font-size:.82rem;font-weight:700;color:${annualSaving-avgInvest>=0?'var(--ok)':'var(--danger)'}">${(annualSaving-avgInvest).toLocaleString('de-DE')} €</div>
         </div>
-        <div style="text-align:center;padding:8px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+        <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
           <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">${L==='en'?'Year 2 net':'Jahr 2 netto'}</div>
           <div style="font-family:var(--fm);font-size:.82rem;font-weight:700;color:${annualSaving*2-avgInvest>=0?'var(--ok)':'var(--danger)'}">${(annualSaving*2-avgInvest).toLocaleString('de-DE')} €</div>
         </div>
-        <div style="text-align:center;padding:8px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+        <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
           <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">${L==='en'?'3-yr ROI':'3-J.-ROI'}</div>
           <div style="font-family:var(--fm);font-size:.82rem;font-weight:700;color:${roiPct>=0?'var(--ok)':'var(--danger)'}">${roiPct >= 0 ? '+' : ''}${roiPct}%</div>
         </div>
@@ -221,7 +221,7 @@ function renderAnalyse(){
           style="padding:4px 10px;border-radius:6px;border:1px solid ${isActive?dt.border:'var(--border)'};background:${isActive?dt.bg:'transparent'};color:${isActive?dt.color:'var(--muted)'};font-size:.62rem;font-family:var(--fm);font-weight:${isActive?'700':'500'};cursor:pointer;transition:.15s">${dt.l}</button>`;
       }).join('');
 
-      return`<div style="background:rgba(8,18,36,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;margin-bottom:8px">
+      return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px">
         <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:160px">
             <div style="font-size:.82rem;font-weight:700;color:var(--text2);margin-bottom:3px">${esc(d.l)}</div>

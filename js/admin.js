@@ -110,7 +110,7 @@ function renderKVAPanel() {
     <div class="fg"><label>${L==='en'?'Hourly Rate (€)':'Stundensatz (€)'}</label><input type="number" value="${rate}" oninput="S.kva.rate=Number(this.value)||250;save();renderAdmin()"></div>
     <div class="fg"><label>${L==='en'?'Client':'Auftraggeber'}</label><input value="${esc(S.meta.auftraggeber||'')}" oninput="S.meta.auftraggeber=this.value;save()"></div>
     <div class="fg"><label>${L==='en'?'Discount (%)':'Rabatt (%)'}</label><input type="number" min="0" max="100" value="${disc}" oninput="S.kva.discount=Number(this.value)||0;save();renderAdmin()"></div>
-    <div class="fg fg-full" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${ku?'rgba(20,184,166,.06)':'rgba(255,255,255,.02)'};border:1px solid ${ku?'rgba(20,184,166,.2)':'var(--border)'};border-radius:8px;transition:.2s">
+    <div class="fg fg-full" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${ku?'rgba(20,184,166,.06)':'var(--surface2)'};border:1px solid ${ku?'rgba(20,184,166,.2)':'var(--border)'};border-radius:8px;transition:.2s">
       <input type="checkbox" id="kuToggle" ${ku?'checked':''} onchange="S.kva.kleinunternehmer=this.checked;save();renderAdmin()" style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0">
       <label for="kuToggle" style="cursor:pointer;margin:0;font-weight:600;color:${ku?'var(--accent)':'var(--text2)'}">${L==='en'?'Small business (§ 19 UStG) — no VAT shown':'Kleinunternehmer (§ 19 UStG) — keine Umsatzsteuer ausweisen'}</label>
     </div>
@@ -141,7 +141,7 @@ function renderKVAPanel() {
        :`<div class="kva-summary-row"><span>${L==='en'?'VAT 19%':'MwSt. 19%'}</span><span>${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>`}
     <div class="kva-summary-row"><span>${ku?(L==='en'?'Total (net)':'Gesamtbetrag (netto)'):(L==='en'?'Total (gross)':'Gesamtbetrag (brutto)')}</span><span style="font-size:1rem;font-family:var(--fh)">${totalBruttofinal.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
   </div>`:''}
-  <div class="fg fg-full"><label>${L==='en'?'Internal Notes / Special Agreements':'Interne Notizen / Besondere Vereinbarungen'}</label><textarea rows="3" oninput="S.kva.notes=this.value;save()" style="width:100%;background:rgba(15,23,42,.8);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical">${esc(S.kva.notes||'')}</textarea></div>`;
+  <div class="fg fg-full"><label>${L==='en'?'Internal Notes / Special Agreements':'Interne Notizen / Besondere Vereinbarungen'}</label><textarea rows="3" oninput="S.kva.notes=this.value;save()" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;font-family:var(--ff);outline:none;resize:vertical">${esc(S.kva.notes||'')}</textarea></div>`;
 }
 
 function generateKVAPositions() {

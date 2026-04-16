@@ -294,7 +294,7 @@ function renderCheck(ck){
   const ckL=typeof _LANG!=='undefined'?_LANG:'de';
   const ckTitle=(ckL==='en'&&ck.l_en)?ck.l_en:ck.l;
   const ckSub=(ckL==='en'&&ck.s_en)?ck.s_en:ck.s;
-  const legend=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:9px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;align-items:center">
+  const legend=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;align-items:center">
     <span style="font-family:var(--fm);font-size:.46rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-right:4px">${ckL==='en'?'LEGEND:':'LEGENDE:'}</span>
     <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:var(--ok);border:1px solid rgba(34,197,94,.2)">${ckL==='en'?'OK — Requirement met':'OK — Anforderung erfüllt'}</span>
     <span style="font-family:var(--fm);font-size:.54rem;padding:2px 8px;border-radius:999px;background:var(--warnDim);color:var(--warn);border:1px solid rgba(234,179,8,.2)">${ckL==='en'?'Deficiency — Partial/documentation missing':'Mangel — Teilweise/Nachweis fehlt'}</span>
