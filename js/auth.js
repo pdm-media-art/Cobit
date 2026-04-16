@@ -232,3 +232,13 @@ function updateLangUI(){
 
 updateLangUI();
 if (checkAuth()){render();}
+
+// ═══ THEME SYSTEM ═══
+let _THEME=localStorage.getItem('ssa_theme')||'dark';
+function toggleTheme(){_THEME=_THEME==='dark'?'light':'dark';localStorage.setItem('ssa_theme',_THEME);applyTheme();}
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',_THEME);
+  const btn=document.getElementById('themeToggleBtn');
+  if(btn)btn.textContent=_THEME==='dark'?'☀':'☽';
+}
+applyTheme();

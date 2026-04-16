@@ -33,6 +33,68 @@
 --sh:0 4px 24px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
 --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fh:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace;
 }
+/* ═══ LIGHT THEME ═══ */
+[data-theme="light"]{
+  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#e4ecf4;
+  --surface:rgba(255,255,255,.98);--surface2:rgba(249,251,253,.97);--surface3:#ffffff;
+  --border:#dde3ed;--border2:#c5cfdc;
+  --text:#374151;--text2:#111827;--muted:#6b7280;--soft:#9ca3af;
+  --accent:#0d9488;--accent2:#0f9b90;--accentDim:rgba(13,148,136,.1);
+  --orange:#c05c08;--orangeDim:rgba(192,92,8,.09);
+  --warn:#9a6900;--warnDim:rgba(154,105,0,.09);
+  --danger:#b91c1c;--dangerDim:rgba(185,28,28,.07);
+  --ok:#15803d;--okDim:rgba(21,128,61,.07);
+  --na:#9ca3af;
+  --purple:#6d28d9;--purpleDim:rgba(109,40,217,.09);
+  --blue:#1d4ed8;--blueDim:rgba(29,78,216,.09);
+  --cyan:#0e7490;--cyanDim:rgba(14,116,144,.09);
+  --emerald:#047857;--emeraldDim:rgba(4,120,87,.09);
+  --sh:0 1px 3px rgba(15,23,42,.07),0 4px 16px rgba(15,23,42,.05);
+}
+[data-theme="light"] body{background:var(--bg)}
+[data-theme="light"] body::before{background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(13,148,136,.04) 0,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(192,92,8,.025) 0,transparent 50%)}
+[data-theme="light"] .hdr{background:rgba(255,255,255,.97);border-bottom-color:rgba(13,148,136,.15)}
+[data-theme="light"] .logo-mark{background:linear-gradient(135deg,rgba(13,148,136,.12),rgba(13,148,136,.06));border-color:rgba(13,148,136,.3)}
+[data-theme="light"] .top-nav{background:rgba(228,236,244,.85);border-color:rgba(13,148,136,.1)}
+[data-theme="light"] .tn:hover{background:rgba(0,0,0,.04)}
+[data-theme="light"] .panel{border-color:rgba(0,0,0,.07)}
+[data-theme="light"] .section-divider{background:rgba(0,0,0,.06)}
+[data-theme="light"] .step-num{background:var(--bg2)}
+[data-theme="light"] .step-btn.visited .step-num{background:var(--bg3)}
+[data-theme="light"] .nd{background:rgba(248,250,252,.9)}
+[data-theme="light"] .nd-h:hover{background:rgba(0,0,0,.02)}
+[data-theme="light"] .fg input,[data-theme="light"] .fg select,[data-theme="light"] .fg textarea{background:#fff;border-color:rgba(0,0,0,.12);color:var(--text2)}
+[data-theme="light"] .fg select option{background:#fff;color:var(--text2)}
+[data-theme="light"] .nc{background:#fff}
+[data-theme="light"] .ci-note input{background:#fff;border-color:rgba(0,0,0,.12);color:var(--text2)}
+[data-theme="light"] .cb{background:rgba(0,0,0,.02)}
+[data-theme="light"] .cb.ok{border-color:rgba(21,128,61,.2);color:#15803d;background:rgba(21,128,61,.03)}
+[data-theme="light"] .cb.ok.active{background:rgba(21,128,61,.12);border-color:#15803d;color:#15803d}
+[data-theme="light"] .cb.mangel{border-color:rgba(154,105,0,.2);color:#9a6900;background:rgba(154,105,0,.03)}
+[data-theme="light"] .cb.mangel.active{background:rgba(154,105,0,.12);border-color:#9a6900;color:#9a6900}
+[data-theme="light"] .cb.kritisch{border-color:rgba(185,28,28,.2);color:#b91c1c;background:rgba(185,28,28,.03)}
+[data-theme="light"] .cb.kritisch.active{background:rgba(185,28,28,.12);border-color:#b91c1c;color:#b91c1c}
+[data-theme="light"] .search-wrap input{background:#fff;border-color:var(--border);color:var(--text2)}
+[data-theme="light"] .modal-overlay{background:rgba(220,228,236,.88)}
+[data-theme="light"] .modal{box-shadow:0 20px 50px rgba(0,0,0,.12)}
+[data-theme="light"] .login-overlay{background:var(--bg)}
+[data-theme="light"] .login-card{background:rgba(255,255,255,.99);border-color:rgba(0,0,0,.09);box-shadow:0 24px 60px rgba(0,0,0,.12)}
+[data-theme="light"] .login-input-wrap input{background:#fff;border-color:rgba(0,0,0,.12);color:var(--text2)}
+[data-theme="light"] .login-lang-select{background:#fff;border-color:rgba(0,0,0,.12);color:var(--text2)}
+[data-theme="light"] .kva-h-input,[data-theme="light"] .kva-cat-select{background:#fff;border-color:var(--border);color:var(--text2)}
+[data-theme="light"] .kva-row:hover{background:rgba(0,0,0,.02)}
+[data-theme="light"] .kva-row td{border-bottom-color:rgba(0,0,0,.06)}
+[data-theme="light"] .kbd{background:rgba(0,0,0,.04);border-color:var(--border2)}
+[data-theme="light"] .adm-nav-item:hover{background:rgba(0,0,0,.03)}
+[data-theme="light"] .adm-nav-icon{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07)}
+[data-theme="light"] .adm-login-overlay{background:rgba(220,228,236,.92)}
+[data-theme="light"] .adm-login-card{box-shadow:0 24px 60px rgba(0,0,0,.15)}
+[data-theme="light"] .toast{box-shadow:0 8px 28px rgba(0,0,0,.12)}
+[data-theme="light"] .uf-icon{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08)}
+[data-theme="light"] .uf-rec{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07)}
+[data-theme="light"] .rpt-tabs{background:rgba(228,236,244,.8)}
+[data-theme="light"] .konzept-measure{background:rgba(248,250,252,.95)}
+[data-theme="light"] ::-webkit-scrollbar-thumb{background:var(--border2)}
 html{scroll-behavior:smooth}
 body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--ff);font-size:14px;line-height:1.6;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(20,184,166,.04) 0,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(249,115,22,.02) 0,transparent 50%);pointer-events:none;z-index:0}
@@ -720,6 +782,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="logo" onclick="S.step=0;go('audit')" title="Zurück zum Hauptmenü" style="cursor:pointer;user-select:none"><div class="logo-mark" style="width:auto;padding:0 10px;font-size:.72rem;letter-spacing:.02em">S3<span>:</span>A</div><div class="logo-text"><span class="logo-name">S3<span style="color:var(--accent)">:</span>Analytics</span><span class="logo-sub">Audit & Compliance Platform</span></div></div>
 <div class="top-nav" id="topNav"><button class="tn active" onclick="go('audit')" id="nav_audit">Audit</button><button class="tn t-db" onclick="go('database')" id="nav_database">Datenbank</button><button class="tn t-ma" onclick="go('massnahmen')" id="nav_massnahmen">Maßnahmen</button><button class="tn t-da" onclick="go('dashboard')" id="nav_dashboard">Dashboard</button><button class="tn t-an" onclick="go('analyse')" id="nav_analyse">Analyse</button><button class="tn t-hi" onclick="go('historie')" id="nav_historie">Historie</button><button class="tn t-adm" onclick="go('admin')" id="nav_admin">Intern</button></div>
 <div class="autosave-dot" id="autosaveDot" title="Gespeichert"></div>
+<button class="lang-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Theme wechseln">☀</button>
 <button class="lang-btn" id="langToggleBtn" onclick="toggleLang()" title="Switch language">EN</button>
 <div class="hdr-badge" id="hdrBadge">–</div>
 <div class="user-badge" id="userBadge" style="display:none" onclick="doLogout()" title="Abmelden">
