@@ -273,7 +273,8 @@ function renderAnalyse(){
     setTimeout(()=>{
       const el=document.getElementById('ac1');
       if(!el)return;
-      const tc='#94a3b8',gc='rgba(30,41,59,.4)';
+      const isLight=typeof _THEME!=='undefined'&&_THEME==='light';
+      const tc=isLight?'#2e5a8a':'#94a3b8',gc=isLight?'rgba(189,208,232,.7)':'rgba(30,41,59,.4)';
       const labels=domData.map(d=>d.l.substring(0,12));
       window._analyseCharts.push(new Chart(el,{
         type:'radar',

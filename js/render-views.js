@@ -106,7 +106,8 @@ function renderDash(){
   </div>`;
   window._dashCharts=[];
   setTimeout(()=>{
-    const tc='#94a3b8',gc='rgba(30,41,59,.4)';
+    const isLight=typeof _THEME!=='undefined'&&_THEME==='light';
+    const tc=isLight?'#2e5a8a':'#94a3b8',gc=isLight?'rgba(189,208,232,.7)':'rgba(30,41,59,.4)';
     const df={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,font:{size:9,family:'DM Sans'},boxWidth:10,padding:8}}}};
     const dfNoLeg={...df,plugins:{legend:{display:false}}};
     // C1 — doughnut control points
