@@ -150,8 +150,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ci-desc{font-size:.7rem;color:var(--muted);margin-top:1px;line-height:1.4}
 .ci-extras{margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .ci-req-docs{font-size:.62rem;color:var(--soft);font-style:italic;margin-top:3px}
+.ci-docs-list{margin-top:2px}
 .ci-doc{display:flex;align-items:center;gap:3px;font-size:.64rem;margin-top:3px}
 .ci-doc a{color:var(--accent);text-decoration:none;font-weight:500}
+.ci-doc-dl{background:none;border:none;color:var(--accent);font-size:.64rem;font-family:var(--ff);cursor:pointer;padding:0;text-decoration:underline;text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ci-doc-rm{background:none;border:none;color:var(--danger);font-size:.6rem;cursor:pointer;padding:0 2px;line-height:1;opacity:.6;transition:.15s}.ci-doc-rm:hover{opacity:1}
+.doc-up-btn{position:relative;overflow:visible}
+.doc-up-btn.has-docs{border-color:rgba(249,115,22,.35)!important;color:var(--orange)!important;background:rgba(249,115,22,.08)!important}
+.doc-audit-badge{display:inline-block;font-family:var(--fm);font-size:.44rem;padding:1px 5px;border-radius:999px;background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.25);margin-left:4px;vertical-align:middle}
 .ci-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ci-dot.green{background:var(--ok)}.ci-dot.yellow{background:var(--warn)}.ci-dot.red{background:var(--danger)}.ci-dot.gray{background:var(--na)}
 .ci-btns{display:flex;gap:3px;flex-shrink:0;flex-wrap:wrap}

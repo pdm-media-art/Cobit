@@ -268,7 +268,8 @@ function renderCheck(ck){
     const itLabel=(chkL==='en'&&it.l_en)?it.l_en:it.l;
     const itDesc=(chkL==='en'&&it.d_en)?it.d_en:it.d;
     const ld=S.docs.filter(d=>d.checkpoints?.includes(it.id));
-    let dh=ld.length?ld.map(d=>`<div class="ci-doc"><span class="ci-dot ${docStatus(d)}"></span><a href="#" onclick="go('database');return false">${esc(d.name)}</a></div>`).join(''):`<div class="ci-doc"><span class="ci-dot gray"></span><span style="color:var(--soft)">${chkL==='en'?'No document':'Kein Dokument'}</span></div>`;
+    const docCount=ld.length;
+    const dh=`<div class="ci-docs-list" id="docs_${it.id}">${docCount?ld.map(d=>`<div class="ci-doc"><span class="ci-dot ${docStatus(d)}"></span>${d.fileData?`<button class="ci-doc-dl" onclick="downloadDoc(${d.id})">${esc(d.name)}</button><button class="ci-doc-rm" onclick="unlinkDoc(${d.id},'${it.id}')" title="${chkL==='en'?'Remove':'Entfernen'}">✕</button>`:`<a href="#" onclick="go('database');return false">${esc(d.name)}</a>`}</div>`).join(''):`<div class="ci-doc"><span class="ci-dot gray"></span><span style="color:var(--soft)">${chkL==='en'?'No document':'Kein Dokument'}</span></div>`}</div>`;
     // COBIT extras
     let extras='';
     if(it.m==='itgov'){
@@ -282,10 +283,11 @@ function renderCheck(ck){
     const photoCount=(f.photos||[]).length;
     const camIcon=`<svg width="13" height="11" viewBox="0 0 24 20" fill="currentColor"><path d="M9 2L7.17 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 3c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3z"/></svg>`;
     const photoBadge=photoCount?`<span class="photo-cnt">${photoCount}</span>`:'';
+    const docBadge=docCount?`<span class="photo-cnt" style="background:var(--orange)">${docCount}</span>`:'';
     const photoThumbsHTML=(f.photos||[]).map((p,i)=>`<div style="position:relative;flex-shrink:0"><img src="${p}" style="width:52px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:pointer" onclick="viewPhoto('${it.id}',${i})" title="${chkL==='en'?'View photo':'Foto ansehen'}"><button onclick="removePhoto('${it.id}',${i})" style="position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;background:var(--danger);border:none;color:#fff;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0">✕</button></div>`).join('');
     const photosDiv=`<div class="ci-photos" id="photos_${it.id}" style="${photoThumbsHTML?'display:flex':'display:none'};gap:5px;flex-wrap:wrap;margin-top:6px">${photoThumbsHTML}</div>`;
     const hint=typeof HINTS!=='undefined'&&HINTS[it.id]?HINTS[it.id]:(chkL==='en'?'Note...':'Notiz...');
-    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${itLabel} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${itDesc}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button><button class="cb photo-btn ${photoCount?'has-photos':''}" onclick="addPhoto('${it.id}')" title="${chkL==='en'?'Add photo':'Foto hinzufügen'}">${camIcon}${photoBadge}</button></div></div><div class="ci-note ${s&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="${hint}" value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div>${photosDiv}</div>`;
+    return`<div class="ci ${s?'s-'+s:''}" id="ci_${it.id}"><div class="ci-top"><div class="ci-text"><div class="ci-label">${itLabel} <span class="mi ${mc}">${ml}</span></div><div class="ci-norm ${mc}">${it.n}</div><div class="ci-desc">${itDesc}</div>${extras}${dh}</div><div class="ci-btns"><button class="cb ok ${s==='ok'?'active':''}" onclick="setS('${it.id}','ok')">✓</button><button class="cb mangel ${s==='mangel'?'active':''}" onclick="setS('${it.id}','mangel')">⚠</button><button class="cb kritisch ${s==='kritisch'?'active':''}" onclick="setS('${it.id}','kritisch')">✕</button><button class="cb na ${s==='na'?'active':''}" onclick="setS('${it.id}','na')">–</button><button class="cb photo-btn ${photoCount?'has-photos':''}" onclick="addPhoto('${it.id}')" title="${chkL==='en'?'Add photo':'Foto hinzufügen'}">${camIcon}${photoBadge}</button><button class="cb doc-up-btn${docCount?' has-docs':''}" onclick="uploadDocForItem('${it.id}')" title="${chkL==='en'?'Upload document':'Dokument hochladen'}" id="docbtn_${it.id}">📎${docBadge}</button></div></div><div class="ci-note ${s&&s!=='na'?'show':''}" id="note_${it.id}"><input placeholder="${hint}" value="${esc(f.note||'')}" oninput="setN('${it.id}',this.value)"></div>${photosDiv}</div>`;
   }).join('');
   const done=ck.items.filter(i=>S.findings[i.id]?.status).length;
   const nb=ck.norms.map(n=>`<span class="nb ${modCls(NORMS[n]?.m)}">${n}</span>`).join('');
@@ -364,6 +366,49 @@ function _updatePhotoUI(id){
     wrap.style.display='flex';
     wrap.innerHTML=photos.map((p,i)=>`<div style="position:relative;flex-shrink:0"><img src="${p}" style="width:52px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:pointer" onclick="viewPhoto('${id}',${i})" title="${L==='en'?'View photo':'Foto ansehen'}"><button onclick="removePhoto('${id}',${i})" style="position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;background:var(--danger);border:none;color:#fff;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0">✕</button></div>`).join('');
   }
+}
+
+// ═══ DOKUMENT-UPLOAD (Audit) ═══
+function uploadDocForItem(itemId){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.png,.jpg,.jpeg';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    if(file.size>2*1024*1024){toast(L==='en'?'File too large (max 2 MB)':'Datei zu groß (max. 2 MB)','error');return;}
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const ext=(file.name.split('.').pop()||'').toLowerCase();
+      const cat=['pdf','doc','docx'].includes(ext)?'Richtlinie':['xls','xlsx'].includes(ext)?'Nachweis':'Sonstiges';
+      const doc={id:Date.now(),name:file.name,category:cat,expiry:'',version:'1.0',owner:'',notes:'',norms:[],checkpoints:[itemId],addedAt:new Date().toISOString(),fileData:ev.target.result,fileSize:file.size};
+      if(!S.docs)S.docs=[];
+      S.docs.push(doc);
+      save();
+      try{const sz=new Blob([JSON.stringify(S)]).size;if(sz>4.5*1024*1024)toast(L==='en'?'Storage near limit — delete unused documents.':'Speicher fast voll — nicht benötigte Dokumente löschen.','warn');}catch(e2){}
+      _updateDocUI(itemId);
+      toast(L==='en'?`"${file.name}" uploaded and linked.`:`„${file.name}" hochgeladen und verknüpft.`,'success');
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+function downloadDoc(docId){
+  const d=S.docs.find(x=>x.id===docId);if(!d||!d.fileData)return;
+  const a=document.createElement('a');a.href=d.fileData;a.download=d.name;a.click();
+}
+function unlinkDoc(docId,itemId){
+  const d=S.docs.find(x=>x.id===docId);if(!d)return;
+  d.checkpoints=(d.checkpoints||[]).filter(c=>c!==itemId);
+  if(!d.checkpoints.length&&d.fileData)S.docs=S.docs.filter(x=>x.id!==docId);
+  save();_updateDocUI(itemId);
+}
+function _updateDocUI(itemId){
+  const L=typeof _LANG!=='undefined'?_LANG:'de';
+  const ld=S.docs.filter(d=>d.checkpoints?.includes(itemId));
+  const wrap=document.getElementById('docs_'+itemId);
+  if(wrap){wrap.innerHTML=ld.length?ld.map(d=>`<div class="ci-doc"><span class="ci-dot ${docStatus(d)}"></span>${d.fileData?`<button class="ci-doc-dl" onclick="downloadDoc(${d.id})">${esc(d.name)}</button><button class="ci-doc-rm" onclick="unlinkDoc(${d.id},'${itemId}')" title="${L==='en'?'Remove':'Entfernen'}">✕</button>`:`<a href="#" onclick="go('database');return false">${esc(d.name)}</a>`}</div>`).join(''):`<div class="ci-doc"><span class="ci-dot gray"></span><span style="color:var(--soft)">${L==='en'?'No document':'Kein Dokument'}</span></div>`;}
+  const btn=document.getElementById('docbtn_'+itemId);
+  if(btn){btn.innerHTML='📎'+(ld.length?`<span class="photo-cnt" style="background:var(--orange)">${ld.length}</span>`:'');btn.classList.toggle('has-docs',ld.length>0);}
 }
 
 // ═══ MATURITY ═══
